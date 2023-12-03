@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"compressURL/internal/controller/user"
 	"context"
 
 	"github.com/gogf/gf/v2/frame/g"
@@ -21,6 +22,7 @@ var (
 				group.Middleware(ghttp.MiddlewareHandlerResponse)
 				group.Bind(
 					hello.NewV1(),
+					user.NewV1(),
 				)
 			})
 			s.Run()
