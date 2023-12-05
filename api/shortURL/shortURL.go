@@ -2,14 +2,15 @@
 // Code generated and maintained by GoFrame CLI tool. DO NOT EDIT.
 // =================================================================================
 
-package hello
+package shortURL
 
 import (
 	"context"
 
-	"compressURL/api/hello/v1"
+	"compressURL/api/shortURL/v1"
 )
 
-type IHelloV1 interface {
-	Hello(ctx context.Context, req *v1.HelloReq) (res *v1.HelloRes, err error)
+type IShortURLV1 interface {
+	Create(ctx context.Context, req *v1.CreateReq) (res *v1.CreateRes, err error)
+	GetUrl(ctx context.Context, req *v1.GetUrlReq) (res *v1.GetUrlRes, err error)
 }

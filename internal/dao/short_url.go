@@ -8,19 +8,19 @@ import (
 	"compressURL/internal/dao/internal"
 )
 
-// internalUsersDao is internal type for wrapping internal DAO implements.
-type internalUsersDao = *internal.UsersDao
+// internalShortUrlDao is internal type for wrapping internal DAO implements.
+type internalShortUrlDao = *internal.ShortUrlDao
 
-// usersDao is the data access object for table users.
+// shortUrlDao is the data access object for table short_url.
 // You can define custom methods on it to extend its functionality as you wish.
-type usersDao struct {
-	internalUsersDao
+type shortUrlDao struct {
+	internalShortUrlDao
 }
 
 var (
-	// Users is globally public accessible object for table users operations.
-	Users = usersDao{
-		internal.NewUsersDao(),
+	// ShortUrl is globally public accessible object for table short_url operations.
+	ShortUrl = shortUrlDao{
+		internal.NewShortUrlDao(),
 	}
 )
 

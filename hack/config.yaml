@@ -8,7 +8,7 @@ gfcli:
   gen:
     dao:
       - link: "mysql:root:123456@tcp(127.0.0.1:3306)/compressURL"
-        tables: "users"
+        tables: "short_url"
         jsonCase: "CamelLower"
   # 工具编译配置
   build:
