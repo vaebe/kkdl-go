@@ -24,13 +24,13 @@ func New() *sShortURL {
 
 // CreateShortURL 创建短链
 func (s *sShortURL) CreateShortURL(ctx context.Context, in model.ShortURLCreateInput) error {
-	_, err := dao.ShortUrl.Ctx(ctx).Save(g.Map{"ShortUrl": in.ShortUrl, "RawUrl": in.RawUrl})
+	_, err := dao.ShortUrl.Ctx(ctx).Save(g.Map{"shortUrl": in.ShortUrl, "rawUrl": in.RawUrl, "expirationTime": in.ExpirationTime})
 	return err
 }
 
 // GetShortURL 获取短链
 func (s *sShortURL) GetShortURL(ctx context.Context, url string) (string, error) {
-	one, err := dao.ShortUrl.Ctx(ctx).Where("ShortUrl", url).One()
+	one, err := dao.ShortUrl.Ctx(ctx).Where("shortUrl", url).One()
 	if err != nil {
 		return "", err
 	}

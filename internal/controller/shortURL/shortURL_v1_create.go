@@ -7,6 +7,8 @@ import (
 	"compressURL/internal/service"
 	"context"
 	"fmt"
+	"github.com/gogf/gf/v2/frame/g"
+	"time"
 )
 
 func (c *ControllerV1) Create(ctx context.Context, req *v1.CreateReq) (res *v1.CreateRes, err error) {
@@ -16,18 +18,26 @@ func (c *ControllerV1) Create(ctx context.Context, req *v1.CreateReq) (res *v1.C
 		return nil, err
 	}
 
-	shortUrl := fmt.Sprintf("%s", codeData.GMap().Get("code"))
+	code := fmt.Sprintf("%s", codeData.GMap().Get("code"))
 
 	err = service.ShortURL().CreateShortURL(ctx, model.ShortURLCreateInput{
-		ShortUrl: shortUrl,
+		ShortUrl: code,
 		RawUrl:   req.RawUrl,
+		// 默认七天
+		ExpirationTime: time.Now().AddDate(0, 0, 7).UTC().Format("2006-01-02"),
 	})
 
 	if err != nil {
 		return nil, err
 	}
 
+	// 修改已使用的 code 状态
+	_, err = dao.ShortUrlCode.Ctx(ctx).Data(g.Map{"status": 1}).Where("code", code).Update()
+	if err != nil {
+		return nil, err
+	}
+
 	return &v1.CreateRes{
-		ShortUrl: shortUrl,
+		ShortUrl: code,
 	}, nil
 }

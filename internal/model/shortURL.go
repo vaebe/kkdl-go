@@ -1,6 +1,7 @@
 package model
 
 type ShortURLCreateInput struct {
-	ShortUrl string
-	RawUrl   string
+	ShortUrl       string
+	RawUrl         string
+	ExpirationTime string
 }
