@@ -28,7 +28,14 @@ func registerGetShortUrlRouter(s *ghttp.Server, ctx context.Context) {
 }
 
 func mainFunc(ctx context.Context, parser *gcmd.Parser) (err error) {
+
 	s := g.Server()
+
+	err = GenerateShortLinkScheduledTask(ctx)
+
+	if err != nil {
+		return err
+	}
 
 	registerGetShortUrlRouter(s, ctx)
 
