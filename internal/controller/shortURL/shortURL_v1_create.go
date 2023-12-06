@@ -25,7 +25,7 @@ func (c *ControllerV1) Create(ctx context.Context, req *v1.CreateReq) (res *v1.C
 
 	err = service.ShortURL().CreateShortURL(ctx, model.ShortURLCreateInput{
 		ShortUrl: ShortUrl,
-		RawUrl:   "www.baidu.com",
+		RawUrl:   req.RawUrl,
 	})
 
 	if err != nil {
