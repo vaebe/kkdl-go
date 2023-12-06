@@ -1,30 +1,25 @@
 package shortURL
 
 import (
+	"compressURL/api/shortURL/v1"
+	"compressURL/internal/dao"
 	"compressURL/internal/model"
 	"compressURL/internal/service"
-	"compressURL/utility"
 	"context"
-	"math/rand"
-	"time"
-
-	"compressURL/api/shortURL/v1"
+	"fmt"
 )
 
-func generateRandomNumber() int {
-	// 设置随机数种子，确保每次运行程序时都得到不同的结果
-	rand.NewSource(time.Now().UnixNano())
-	max := 9999999999
-	min := 1
-	return rand.Intn(max-min+1) + min
-}
-
 func (c *ControllerV1) Create(ctx context.Context, req *v1.CreateReq) (res *v1.CreateRes, err error) {
+	// 获取一条未使用短链 code
+	codeData, err := dao.ShortUrlCode.Ctx(ctx).Where("status", 0).One()
+	if err != nil {
+		return nil, err
+	}
 
-	ShortUrl := utility.IntToBase62(generateRandomNumber())
+	shortUrl := fmt.Sprintf("%s", codeData.GMap().Get("code"))
 
 	err = service.ShortURL().CreateShortURL(ctx, model.ShortURLCreateInput{
-		ShortUrl: ShortUrl,
+		ShortUrl: shortUrl,
 		RawUrl:   req.RawUrl,
 	})
 
@@ -33,6 +28,6 @@ func (c *ControllerV1) Create(ctx context.Context, req *v1.CreateReq) (res *v1.C
 	}
 
 	return &v1.CreateRes{
-		ShortUrl: ShortUrl,
+		ShortUrl: shortUrl,
 	}, nil
 }
