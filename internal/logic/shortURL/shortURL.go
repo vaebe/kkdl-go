@@ -4,6 +4,7 @@ import (
 	"compressURL/internal/dao"
 	"compressURL/internal/model"
 	"compressURL/internal/service"
+	"errors"
 	"fmt"
 	"github.com/gogf/gf/v2/frame/g"
 	"golang.org/x/net/context"
@@ -32,6 +33,10 @@ func (s *sShortURL) GetShortURL(ctx context.Context, url string) (string, error)
 	one, err := dao.ShortUrl.Ctx(ctx).Where("ShortUrl", url).One()
 	if err != nil {
 		return "", err
+	}
+
+	if one == nil {
+		return "", errors.New("未查询到对应的数据")
 	}
 
 	rawUrl := fmt.Sprintf("%s", one.GMap().Get("rawUrl"))
