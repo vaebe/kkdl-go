@@ -8,7 +8,6 @@ type UserCreateInput struct {
 	AccountType string // 账号类型: 01 邮箱 02 小程序
 	Role        string // 角色: 00 admin 01 普通用户 02 vip
 	Salt        string // 用户盐值
-	userId      string // 用户id
 }
 
 type UserUpdateInput struct {

@@ -8,6 +8,7 @@ import (
 	"compressURL/internal/service"
 	"compressURL/utility"
 	"errors"
+	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/util/grand"
 	"golang.org/x/net/context"
 )
@@ -24,14 +25,34 @@ func New() *sUser {
 }
 
 func (s *sUser) Create(ctx context.Context, in model.UserCreateInput) (userid int64, error error) {
-	in.Salt = grand.S(10)
-	in.Password = utility.EncryptPassword(in.Password, in.Salt)
-
+	// 昵称不存在生成默认昵称
 	if in.Nickname == "" {
 		in.Nickname = "UU" + grand.S(4)
 	}
 
-	id, err := dao.User.Ctx(ctx).Data(in).InsertAndGetId()
+	// 生成随机盐值
+	in.Salt = grand.S(10)
+
+	// Email、WxId 只会存在一个切不可为空
+	data := g.Map{
+		"Email":       nil,
+		"WxId":        nil,
+		"Password":    utility.EncryptPassword(in.Password, in.Salt),
+		"Nickname":    in.Nickname,
+		"AccountType": in.AccountType,
+		"Role":        in.Role,
+		"Salt":        in.Salt,
+	}
+
+	if in.WxId != "" {
+		data["WxId"] = in.WxId
+	}
+
+	if in.Email != "" {
+		data["Email"] = in.Email
+	}
+
+	id, err := dao.User.Ctx(ctx).Data(data).InsertAndGetId()
 	if err != nil {
 		return 0, err
 	}
