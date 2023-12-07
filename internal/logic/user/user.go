@@ -4,9 +4,10 @@ import (
 	v1 "compressURL/api/user/v1"
 	"compressURL/internal/dao"
 	"compressURL/internal/model"
+	"compressURL/internal/model/entity"
 	"compressURL/internal/service"
 	"compressURL/utility"
-	"github.com/gogf/gf/v2/frame/g"
+	"errors"
 	"github.com/gogf/gf/v2/util/grand"
 	"golang.org/x/net/context"
 )
@@ -26,6 +27,10 @@ func (s *sUser) Create(ctx context.Context, in model.UserCreateInput) (userid in
 	in.Salt = grand.S(10)
 	in.Password = utility.EncryptPassword(in.Password, in.Salt)
 
+	if in.Nickname == "" {
+		in.Nickname = "UU" + grand.S(4)
+	}
+
 	id, err := dao.User.Ctx(ctx).Data(in).InsertAndGetId()
 	if err != nil {
 		return 0, err
@@ -39,7 +44,18 @@ func (s *sUser) Remove(ctx context.Context, id int64) error {
 }
 
 func (s *sUser) Update(ctx context.Context, in model.UserUpdateInput) error {
-	_, err := dao.User.Ctx(ctx).Data(in).
+	// 获取用户信息
+	userInfo, err := service.User().Detail(ctx, in.Id)
+
+	if err != nil {
+		return err
+	}
+
+	// 对修改后的密码加密
+	in.Password = utility.EncryptPassword(in.Password, userInfo.Salt)
+
+	// 更新数据
+	_, err = dao.User.Ctx(ctx).Data(in).
 		FieldsEx(dao.User.Columns().Id).
 		Where(dao.User.Columns().Id, in.Id).
 		Update()
@@ -51,10 +67,20 @@ func (s *sUser) GetUserInfo(ctx context.Context, id int64) (info *v1.GetUserInfo
 
 	err := dao.User.Ctx(ctx).Where(dao.User.Columns().Id, id).Scan(&userInfo)
 
-	g.Log().Info(ctx, &userInfo)
-
 	if err != nil {
-		return &userInfo, err
+		return nil, errors.New("未查询到用户数据！")
 	}
 	return &userInfo, nil
+}
+
+// Detail 获取用户详情
+func (s *sUser) Detail(ctx context.Context, id int64) (info entity.User, error error) {
+	userInfo := entity.User{}
+
+	err := dao.User.Ctx(ctx).Where(dao.User.Columns().Id, id).Scan(&userInfo)
+
+	if err != nil {
+		return userInfo, errors.New("未查询到用户数据！")
+	}
+	return userInfo, nil
 }

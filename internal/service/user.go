@@ -8,6 +8,7 @@ package service
 import (
 	v1 "compressURL/api/user/v1"
 	"compressURL/internal/model"
+	"compressURL/internal/model/entity"
 
 	"golang.org/x/net/context"
 )
@@ -18,6 +19,7 @@ type (
 		Remove(ctx context.Context, id int64) error
 		Update(ctx context.Context, in model.UserUpdateInput) error
 		GetUserInfo(ctx context.Context, id int64) (info *v1.GetUserInfoRes, error error)
+		Detail(ctx context.Context, id int64) (info entity.User, error error)
 	}
 )
 
