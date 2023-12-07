@@ -41,7 +41,7 @@ func mainFunc(ctx context.Context, parser *gcmd.Parser) (err error) {
 	registerGetShortUrlRouter(s, ctx)
 
 	s.Group("/api", func(group *ghttp.RouterGroup) {
-		group.Middleware(ghttp.MiddlewareHandlerResponse)
+		group.Middleware(ghttp.MiddlewareHandlerResponse, ghttp.MiddlewareCORS)
 		group.Bind(
 			shortURL.NewV1(),
 			user.NewV1(),
