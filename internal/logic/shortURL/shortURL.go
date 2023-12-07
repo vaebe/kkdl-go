@@ -3,6 +3,7 @@ package shortURL
 import (
 	"compressURL/internal/dao"
 	"compressURL/internal/model"
+	"compressURL/internal/model/entity"
 	"compressURL/internal/service"
 	"errors"
 	"fmt"
@@ -22,9 +23,37 @@ func New() *sShortURL {
 }
 
 // CreateShortURL 创建短链
-func (s *sShortURL) CreateShortURL(ctx context.Context, in model.ShortURLCreateInput) error {
-	_, err := dao.ShortUrl.Ctx(ctx).Save(g.Map{"shortUrl": in.ShortUrl, "rawUrl": in.RawUrl, "expirationTime": in.ExpirationTime})
-	return err
+func (s *sShortURL) CreateShortURL(ctx context.Context, in model.ShortURLCreateInput) (string, error) {
+	// 获取一条未使用短链 code
+	shortCodeData := entity.ShortUrlCode{}
+	err := dao.ShortUrlCode.Ctx(ctx).Where("status", 0).Limit(1).Scan(&shortCodeData)
+	if err != nil {
+		return "", err
+	}
+
+	// 创建事务
+	db := g.DB()
+	if tx, err := db.Begin(ctx); err == nil {
+		_, err := tx.Model("short_url").
+			Data(g.Map{"shortUrl": shortCodeData.Code, "rawUrl": in.RawUrl, "expirationTime": in.ExpirationTime}).
+			Save()
+
+		if err != nil {
+			return "", err
+		}
+
+		_, err = tx.Model("short_url_code").Data(g.Map{"status": 1}).Where("code", shortCodeData.Code).Update()
+		if err != nil {
+			// 回滚事务
+			tx.Rollback()
+			return "", err
+		}
+
+		// 提交事务
+		tx.Commit()
+	}
+
+	return shortCodeData.Code, err
 }
 
 // GetShortURL 获取短链

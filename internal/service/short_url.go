@@ -14,7 +14,7 @@ import (
 type (
 	IShortURL interface {
 		// CreateShortURL 创建短链
-		CreateShortURL(ctx context.Context, in model.ShortURLCreateInput) error
+		CreateShortURL(ctx context.Context, in model.ShortURLCreateInput) (string, error)
 		// GetShortURL 获取短链
 		GetShortURL(ctx context.Context, url string) (string, error)
 	}
