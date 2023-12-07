@@ -14,8 +14,7 @@ type sShortURL struct {
 }
 
 func init() {
-	url := New()
-	service.RegisterShortURL(url)
+	service.RegisterShortURL(New())
 }
 
 func New() *sShortURL {

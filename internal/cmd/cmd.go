@@ -3,6 +3,7 @@ package cmd
 import (
 	v1 "compressURL/api/shortURL/v1"
 	"compressURL/internal/controller/shortURL"
+	"compressURL/internal/controller/user"
 	"context"
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/net/ghttp"
@@ -43,6 +44,7 @@ func mainFunc(ctx context.Context, parser *gcmd.Parser) (err error) {
 		group.Middleware(ghttp.MiddlewareHandlerResponse)
 		group.Bind(
 			shortURL.NewV1(),
+			user.NewV1(),
 		)
 	})
 	s.Run()

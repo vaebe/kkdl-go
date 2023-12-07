@@ -6,4 +6,5 @@ package logic
 
 import (
 	_ "compressURL/internal/logic/shortURL"
+	_ "compressURL/internal/logic/user"
 )
