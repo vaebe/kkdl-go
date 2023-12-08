@@ -43,12 +43,26 @@ func mainFunc(ctx context.Context, parser *gcmd.Parser) (err error) {
 	registerGetShortUrlRouter(s, ctx)
 
 	s.Group("/api", func(group *ghttp.RouterGroup) {
-		group.Middleware(ghttp.MiddlewareCORS, ghttp.MiddlewareHandlerResponse, middlewares.MiddlewareAuth)
-		group.Bind(
-			shortURL.NewV1(),
-			user.NewV1(),
-			login.NewV1(),
-		)
+		group.Middleware(ghttp.MiddlewareCORS, ghttp.MiddlewareHandlerResponse)
+
+		// 不需要权限
+		group.Group("/", func(group *ghttp.RouterGroup) {
+			group.Bind(
+				login.NewV1().EmailLogin,
+				login.NewV1().WeChatMiniProgramLogin,
+			)
+		})
+
+		// 需要权限验证
+		group.Group("/", func(group *ghttp.RouterGroup) {
+			group.Middleware(middlewares.MiddlewareAuth)
+			group.Bind(
+				shortURL.NewV1(),
+				user.NewV1(),
+				login.NewV1().SignOut,
+			)
+		})
+
 	})
 	s.Run()
 	return nil
