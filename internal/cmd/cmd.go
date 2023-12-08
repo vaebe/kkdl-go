@@ -2,8 +2,10 @@ package cmd
 
 import (
 	v1 "compressURL/api/shortURL/v1"
+	"compressURL/internal/controller/login"
 	"compressURL/internal/controller/shortURL"
 	"compressURL/internal/controller/user"
+	"compressURL/internal/middlewares"
 	"context"
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/net/ghttp"
@@ -41,10 +43,11 @@ func mainFunc(ctx context.Context, parser *gcmd.Parser) (err error) {
 	registerGetShortUrlRouter(s, ctx)
 
 	s.Group("/api", func(group *ghttp.RouterGroup) {
-		group.Middleware(ghttp.MiddlewareHandlerResponse, ghttp.MiddlewareCORS)
+		group.Middleware(ghttp.MiddlewareCORS, ghttp.MiddlewareHandlerResponse, middlewares.MiddlewareAuth)
 		group.Bind(
 			shortURL.NewV1(),
 			user.NewV1(),
+			login.NewV1(),
 		)
 	})
 	s.Run()
