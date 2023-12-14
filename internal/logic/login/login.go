@@ -50,13 +50,12 @@ func (s *sLogin) GetUserInfo(ctx context.Context, in model.LoginInput) (entity.U
 
 // UserLogin 用户登录
 func (s *sLogin) UserLogin(ctx context.Context, in model.LoginInput) (userInfo entity.User, token string, tokenExpire string, err error) {
-	token, expire := Auth.LoginHandler(ctx)
-
 	userInfo, err = service.Login().GetUserInfo(ctx, in)
 	if err != nil {
 		return entity.User{}, "", "", err
 	}
 
+	token, expire := Auth.LoginHandler(ctx)
 	tokenExpire = expire.Format("2006-01-02 15:04:05")
 
 	return userInfo, token, tokenExpire, nil
