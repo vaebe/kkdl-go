@@ -17,6 +17,7 @@ type (
 		GetUserInfo(ctx context0.Context, in model.LoginInput) (entity.User, error)
 		UserLogin(ctx context0.Context, in model.LoginInput) (userInfo entity.User, token string, tokenExpire string, err error)
 		SignOutLogin(ctx context0.Context) error
+		GetWeChatToken(ctx context0.Context) (string, error)
 	}
 )
 
