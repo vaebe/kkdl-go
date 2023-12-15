@@ -35,6 +35,7 @@ func getWeChatToken(ctx context.Context) string {
 	return weChatToken.String()
 }
 
+// GetWeChatToken 获取微信 api token
 func (s *sLogin) GetWeChatToken(ctx context.Context) (string, error) {
 	// 缓存的 weChatToken 存在直接返回
 	token := getWeChatToken(ctx)
