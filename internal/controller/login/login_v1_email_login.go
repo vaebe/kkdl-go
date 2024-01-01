@@ -18,7 +18,7 @@ func (c *ControllerV1) EmailLogin(ctx context.Context, req *v1.EmailLoginReq) (r
 		Token:       token,
 		TokenExpire: tokenExpire,
 		UserInfo: v1.UserInfo{
-			Id:          int64(userInfo.Id),
+			Id:          userInfo.Id,
 			Email:       userInfo.Email,
 			WxId:        userInfo.WxId,
 			Nickname:    userInfo.Nickname,

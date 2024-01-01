@@ -11,7 +11,7 @@ type UserCreateInput struct {
 }
 
 type UserUpdateInput struct {
-	Id       int64  // 唯一标识，自增长整数
+	Id       string // 唯一标识，自增长整数
 	Password string // 密码, 小程序登录无密码
 	Nickname string // 昵称, 创建默认生成
 }

@@ -12,7 +12,7 @@ import (
 // User is the golang structure of table user for DAO operations like Where/Data.
 type User struct {
 	g.Meta      `orm:"table:user, do:true"`
-	Id          interface{} // 唯一标识，自增长整数
+	Id          interface{} // 唯一标识
 	Email       interface{} // 邮箱,唯一
 	WxId        interface{} // 小程序id,唯一
 	Password    interface{} // 密码, 小程序登录无密码

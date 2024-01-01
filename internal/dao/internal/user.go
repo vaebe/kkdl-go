@@ -20,7 +20,7 @@ type UserDao struct {
 
 // UserColumns defines and stores column names for table user.
 type UserColumns struct {
-	Id          string // 唯一标识，自增长整数
+	Id          string // 唯一标识
 	Email       string // 邮箱,唯一
 	WxId        string // 小程序id,唯一
 	Password    string // 密码, 小程序登录无密码

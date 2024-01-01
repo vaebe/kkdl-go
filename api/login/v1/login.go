@@ -12,7 +12,7 @@ type EmailLoginReq struct {
 }
 
 type UserInfo struct {
-	Id          int64  `json:"id" dc:"用户id"`
+	Id          string `json:"id" dc:"用户id"`
 	Email       string `json:"email" dc:"邮箱"`
 	WxId        string `json:"wxId" dc:"小程序id"`
 	Nickname    string `json:"nickname" dc:"昵称"`

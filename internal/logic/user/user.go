@@ -8,8 +8,10 @@ import (
 	"compressURL/internal/service"
 	"compressURL/utility"
 	"errors"
+	"github.com/gogf/gf/v2/errors/gerror"
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/util/grand"
+	"github.com/gogf/gf/v2/util/guid"
 	"golang.org/x/net/context"
 )
 
@@ -24,7 +26,7 @@ func New() *sUser {
 	return &sUser{}
 }
 
-func (s *sUser) Create(ctx context.Context, in model.UserCreateInput) (userid int64, error error) {
+func (s *sUser) Create(ctx context.Context, in model.UserCreateInput) (userid string, error error) {
 	// 昵称不存在生成默认昵称
 	if in.Nickname == "" {
 		in.Nickname = "UU" + grand.S(4)
@@ -33,8 +35,11 @@ func (s *sUser) Create(ctx context.Context, in model.UserCreateInput) (userid in
 	// 生成随机盐值
 	in.Salt = grand.S(10)
 
-	// Email、WxId 只会存在一个切不可为空
+	userId := guid.S()
+
+	// Email、WxId 只会存在一个且不可为空
 	data := g.Map{
+		"Id":          userId,
 		"Email":       nil,
 		"WxId":        nil,
 		"Password":    utility.EncryptPassword(in.Password, in.Salt),
@@ -52,18 +57,29 @@ func (s *sUser) Create(ctx context.Context, in model.UserCreateInput) (userid in
 		data["Email"] = in.Email
 	}
 
-	id, err := dao.User.Ctx(ctx).Data(data).InsertAndGetId()
+	_, err := dao.User.Ctx(ctx).Data(data).InsertAndGetId()
 	if err != nil {
-		return 0, err
+		return "", err
 	}
-	return id, nil
+	return userId, nil
 }
 
-func (s *sUser) Remove(ctx context.Context, id int64) error {
-	_, err := dao.User.Ctx(ctx).Where(dao.User.Columns().Id, id).Delete()
+// Remove 删除用户
+func (s *sUser) Remove(ctx context.Context, id string) error {
+
+	db := dao.User.Ctx(ctx).Where(dao.User.Columns().Id, id)
+
+	result, err := db.Count()
+
+	if result == 0 {
+		return gerror.New("用户不存在！")
+	}
+
+	_, err = db.Delete()
 	return err
 }
 
+// Update 更新用户信息
 func (s *sUser) Update(ctx context.Context, in model.UserUpdateInput) error {
 	// 获取用户信息
 	userInfo, err := service.User().Detail(ctx, in.Id)
@@ -83,7 +99,7 @@ func (s *sUser) Update(ctx context.Context, in model.UserUpdateInput) error {
 	return err
 }
 
-func (s *sUser) GetUserInfo(ctx context.Context, id int64) (info *v1.GetUserInfoRes, error error) {
+func (s *sUser) GetUserInfo(ctx context.Context, id string) (info *v1.GetUserInfoRes, error error) {
 	userInfo := v1.GetUserInfoRes{}
 
 	err := dao.User.Ctx(ctx).Where(dao.User.Columns().Id, id).Scan(&userInfo)
@@ -95,7 +111,7 @@ func (s *sUser) GetUserInfo(ctx context.Context, id int64) (info *v1.GetUserInfo
 }
 
 // Detail 获取用户详情
-func (s *sUser) Detail(ctx context.Context, id int64) (info entity.User, error error) {
+func (s *sUser) Detail(ctx context.Context, id string) (info entity.User, error error) {
 	userInfo := entity.User{}
 
 	err := dao.User.Ctx(ctx).Where(dao.User.Columns().Id, id).Scan(&userInfo)
