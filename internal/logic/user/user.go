@@ -66,16 +66,12 @@ func (s *sUser) Create(ctx context.Context, in model.UserCreateInput) (userid st
 
 // Remove 删除用户
 func (s *sUser) Remove(ctx context.Context, id string) error {
+	res, err := dao.User.Ctx(ctx).Where(dao.User.Columns().Id, id).Delete()
 
-	db := dao.User.Ctx(ctx).Where(dao.User.Columns().Id, id)
-
-	result, err := db.Count()
-
-	if result == 0 {
-		return gerror.New("用户不存在！")
+	if num, _ := res.RowsAffected(); num == 0 {
+		return gerror.New("需要删除的数据不存在！")
 	}
 
-	_, err = db.Delete()
 	return err
 }
 
