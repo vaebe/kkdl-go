@@ -5,7 +5,7 @@ import "github.com/gogf/gf/v2/frame/g"
 type CreateReq struct {
 	g.Meta         `path:"/shortURL/create" method:"post" summary:"创建短链" tags:"短链"`
 	RawUrl         string `json:"rawUrl" v:"required#请输入url"   dc:"rawUrl"`
-	ExpirationTime string `json:"ExpirationTime"    dc:"过期时间"`
+	ExpirationTime string `json:"expirationTime"    dc:"过期时间"`
 }
 type CreateRes struct {
 	ShortUrl string `json:"shortUrl" dc:"短链"`
