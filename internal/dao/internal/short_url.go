@@ -26,6 +26,8 @@ type ShortUrlColumns struct {
 	ExpirationTime string // 过期时间
 	UserId         string // 用户id
 	CreatedAt      string // 创建时间，默认为当前时间戳
+	Title          string // 短链标题
+	GroupId        string // 短链分组id
 }
 
 // shortUrlColumns holds the columns for table short_url.
@@ -36,6 +38,8 @@ var shortUrlColumns = ShortUrlColumns{
 	ExpirationTime: "expirationTime",
 	UserId:         "userId",
 	CreatedAt:      "created_at",
+	Title:          "title",
+	GroupId:        "group_id",
 }
 
 // NewShortUrlDao creates and returns a new DAO object for table data access.

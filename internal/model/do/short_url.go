@@ -18,4 +18,6 @@ type ShortUrl struct {
 	ExpirationTime *gtime.Time // 过期时间
 	UserId         interface{} // 用户id
 	CreatedAt      *gtime.Time // 创建时间，默认为当前时间戳
+	Title          interface{} // 短链标题
+	GroupId        interface{} // 短链分组id
 }

@@ -16,4 +16,6 @@ type ShortUrl struct {
 	ExpirationTime *gtime.Time `json:"expirationTime" ` // 过期时间
 	UserId         int         `json:"userId"         ` // 用户id
 	CreatedAt      *gtime.Time `json:"createdAt"      ` // 创建时间，默认为当前时间戳
+	Title          string      `json:"title"          ` // 短链标题
+	GroupId        int         `json:"groupId"        ` // 短链分组id
 }
