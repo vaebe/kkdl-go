@@ -6,7 +6,7 @@
 package service
 
 import (
-	"compressURL/internal/model"
+	"compressURL/internal/model/entity"
 
 	"golang.org/x/net/context"
 )
@@ -14,7 +14,7 @@ import (
 type (
 	IShortURL interface {
 		// CreateShortURL 创建短链
-		CreateShortURL(ctx context.Context, in model.ShortURLCreateInput) (string, error)
+		CreateShortURL(ctx context.Context, in entity.ShortUrl) (string, error)
 		// GetShortURL 获取短链
 		GetShortURL(ctx context.Context, url string) (string, error)
 	}

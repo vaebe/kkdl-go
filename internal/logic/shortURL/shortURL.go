@@ -2,7 +2,6 @@ package shortURL
 
 import (
 	"compressURL/internal/dao"
-	"compressURL/internal/model"
 	"compressURL/internal/model/entity"
 	"compressURL/internal/service"
 	"errors"
@@ -23,7 +22,7 @@ func New() *sShortURL {
 }
 
 // CreateShortURL 创建短链
-func (s *sShortURL) CreateShortURL(ctx context.Context, in model.ShortURLCreateInput) (string, error) {
+func (s *sShortURL) CreateShortURL(ctx context.Context, in entity.ShortUrl) (string, error) {
 	// 获取一条未使用短链 code
 	shortCodeData := entity.ShortUrlCode{}
 	err := dao.ShortUrlCode.Ctx(ctx).Where("status", 0).Limit(1).Scan(&shortCodeData)
@@ -35,7 +34,7 @@ func (s *sShortURL) CreateShortURL(ctx context.Context, in model.ShortURLCreateI
 	db := g.DB()
 	if tx, err := db.Begin(ctx); err == nil {
 		_, err := tx.Model("short_url").
-			Data(g.Map{"shortUrl": shortCodeData.Code, "rawUrl": in.RawUrl, "expirationTime": in.ExpirationTime}).
+			Data(g.Map{"shortUrl": shortCodeData.Code, "rawUrl": in.RawUrl, "expirationTime": in.ExpirationTime, "title": in.Title, "groupId": in.GroupId}).
 			Save()
 
 		if err != nil {
