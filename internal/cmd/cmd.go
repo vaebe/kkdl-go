@@ -19,6 +19,10 @@ func registerGetShortUrlRouter(s *ghttp.Server, ctx context.Context) {
 	s.BindHandler("/:id", func(r *ghttp.Request) {
 		shortUrl := gstr.SubStr(r.Request.RequestURI, 1, len(r.Request.RequestURI))
 
+		if shortUrl == "favicon.ico" {
+			return
+		}
+
 		req, err := shortURL.NewV1().GetUrl(ctx, &v1.GetUrlReq{ShortUrl: shortUrl})
 		if err != nil {
 			r.Response.Write("未获取到对应的地址，请检查链接是否正确！")
