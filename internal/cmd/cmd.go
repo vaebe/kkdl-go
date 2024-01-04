@@ -68,6 +68,7 @@ func mainFunc(ctx context.Context, parser *gcmd.Parser) (err error) {
 				user.NewV1().GetUserInfo,
 				user.NewV1().Remove,
 				user.NewV1().Update,
+				user.NewV1().GetUserList,
 				login.NewV1().SignOut,
 			)
 		})

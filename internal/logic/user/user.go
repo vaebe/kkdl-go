@@ -26,7 +26,7 @@ func New() *sUser {
 	return &sUser{}
 }
 
-func (s *sUser) Create(ctx context.Context, in model.UserCreateInput) (userid string, error error) {
+func (s *sUser) Create(ctx context.Context, in model.UserCreateInput) (string, error) {
 	// 昵称不存在生成默认昵称
 	if in.Nickname == "" {
 		in.Nickname = "UU" + grand.S(4)
@@ -95,7 +95,7 @@ func (s *sUser) Update(ctx context.Context, in model.UserUpdateInput) error {
 	return err
 }
 
-func (s *sUser) GetUserInfo(ctx context.Context, id string) (info *v1.GetUserInfoRes, error error) {
+func (s *sUser) GetUserInfo(ctx context.Context, id string) (*v1.GetUserInfoRes, error) {
 	userInfo := v1.GetUserInfoRes{}
 
 	err := dao.User.Ctx(ctx).Where(dao.User.Columns().Id, id).Scan(&userInfo)
@@ -107,7 +107,7 @@ func (s *sUser) GetUserInfo(ctx context.Context, id string) (info *v1.GetUserInf
 }
 
 // Detail 获取用户详情
-func (s *sUser) Detail(ctx context.Context, id string) (info entity.User, error error) {
+func (s *sUser) Detail(ctx context.Context, id string) (entity.User, error) {
 	userInfo := entity.User{}
 
 	err := dao.User.Ctx(ctx).Where(dao.User.Columns().Id, id).Scan(&userInfo)
@@ -116,4 +116,32 @@ func (s *sUser) Detail(ctx context.Context, id string) (info entity.User, error 
 		return userInfo, errors.New("未查询到用户数据！")
 	}
 	return userInfo, nil
+}
+
+// GetUserList 获取用户列表
+func (s *sUser) GetUserList(ctx context.Context, in v1.GetUserListReq) ([]entity.User, int, error) {
+	var userList []entity.User
+
+	db := dao.User.Ctx(ctx)
+
+	if in.WxId != "" {
+		db = db.Where(dao.User.Columns().WxId, in.WxId)
+	}
+
+	if in.Email != "" {
+		db = db.Where(dao.User.Columns().Email, in.Email)
+	}
+
+	if in.Nickname != "" {
+		db = db.Where(dao.User.Columns().Nickname, in.Nickname)
+	}
+
+	total, _ := db.Count()
+
+	err := db.Page(in.PageNo, in.PageSize).Scan(&userList)
+
+	if err != nil {
+		return nil, 0, err
+	}
+	return userList, total, nil
 }

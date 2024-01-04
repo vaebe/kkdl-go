@@ -15,12 +15,16 @@ import (
 
 type (
 	IUser interface {
-		Create(ctx context.Context, in model.UserCreateInput) (userid string, error error)
+		Create(ctx context.Context, in model.UserCreateInput) (string, error)
+		// Remove 删除用户
 		Remove(ctx context.Context, id string) error
+		// Update 更新用户信息
 		Update(ctx context.Context, in model.UserUpdateInput) error
-		GetUserInfo(ctx context.Context, id string) (info *v1.GetUserInfoRes, error error)
+		GetUserInfo(ctx context.Context, id string) (*v1.GetUserInfoRes, error)
 		// Detail 获取用户详情
-		Detail(ctx context.Context, id string) (info entity.User, error error)
+		Detail(ctx context.Context, id string) (entity.User, error)
+		// GetUserList 获取用户列表
+		GetUserList(ctx context.Context, in v1.GetUserListReq) ([]entity.User, int, error)
 	}
 )
 
