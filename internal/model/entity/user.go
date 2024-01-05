@@ -14,7 +14,7 @@ type User struct {
 	Email       string      `json:"email"       ` // 邮箱,唯一
 	WxId        string      `json:"wxId"        ` // 小程序id,唯一
 	Password    string      `json:"password"    ` // 密码, 小程序登录无密码
-	Nickname    string      `json:"nickname"    ` // 昵称, 创建默认生成
+	NickName    string      `json:"nickName"    ` // 昵称, 创建默认生成
 	AccountType string      `json:"accountType" ` // 账号类型: 01 邮箱 02 小程序
 	Role        string      `json:"role"        ` // 角色: 00 admin 01 普通用户 02 vip
 	DeletedAt   *gtime.Time `json:"deletedAt"   ` // 删除时间

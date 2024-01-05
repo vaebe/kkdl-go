@@ -16,7 +16,7 @@ type User struct {
 	Email       interface{} // 邮箱,唯一
 	WxId        interface{} // 小程序id,唯一
 	Password    interface{} // 密码, 小程序登录无密码
-	Nickname    interface{} // 昵称, 创建默认生成
+	NickName    interface{} // 昵称, 创建默认生成
 	AccountType interface{} // 账号类型: 01 邮箱 02 小程序
 	Role        interface{} // 角色: 00 admin 01 普通用户 02 vip
 	DeletedAt   *gtime.Time // 删除时间

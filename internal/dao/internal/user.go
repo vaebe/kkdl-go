@@ -24,7 +24,7 @@ type UserColumns struct {
 	Email       string // 邮箱,唯一
 	WxId        string // 小程序id,唯一
 	Password    string // 密码, 小程序登录无密码
-	Nickname    string // 昵称, 创建默认生成
+	NickName    string // 昵称, 创建默认生成
 	AccountType string // 账号类型: 01 邮箱 02 小程序
 	Role        string // 角色: 00 admin 01 普通用户 02 vip
 	DeletedAt   string // 删除时间
@@ -40,7 +40,7 @@ var userColumns = UserColumns{
 	Email:       "email",
 	WxId:        "wxId",
 	Password:    "password",
-	Nickname:    "nickname",
+	NickName:    "nickName",
 	AccountType: "accountType",
 	Role:        "role",
 	DeletedAt:   "deleted_at",
