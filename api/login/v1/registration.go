@@ -7,7 +7,7 @@ type RegistrationReq struct {
 	Email    string `json:"email"    dc:"邮箱"`
 	WxId     string `json:"wxId"    dc:"小程序 id"`
 	Password string `json:"password"   dc:"密码"`
-	Nickname string `json:"nickname"   dc:"昵称"`
+	NickName string `json:"nickName"   dc:"昵称"`
 }
 type RegistrationRes struct {
 	Id string `json:"id" dc:"用户 id"`

@@ -14,7 +14,7 @@ func (c *ControllerV1) Update(ctx context.Context, req *v1.UpdateReq) (res *v1.U
 		Id:       req.Id,
 		Email:    req.Email,
 		Password: req.Password,
-		Nickname: req.Nickname,
+		NickName: req.NickName,
 		Role:     req.Role,
 		Avatar:   req.Avatar,
 	}

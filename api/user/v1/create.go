@@ -6,7 +6,7 @@ type CreateReq struct {
 	g.Meta   `path:"/user/create" method:"post" summary:"创建用户" tags:"用户"`
 	Email    string `json:"email"    dc:"邮箱"`
 	Password string `json:"password"   dc:"密码"`
-	Nickname string `json:"nickname"   dc:"昵称"`
+	NickName string `json:"nickName"   dc:"昵称"`
 	Role     string `json:"role"   dc:"角色"`
 	Avatar   string `json:"avatar"   dc:"头像"`
 }

@@ -13,7 +13,7 @@ func (c *ControllerV1) Registration(ctx context.Context, req *v1.RegistrationReq
 		Email:       req.Email,
 		WxId:        req.WxId,
 		Password:    req.Password,
-		Nickname:    req.Nickname,
+		NickName:    req.NickName,
 		AccountType: "01",
 		Role:        "01",
 	}

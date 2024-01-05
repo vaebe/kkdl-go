@@ -87,7 +87,7 @@ func Authenticator(ctx context.Context) (interface{}, error) {
 		"id":          userInfo.Id,
 		"Email":       userInfo.Email,
 		"WxId":        userInfo.WxId,
-		"Nickname":    userInfo.Nickname,
+		"NickName":    userInfo.NickName,
 		"AccountType": userInfo.AccountType,
 		"Role":        userInfo.Role,
 	}

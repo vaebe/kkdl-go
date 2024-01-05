@@ -11,7 +11,7 @@ func (c *ControllerV1) Create(ctx context.Context, req *v1.CreateReq) (res *v1.C
 	userinfo := entity.User{
 		Email:    req.Email,
 		Password: req.Password,
-		Nickname: req.Nickname,
+		NickName: req.NickName,
 		Role:     req.Role,
 		Avatar:   req.Avatar,
 	}

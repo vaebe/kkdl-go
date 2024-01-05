@@ -22,7 +22,7 @@ func (c *ControllerV1) EmailLogin(ctx context.Context, req *v1.EmailLoginReq) (r
 			Id:          userInfo.Id,
 			Email:       userInfo.Email,
 			WxId:        userInfo.WxId,
-			Nickname:    userInfo.Nickname,
+			NickName:    userInfo.NickName,
 			AccountType: userInfo.AccountType,
 			Role:        userInfo.Role,
 		},

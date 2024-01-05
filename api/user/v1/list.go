@@ -9,7 +9,7 @@ import (
 type GetUserListReq struct {
 	g.Meta `path:"/user/getList" method:"post" summary:"获取用户列表" tags:"用户"`
 	model.PageParams
-	Nickname string `json:"nickname" dc:"昵称"`
+	NickName string `json:"nickName"   dc:"昵称"`
 	Email    string `json:"email"   dc:"邮箱"`
 	WxId     string `json:"wxId"   dc:"微信 id"`
 }

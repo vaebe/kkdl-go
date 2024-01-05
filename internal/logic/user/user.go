@@ -27,8 +27,8 @@ func New() *sUser {
 
 func (s *sUser) Create(ctx context.Context, in entity.User) (string, error) {
 	// 昵称不存在生成默认昵称
-	if in.Nickname == "" {
-		in.Nickname = "kk" + grand.S(4)
+	if in.NickName == "" {
+		in.NickName = "kk" + grand.S(4)
 	}
 
 	// 生成随机盐值
@@ -42,7 +42,7 @@ func (s *sUser) Create(ctx context.Context, in entity.User) (string, error) {
 		"Email":       nil,
 		"WxId":        nil,
 		"Password":    utility.EncryptPassword(in.Password, in.Salt),
-		"Nickname":    in.Nickname,
+		"NickName":    in.NickName,
 		"AccountType": nil,
 		"Role":        in.Role,
 		"Salt":        in.Salt,
@@ -126,7 +126,7 @@ func (s *sUser) GetUserList(ctx context.Context, in v1.GetUserListReq) ([]entity
 	db := dao.User.Ctx(ctx).OmitEmptyWhere().
 		Where(dao.User.Columns().WxId, in.WxId).
 		Where(dao.User.Columns().Email, in.Email).
-		Where(dao.User.Columns().Nickname, in.Nickname)
+		Where(dao.User.Columns().NickName, in.NickName)
 
 	total, _ := db.Count()
 
