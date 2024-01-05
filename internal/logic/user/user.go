@@ -122,19 +122,10 @@ func (s *sUser) Detail(ctx context.Context, id string) (entity.User, error) {
 func (s *sUser) GetUserList(ctx context.Context, in v1.GetUserListReq) ([]entity.User, int, error) {
 	var userList []entity.User
 
-	db := dao.User.Ctx(ctx)
-
-	if in.WxId != "" {
-		db = db.Where(dao.User.Columns().WxId, in.WxId)
-	}
-
-	if in.Email != "" {
-		db = db.Where(dao.User.Columns().Email, in.Email)
-	}
-
-	if in.Nickname != "" {
-		db = db.Where(dao.User.Columns().Nickname, in.Nickname)
-	}
+	db := dao.User.Ctx(ctx).OmitEmptyWhere().
+		Where(dao.User.Columns().WxId, in.WxId).
+		Where(dao.User.Columns().Email, in.Email).
+		Where(dao.User.Columns().Nickname, in.Nickname)
 
 	total, _ := db.Count()
 
