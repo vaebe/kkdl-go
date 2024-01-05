@@ -1,7 +1,7 @@
 package login
 
 import (
-	"compressURL/internal/model"
+	"compressURL/internal/model/entity"
 	"compressURL/internal/service"
 	"context"
 
@@ -9,17 +9,13 @@ import (
 )
 
 func (c *ControllerV1) Registration(ctx context.Context, req *v1.RegistrationReq) (res *v1.RegistrationRes, err error) {
-	userinfo := model.UserCreateInput{
+	userinfo := entity.User{
 		Email:       req.Email,
 		WxId:        req.WxId,
 		Password:    req.Password,
 		Nickname:    req.Nickname,
 		AccountType: "01",
 		Role:        "01",
-	}
-
-	if req.WxId != "" {
-		userinfo.AccountType = "02"
 	}
 
 	id, err := service.User().Create(ctx, userinfo)

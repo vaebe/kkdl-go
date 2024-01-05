@@ -2,6 +2,7 @@ package login
 
 import (
 	"compressURL/internal/model"
+	"compressURL/internal/model/entity"
 	"compressURL/internal/service"
 	"context"
 
@@ -17,7 +18,7 @@ func (c *ControllerV1) EmailLogin(ctx context.Context, req *v1.EmailLoginReq) (r
 	return &v1.EmailLoginRes{
 		Token:       token,
 		TokenExpire: tokenExpire,
-		UserInfo: v1.UserInfo{
+		UserInfo: entity.User{
 			Id:          userInfo.Id,
 			Email:       userInfo.Email,
 			WxId:        userInfo.WxId,

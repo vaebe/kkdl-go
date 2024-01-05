@@ -3,7 +3,6 @@ package user
 import (
 	v1 "compressURL/api/user/v1"
 	"compressURL/internal/dao"
-	"compressURL/internal/model"
 	"compressURL/internal/model/entity"
 	"compressURL/internal/service"
 	"compressURL/utility"
@@ -26,10 +25,10 @@ func New() *sUser {
 	return &sUser{}
 }
 
-func (s *sUser) Create(ctx context.Context, in model.UserCreateInput) (string, error) {
+func (s *sUser) Create(ctx context.Context, in entity.User) (string, error) {
 	// 昵称不存在生成默认昵称
 	if in.Nickname == "" {
-		in.Nickname = "UU" + grand.S(4)
+		in.Nickname = "kk" + grand.S(4)
 	}
 
 	// 生成随机盐值
@@ -44,17 +43,19 @@ func (s *sUser) Create(ctx context.Context, in model.UserCreateInput) (string, e
 		"WxId":        nil,
 		"Password":    utility.EncryptPassword(in.Password, in.Salt),
 		"Nickname":    in.Nickname,
-		"AccountType": in.AccountType,
+		"AccountType": nil,
 		"Role":        in.Role,
 		"Salt":        in.Salt,
 	}
 
 	if in.WxId != "" {
 		data["WxId"] = in.WxId
+		data["AccountType"] = "02"
 	}
 
 	if in.Email != "" {
 		data["Email"] = in.Email
+		data["AccountType"] = "01"
 	}
 
 	_, err := dao.User.Ctx(ctx).Data(data).InsertAndGetId()
@@ -64,19 +65,8 @@ func (s *sUser) Create(ctx context.Context, in model.UserCreateInput) (string, e
 	return userId, nil
 }
 
-// Remove 删除用户
-func (s *sUser) Remove(ctx context.Context, id string) error {
-	res, err := dao.User.Ctx(ctx).Where(dao.User.Columns().Id, id).Delete()
-
-	if num, _ := res.RowsAffected(); num == 0 {
-		return gerror.New("需要删除的数据不存在！")
-	}
-
-	return err
-}
-
 // Update 更新用户信息
-func (s *sUser) Update(ctx context.Context, in model.UserUpdateInput) error {
+func (s *sUser) Update(ctx context.Context, in entity.User) error {
 	// 获取用户信息
 	userInfo, err := service.User().Detail(ctx, in.Id)
 
@@ -92,6 +82,17 @@ func (s *sUser) Update(ctx context.Context, in model.UserUpdateInput) error {
 		FieldsEx(dao.User.Columns().Id).
 		Where(dao.User.Columns().Id, in.Id).
 		Update()
+	return err
+}
+
+// Remove 删除用户
+func (s *sUser) Remove(ctx context.Context, id string) error {
+	res, err := dao.User.Ctx(ctx).Where(dao.User.Columns().Id, id).Delete()
+
+	if num, _ := res.RowsAffected(); num == 0 {
+		return gerror.New("需要删除的数据不存在！")
+	}
+
 	return err
 }
 

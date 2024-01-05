@@ -7,7 +7,6 @@ package service
 
 import (
 	v1 "compressURL/api/user/v1"
-	"compressURL/internal/model"
 	"compressURL/internal/model/entity"
 
 	"golang.org/x/net/context"
@@ -15,11 +14,11 @@ import (
 
 type (
 	IUser interface {
-		Create(ctx context.Context, in model.UserCreateInput) (string, error)
+		Create(ctx context.Context, in entity.User) (string, error)
+		// Update 更新用户信息
+		Update(ctx context.Context, in entity.User) error
 		// Remove 删除用户
 		Remove(ctx context.Context, id string) error
-		// Update 更新用户信息
-		Update(ctx context.Context, in model.UserUpdateInput) error
 		GetUserInfo(ctx context.Context, id string) (*v1.GetUserInfoRes, error)
 		// Detail 获取用户详情
 		Detail(ctx context.Context, id string) (entity.User, error)
