@@ -55,7 +55,7 @@ func mainFunc(ctx context.Context, parser *gcmd.Parser) (err error) {
 				login.NewV1().EmailLogin,
 				login.NewV1().WeChatMiniProgramLogin,
 				login.NewV1().GetMiniProgramCode,
-				user.NewV1().Create,
+				login.NewV1().Registration,
 				shortURL.NewV1().Create,
 			)
 		})
@@ -64,12 +64,9 @@ func mainFunc(ctx context.Context, parser *gcmd.Parser) (err error) {
 		group.Group("/", func(group *ghttp.RouterGroup) {
 			group.Middleware(middlewares.MiddlewareAuth)
 			group.Bind(
-				shortURL.NewV1().GetUrl,
-				user.NewV1().GetUserInfo,
-				user.NewV1().Remove,
-				user.NewV1().Update,
-				user.NewV1().GetUserList,
 				login.NewV1().SignOut,
+				shortURL.NewV1().GetUrl,
+				user.NewV1(),
 			)
 		})
 
