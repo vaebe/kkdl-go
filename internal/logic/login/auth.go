@@ -17,7 +17,7 @@ func InitAuth() {
 		Key:             []byte("short_url_byd"),
 		Timeout:         time.Hour * 5,
 		MaxRefresh:      time.Hour * 5,
-		IdentityKey:     "id",
+		IdentityKey:     "LoginUserId",
 		TokenLookup:     "header: Authorization, query: token, cookie: jwt",
 		TokenHeadName:   "Bearer",
 		TimeFunc:        time.Now,
@@ -84,12 +84,9 @@ func Authenticator(ctx context.Context) (interface{}, error) {
 	}
 
 	data := g.Map{
-		"id":          userInfo.Id,
-		"Email":       userInfo.Email,
-		"WxId":        userInfo.WxId,
-		"NickName":    userInfo.NickName,
-		"AccountType": userInfo.AccountType,
-		"Role":        userInfo.Role,
+		"LoginUserId":          userInfo.Id,
+		"LoginUserAccountType": userInfo.AccountType,
+		"LoginUserRole":        userInfo.Role,
 	}
 
 	return data, nil
