@@ -23,4 +23,5 @@ type User struct {
 	UpdatedAt   *gtime.Time // 更新时间
 	CreatedAt   *gtime.Time // 创建时间
 	Salt        interface{} // 用户盐值
+	Avatar      interface{} // 用户头像
 }

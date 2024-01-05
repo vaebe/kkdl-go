@@ -21,4 +21,5 @@ type User struct {
 	UpdatedAt   *gtime.Time `json:"updatedAt"   ` // 更新时间
 	CreatedAt   *gtime.Time `json:"createdAt"   ` // 创建时间
 	Salt        string      `json:"salt"        ` // 用户盐值
+	Avatar      string      `json:"avatar"      ` // 用户头像
 }
