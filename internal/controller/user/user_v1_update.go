@@ -1,11 +1,10 @@
 package user
 
 import (
+	"compressURL/api/user/v1"
 	"compressURL/internal/model/entity"
 	"compressURL/internal/service"
 	"context"
-
-	"compressURL/api/user/v1"
 )
 
 func (c *ControllerV1) Update(ctx context.Context, req *v1.UpdateReq) (res *v1.UpdateRes, err error) {

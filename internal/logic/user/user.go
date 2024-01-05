@@ -74,11 +74,29 @@ func (s *sUser) Update(ctx context.Context, in entity.User) error {
 		return err
 	}
 
-	// 对修改后的密码加密
-	in.Password = utility.EncryptPassword(in.Password, userInfo.Salt)
+	if in.Password != "" {
+		// 对修改后的密码加密
+		in.Password = utility.EncryptPassword(in.Password, userInfo.Salt)
+	}
+
+	// 账号未更改不做更新
+	if in.Email == userInfo.Email {
+		in.Email = ""
+	}
+
+	count, err := dao.User.Ctx(ctx).Where(dao.User.Columns().Email, in.Email).Count()
+	if err != nil {
+		return err
+	}
+
+	// 存在一个用户且邮箱不为空
+	if count == 1 && in.Email != "" {
+		return gerror.New("邮箱已存在！")
+	}
 
 	// 更新数据
 	_, err = dao.User.Ctx(ctx).Data(in).
+		OmitEmpty().
 		FieldsEx(dao.User.Columns().Id).
 		Where(dao.User.Columns().Id, in.Id).
 		Update()
