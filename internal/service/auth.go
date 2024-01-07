@@ -6,12 +6,17 @@
 package service
 
 import (
+	"compressURL/internal/model"
+
 	jwt "github.com/gogf/gf-jwt/v2"
+	"golang.org/x/net/context"
 )
 
 type (
 	IAuth interface {
 		AuthInstance() *jwt.GfJWTMiddleware
+		// GetLoginUserInfo 获取当前登录用户的信息
+		GetLoginUserInfo(ctx context.Context) (model.JWTPayloadInfo, error)
 	}
 )
 

@@ -44,6 +44,21 @@ func (s sAuth) AuthInstance() *jwt.GfJWTMiddleware {
 	return authInstance
 }
 
+// GetLoginUserInfo 获取当前登录用户的信息
+func (s sAuth) GetLoginUserInfo(ctx context.Context) (model.JWTPayloadInfo, error) {
+
+	jwtInfo, token, err := authInstance.GetClaimsFromJWT(ctx)
+
+	info := model.JWTPayloadInfo{
+		Id:          jwtInfo["LoginUserId"].(string),
+		AccountType: jwtInfo["LoginUserAccountType"].(string),
+		Role:        jwtInfo["LoginUserRole"].(string),
+		Token:       token,
+	}
+
+	return info, err
+}
+
 // PayloadFunc is a callback function that will be called during login.
 // Using this function it is possible to add additional payload data to the webtoken.
 // The data is then made available during requests via c.Get("JWT_PAYLOAD").
