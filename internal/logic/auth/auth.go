@@ -1,18 +1,30 @@
-package login
+package auth
 
 import (
 	"compressURL/internal/model"
 	"compressURL/internal/service"
-	"context"
 	jwt "github.com/gogf/gf-jwt/v2"
 	"github.com/gogf/gf/v2/frame/g"
+	"golang.org/x/net/context"
 	"time"
 )
 
-var Auth *jwt.GfJWTMiddleware
+type sAuth struct {
+}
 
-func InitAuth() {
-	Auth = jwt.New(&jwt.GfJWTMiddleware{
+func init() {
+	initAuth()
+	service.RegisterAuth(New())
+}
+
+func New() *sAuth {
+	return &sAuth{}
+}
+
+var authInstance *jwt.GfJWTMiddleware
+
+func initAuth() {
+	authInstance = jwt.New(&jwt.GfJWTMiddleware{
 		Realm:           "short_url",
 		Key:             []byte("short_url_byd"),
 		Timeout:         time.Hour * 5,
@@ -26,6 +38,10 @@ func InitAuth() {
 		PayloadFunc:     PayloadFunc,
 		IdentityHandler: IdentityHandler,
 	})
+}
+
+func (s sAuth) AuthInstance() *jwt.GfJWTMiddleware {
+	return authInstance
 }
 
 // PayloadFunc is a callback function that will be called during login.
@@ -50,7 +66,7 @@ func PayloadFunc(data interface{}) jwt.MapClaims {
 // Using this function, by r.GetParam("id") get identity
 func IdentityHandler(ctx context.Context) interface{} {
 	claims := jwt.ExtractClaims(ctx)
-	return claims[Auth.IdentityKey]
+	return claims[authInstance.IdentityKey]
 }
 
 // Unauthorized is used to define customized Unauthorized callback function.
