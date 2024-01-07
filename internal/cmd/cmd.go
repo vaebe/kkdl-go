@@ -65,6 +65,7 @@ func mainFunc(ctx context.Context, parser *gcmd.Parser) (err error) {
 			group.Middleware(middlewares.MiddlewareAuth)
 			group.Bind(
 				login.NewV1().SignOut,
+				login.NewV1().RefreshToken,
 				shortURL.NewV1().GetUrl,
 				user.NewV1(),
 			)
