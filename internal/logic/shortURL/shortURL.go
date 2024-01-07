@@ -1,6 +1,7 @@
 package shortURL
 
 import (
+	v1 "compressURL/api/shortURL/v1"
 	"compressURL/internal/dao"
 	"compressURL/internal/model/entity"
 	"compressURL/internal/service"
@@ -68,4 +69,27 @@ func (s *sShortURL) GetShortURL(ctx context.Context, url string) (string, error)
 
 	rawUrl := fmt.Sprintf("%s", one.GMap().Get("rawUrl"))
 	return rawUrl, nil
+}
+
+// GetList 短链列表
+func (s *sShortURL) GetList(ctx context.Context, in v1.GetListReq, userId string) ([]entity.ShortUrl, int, error) {
+	var list []entity.ShortUrl
+
+	db := dao.ShortUrl.Ctx(ctx).OmitEmptyWhere().
+		Where(dao.ShortUrl.Columns().Title, in.Title).
+		Where(dao.ShortUrl.Columns().RawUrl, in.RawUrl)
+
+	// 用户 id 存在只查询当前用户的数据
+	if userId != "" {
+		db = db.Where(dao.ShortUrl.Columns().UserId, userId)
+	}
+
+	total, _ := db.Count()
+
+	err := db.Page(in.PageNo, in.PageSize).Scan(&list)
+
+	if err != nil {
+		return nil, 0, err
+	}
+	return list, total, nil
 }

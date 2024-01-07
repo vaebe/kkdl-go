@@ -67,6 +67,7 @@ func mainFunc(ctx context.Context, parser *gcmd.Parser) (err error) {
 				login.NewV1().SignOut,
 				login.NewV1().RefreshToken,
 				shortURL.NewV1().GetUrl,
+				shortURL.NewV1().GetList,
 				user.NewV1(),
 			)
 		})

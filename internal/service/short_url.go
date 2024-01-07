@@ -6,6 +6,7 @@
 package service
 
 import (
+	v1 "compressURL/api/shortURL/v1"
 	"compressURL/internal/model/entity"
 
 	"golang.org/x/net/context"
@@ -17,6 +18,8 @@ type (
 		CreateShortURL(ctx context.Context, in entity.ShortUrl) (string, error)
 		// GetShortURL 获取短链
 		GetShortURL(ctx context.Context, url string) (string, error)
+		// GetList 短链列表
+		GetList(ctx context.Context, in v1.GetListReq, userId string) ([]entity.ShortUrl, int, error)
 	}
 )
 
