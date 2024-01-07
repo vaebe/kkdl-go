@@ -11,7 +11,6 @@ func (c *ControllerV1) RefreshToken(ctx context.Context, _ *v1.RefreshTokenReq) 
 	token, expire := service.Auth().AuthInstance().RefreshHandler(ctx)
 	expireStr := gtime.NewFromTime(expire).Format("Y-m-d H:i:s")
 
-	res.Token = token
 	return &v1.RefreshTokenRes{
 		Token:  token,
 		Expire: expireStr,
