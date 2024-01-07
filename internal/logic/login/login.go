@@ -8,6 +8,7 @@ import (
 	"compressURL/utility"
 	"github.com/gogf/gf/v2/errors/gerror"
 	"github.com/gogf/gf/v2/os/glog"
+	"github.com/gogf/gf/v2/os/gtime"
 	"golang.org/x/net/context"
 )
 
@@ -15,7 +16,6 @@ type sLogin struct {
 }
 
 func init() {
-	InitAuth()
 	service.RegisterLogin(New())
 }
 
@@ -23,6 +23,7 @@ func New() *sLogin {
 	return &sLogin{}
 }
 
+// GetUserInfo 获取用户信息
 func (s *sLogin) GetUserInfo(ctx context.Context, in model.LoginInput) (entity.User, error) {
 	userInfo := entity.User{}
 
@@ -55,15 +56,15 @@ func (s *sLogin) UserLogin(ctx context.Context, in model.LoginInput) (userInfo e
 		return entity.User{}, "", "", err
 	}
 
-	token, expire := Auth.LoginHandler(ctx)
-	tokenExpire = expire.Format("2006-01-02 15:04:05")
+	token, expire := service.Auth().AuthInstance().LoginHandler(ctx)
+	tokenExpire = gtime.NewFromTime(expire).Format("Y-m-d H:i:s")
 
 	return userInfo, token, tokenExpire, nil
 }
 
+// SignOutLogin 退出登录
 func (s *sLogin) SignOutLogin(ctx context.Context) error {
-	st := Auth.GetPayload(ctx)
-	glog.Info(ctx, st)
+	service.Auth().AuthInstance().LogoutHandler(ctx)
 	// 用户退出登录删除 redis token
 	return nil
 }

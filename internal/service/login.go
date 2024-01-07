@@ -9,15 +9,19 @@ import (
 	"compressURL/internal/model"
 	"compressURL/internal/model/entity"
 
-	context0 "golang.org/x/net/context"
+	"golang.org/x/net/context"
 )
 
 type (
 	ILogin interface {
-		GetUserInfo(ctx context0.Context, in model.LoginInput) (entity.User, error)
-		UserLogin(ctx context0.Context, in model.LoginInput) (userInfo entity.User, token string, tokenExpire string, err error)
-		SignOutLogin(ctx context0.Context) error
-		GetWeChatToken(ctx context0.Context) (string, error)
+		// GetUserInfo 获取用户信息
+		GetUserInfo(ctx context.Context, in model.LoginInput) (entity.User, error)
+		// UserLogin 用户登录
+		UserLogin(ctx context.Context, in model.LoginInput) (userInfo entity.User, token string, tokenExpire string, err error)
+		// SignOutLogin 退出登录
+		SignOutLogin(ctx context.Context) error
+		// GetWeChatToken 获取微信 api token
+		GetWeChatToken(ctx context.Context) (string, error)
 	}
 )
 
