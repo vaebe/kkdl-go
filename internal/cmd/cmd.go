@@ -2,6 +2,7 @@ package cmd
 
 import (
 	v1 "compressURL/api/shortURL/v1"
+	"compressURL/internal/controller/common"
 	"compressURL/internal/controller/login"
 	"compressURL/internal/controller/shortURL"
 	"compressURL/internal/controller/user"
@@ -69,6 +70,7 @@ func mainFunc(ctx context.Context, parser *gcmd.Parser) (err error) {
 				shortURL.NewV1().GetUrl,
 				shortURL.NewV1().GetList,
 				user.NewV1(),
+				common.NewV1(),
 			)
 		})
 

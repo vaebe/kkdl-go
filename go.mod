@@ -7,6 +7,7 @@ require (
 	github.com/gogf/gf/contrib/drivers/mysql/v2 v2.5.7
 	github.com/gogf/gf/contrib/nosql/redis/v2 v2.5.7
 	github.com/gogf/gf/v2 v2.5.7
+	github.com/qiniu/go-sdk/v7 v7.19.0
 	golang.org/x/net v0.19.0
 )
 
@@ -34,6 +35,7 @@ require (
 	go.opentelemetry.io/otel/metric v1.21.0 // indirect
 	go.opentelemetry.io/otel/sdk v1.21.0 // indirect
 	go.opentelemetry.io/otel/trace v1.21.0 // indirect
+	golang.org/x/sync v0.0.0-20220722155255-886fb9371eb4 // indirect
 	golang.org/x/sys v0.15.0 // indirect
 	golang.org/x/text v0.14.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
