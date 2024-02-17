@@ -20,7 +20,7 @@ func (c *ControllerV1) UploadFile(ctx context.Context, req *v1.UploadFileReq) (r
 	}
 
 	return &v1.UploadFileRes{
-		Name: fileInfo.Url,
-		Url:  fileInfo.Name,
+		Name: fileInfo.Name,
+		Url:  fileInfo.Url,
 	}, err
 }
