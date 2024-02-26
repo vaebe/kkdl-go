@@ -14,6 +14,7 @@ gfcli:
   build:
     name: "reURl"
     arch: "amd64"
-    system: "linux,darwin,windows"
+    system: "linux"
+    packSrc: "manifest/config,resource/public,resource/template"
     mod: ""
     cgo: 0
