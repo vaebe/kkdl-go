@@ -87,7 +87,7 @@ func (s *sShortURL) GetList(ctx context.Context, in v1.GetListReq, userId string
 
 	total, _ := db.Count()
 
-	err := db.Page(in.PageNo, in.PageSize).Scan(&list)
+	err := db.OrderDesc(dao.ShortUrl.Columns().CreatedAt).Page(in.PageNo, in.PageSize).Scan(&list)
 
 	if err != nil {
 		return nil, 0, err
