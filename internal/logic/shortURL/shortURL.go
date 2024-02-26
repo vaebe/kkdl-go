@@ -7,6 +7,7 @@ import (
 	"compressURL/internal/service"
 	"errors"
 	"fmt"
+	"github.com/gogf/gf/v2/errors/gerror"
 	"github.com/gogf/gf/v2/frame/g"
 	"golang.org/x/net/context"
 )
@@ -92,4 +93,15 @@ func (s *sShortURL) GetList(ctx context.Context, in v1.GetListReq, userId string
 		return nil, 0, err
 	}
 	return list, total, nil
+}
+
+// Delete 删除短链
+func (s *sShortURL) Delete(ctx context.Context, id string) error {
+	res, err := dao.ShortUrl.Ctx(ctx).Where(dao.ShortUrl.Columns().Id, id).Delete()
+
+	if num, _ := res.RowsAffected(); num == 0 {
+		return gerror.New("需要删除的数据不存在！")
+	}
+
+	return err
 }
