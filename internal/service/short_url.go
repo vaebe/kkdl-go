@@ -9,11 +9,13 @@ import (
 	v1 "compressURL/api/shortURL/v1"
 	"compressURL/internal/model/entity"
 
+	"github.com/gogf/gf/v2/net/ghttp"
 	"golang.org/x/net/context"
 )
 
 type (
 	IShortURL interface {
+		BatchImport(ctx context.Context, file *ghttp.UploadFile) error
 		// CreateShortURL 创建短链
 		CreateShortURL(ctx context.Context, in entity.ShortUrl) (string, error)
 		// GetShortURL 获取短链

@@ -11,6 +11,7 @@ import (
 )
 
 type IShortURLV1 interface {
+	BatchImport(ctx context.Context, req *v1.BatchImportReq) (res *v1.BatchImportRes, err error)
 	Create(ctx context.Context, req *v1.CreateReq) (res *v1.CreateRes, err error)
 	Delete(ctx context.Context, req *v1.DeleteReq) (res *v1.DeleteRes, err error)
 	GetUrl(ctx context.Context, req *v1.GetUrlReq) (res *v1.GetUrlRes, err error)
