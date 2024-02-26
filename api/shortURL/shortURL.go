@@ -16,4 +16,5 @@ type IShortURLV1 interface {
 	Delete(ctx context.Context, req *v1.DeleteReq) (res *v1.DeleteRes, err error)
 	GetUrl(ctx context.Context, req *v1.GetUrlReq) (res *v1.GetUrlRes, err error)
 	GetList(ctx context.Context, req *v1.GetListReq) (res *v1.GetListRes, err error)
+	TemplateDownload(ctx context.Context, req *v1.TemplateDownloadReq) (res *v1.TemplateDownloadRes, err error)
 }
