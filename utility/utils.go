@@ -27,3 +27,18 @@ func GetFileSuffixName(filename string) string {
 	suffix := filename[indexOfDot+1 : len(filename)] //获取后缀名
 	return strings.ToLower(suffix)                   //后缀名统一小写处理
 }
+
+// SliceEqual 切片是否相等
+func SliceEqual(slice1, slice2 []string) bool {
+	if len(slice1) != len(slice2) {
+		return false
+	}
+
+	for i, v := range slice1 {
+		if v != slice2[i] {
+			return false
+		}
+	}
+
+	return true
+}

@@ -1,46 +1,48 @@
 package shortURL
 
 import (
-	"github.com/gogf/gf/v2/net/ghttp"
-	"github.com/gogf/gf/v2/os/glog"
-	"github.com/xuri/excelize/v2"
+	"compressURL/internal/dao"
+	"compressURL/internal/model/entity"
+	"github.com/gogf/gf/v2/errors/gerror"
+	"github.com/gogf/gf/v2/frame/g"
 	"golang.org/x/net/context"
 )
 
-func (s *sShortURL) BatchImport(ctx context.Context, file *ghttp.UploadFile) error {
-	filesReader, err := file.Open()
-
+func (s *sShortURL) BatchImport(ctx context.Context, in []entity.ShortUrl) ([]string, error) {
+	// 获取一条未使用短链 code
+	var shortCodeDataList []entity.ShortUrlCode
+	err := dao.ShortUrlCode.Ctx(ctx).Where("status", 0).Limit(len(in)).Scan(&shortCodeDataList)
 	if err != nil {
-		return err
+		return nil, gerror.Newf("批量获取短链 code 错误 %s", err)
 	}
 
-	f, err := excelize.OpenReader(filesReader)
-	if err != nil {
-
-		return err
+	var shortCodeList []string
+	for i, _ := range in {
+		in[i].ShortUrl = shortCodeDataList[i].Code
+		shortCodeList = append(shortCodeList, shortCodeDataList[i].Code)
 	}
 
-	// 获取 Sheet1 上所有单元格
-	rows, err := f.GetRows("Sheet1")
-	if err != nil {
-		return err
+	// 创建事务
+	db := g.DB()
+	if tx, err := db.Begin(ctx); err == nil {
+
+		_, err := tx.Model("short_url").Data(in).Save()
+
+		if err != nil {
+			err := tx.Rollback()
+			return nil, err
+		}
+
+		_, err = tx.Model("short_url_code").Data(g.Map{"status": 1}).WhereIn("code", shortCodeList).Update()
+		if err != nil {
+			err := tx.Rollback()
+			return nil, err
+		}
+
+		// 提交事务
+		err = tx.Commit()
+		return nil, err
 	}
 
-	// 首行数据不存在返回
-	if len(rows) == 0 {
-		return err
-	}
-
-	firstRows := rows[0]
-	glog.Info(ctx, firstRows)
-
-	// todo 增加合法性校验、数据插入逻辑
-	//for _, row := range rows {
-	//	for _, colCell := range row {
-	//		fmt.Print(colCell, "\t")
-	//	}
-	//	fmt.Println()
-	//}
-
-	return nil
+	return nil, err
 }
