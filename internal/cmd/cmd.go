@@ -72,6 +72,7 @@ func mainFunc(ctx context.Context, parser *gcmd.Parser) (err error) {
 				shortURL.NewV1().Delete,
 				shortURL.NewV1().BatchImport,
 				shortURL.NewV1().TemplateDownload,
+				shortURL.NewV1().BatchExport,
 				user.NewV1(),
 				common.NewV1(),
 			)
