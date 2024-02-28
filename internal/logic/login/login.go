@@ -27,7 +27,7 @@ func New() *sLogin {
 func (s *sLogin) GetUserInfo(ctx context.Context, in model.LoginInput) (entity.User, error) {
 	userInfo := entity.User{}
 
-	if in.AccountType == "01" {
+	if in.AccountType == "" || in.AccountType == "01" {
 		err := dao.User.Ctx(ctx).Where(dao.User.Columns().Email, in.Email).Scan(&userInfo)
 		if err != nil {
 			glog.Error(ctx, "GetUserInfo", err)
