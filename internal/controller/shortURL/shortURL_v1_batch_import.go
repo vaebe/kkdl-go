@@ -11,6 +11,7 @@ import (
 	"github.com/gogf/gf/v2/os/gtime"
 	"github.com/xuri/excelize/v2"
 	"regexp"
+	"strings"
 )
 
 func checkDataFormat(i int, in []string) string {
@@ -84,7 +85,8 @@ func (c *ControllerV1) BatchImport(ctx context.Context, req *v1.BatchImportReq) 
 		}
 	}
 
-	if errStr != "" {
+	// 使用 strings.TrimSpace 去除 \r\n
+	if strings.TrimSpace(errStr) != "" {
 		return nil, gerror.New(errStr)
 	}
 

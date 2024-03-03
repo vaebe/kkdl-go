@@ -7,7 +7,7 @@ import (
 
 // BatchImportReq 批量导入
 type BatchImportReq struct {
-	g.Meta `path:"/shortURL/batchImport" method:"post" summary:"批量导入短链" tags:"短链"`
+	g.Meta `path:"/shortURL/batchImport" method:"post" mime:"multipart/form-data" summary:"批量导入短链" tags:"短链"`
 	File   *ghttp.UploadFile `json:"file" type:"file" dc:"请选择文件"`
 }
 
