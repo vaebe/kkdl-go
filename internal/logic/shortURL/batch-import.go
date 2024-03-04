@@ -8,6 +8,7 @@ import (
 	"golang.org/x/net/context"
 )
 
+// BatchImport 批量导入
 func (s *sShortURL) BatchImport(ctx context.Context, in []entity.ShortUrl) ([]string, error) {
 	// 获取一条未使用短链 code
 	var shortCodeDataList []entity.ShortUrlCode

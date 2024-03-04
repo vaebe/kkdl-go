@@ -73,6 +73,7 @@ func mainFunc(ctx context.Context, parser *gcmd.Parser) (err error) {
 				shortURL.NewV1().BatchImport,
 				shortURL.NewV1().TemplateDownload,
 				shortURL.NewV1().BatchExport,
+				shortURL.NewV1().BatchCreateShortUrlCode,
 				user.NewV1(),
 				common.NewV1(),
 			)
