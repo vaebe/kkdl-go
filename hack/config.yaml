@@ -12,7 +12,7 @@ gfcli:
         jsonCase: "CamelLower"
   # 工具编译配置
   build:
-    name: "reURl"
+    name: "reURL"
     arch: "amd64"
     system: "linux"
     packSrc: "manifest/config,resource/public,resource/template"
