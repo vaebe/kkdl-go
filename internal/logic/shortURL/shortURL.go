@@ -36,7 +36,7 @@ func (s *sShortURL) CreateShortURL(ctx context.Context, in entity.ShortUrl) (str
 	db := g.DB()
 	if tx, err := db.Begin(ctx); err == nil {
 		_, err := tx.Model("short_url").
-			Data(g.Map{"shortUrl": shortCodeData.Code, "rawUrl": in.RawUrl, "expirationTime": in.ExpirationTime, "title": in.Title, "groupId": in.GroupId}).
+			Data(g.Map{"shortUrl": shortCodeData.Code, "rawUrl": in.RawUrl, "expirationTime": in.ExpirationTime, "title": in.Title, "groupId": in.GroupId, "userId": in.UserId}).
 			Save()
 
 		if err != nil {
