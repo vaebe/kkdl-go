@@ -7,6 +7,7 @@ import (
 	"compressURL/internal/service"
 	"compressURL/utility"
 	"errors"
+	"fmt"
 	"github.com/gogf/gf/v2/errors/gerror"
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/util/grand"
@@ -29,6 +30,11 @@ func (s *sUser) Create(ctx context.Context, in entity.User) (string, error) {
 	// 昵称不存在生成默认昵称
 	if in.NickName == "" {
 		in.NickName = "kk" + grand.S(4)
+	}
+
+	// 头像不存在生成随机头像
+	if in.Avatar == "" {
+		in.Avatar = fmt.Sprintf("https://api.dicebear.com/7.x/bottts-neutral/svg?seed=%s&size=64", in.NickName)
 	}
 
 	// 生成随机盐值
