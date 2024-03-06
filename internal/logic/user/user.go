@@ -52,6 +52,7 @@ func (s *sUser) Create(ctx context.Context, in entity.User) (string, error) {
 		"AccountType": nil,
 		"Role":        in.Role,
 		"Salt":        in.Salt,
+		"Avatar":      in.Avatar,
 	}
 
 	if in.WxId != "" {
