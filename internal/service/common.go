@@ -14,6 +14,7 @@ import (
 
 type (
 	ICommon interface {
+		SendVerificationCodeEmail(ctx context.Context, VerificationCode string, emailAddress string) (err error)
 		UploadFile(ctx context.Context, file *ghttp.UploadFile) (out v1.UploadFileRes, err error)
 	}
 )
