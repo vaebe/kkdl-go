@@ -12,7 +12,7 @@ import (
 func (c *ControllerV1) GetVerificationCodeEmail(ctx context.Context, req *v1.GetVerificationCodeEmailReq) (res *v1.GetVerificationCodeEmailRes, err error) {
 	code := grand.S(6)
 
-	err = g.Redis().SetEX(ctx, req.Email, code, 60)
+	err = g.Redis().SetEX(ctx, req.Email, code, 60*10)
 	if err != nil {
 		return nil, gerror.New("redis 缓存邮箱验证码失败!")
 	}
