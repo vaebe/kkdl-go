@@ -6,6 +6,7 @@ import (
 	"compressURL/internal/controller/login"
 	"compressURL/internal/controller/shortURL"
 	"compressURL/internal/controller/user"
+	"compressURL/internal/controller/weChatMiniProgram"
 	"compressURL/internal/middlewares"
 	"context"
 	"github.com/gogf/gf/v2/frame/g"
@@ -59,6 +60,7 @@ func mainFunc(ctx context.Context, parser *gcmd.Parser) (err error) {
 				login.NewV1().Registration,
 				shortURL.NewV1().Create,
 				common.NewV1().GetVerificationCodeEmail,
+				weChatMiniProgram.NewV1().GetWeChatMiniProgramOpenId,
 			)
 		})
 
