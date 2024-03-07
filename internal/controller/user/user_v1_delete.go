@@ -8,6 +8,6 @@ import (
 )
 
 func (c *ControllerV1) Delete(ctx context.Context, req *v1.DeleteReq) (res *v1.DeleteRes, err error) {
-	err = service.User().Remove(ctx, req.UserId)
+	err = service.User().Remove(ctx, req.Id)
 	return nil, err
 }
