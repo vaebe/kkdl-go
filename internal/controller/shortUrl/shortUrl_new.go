@@ -10,6 +10,6 @@ import (
 
 type ControllerV1 struct{}
 
-func NewV1() shortUrl.IShortURLV1 {
+func NewV1() shortUrl.IShortUrlV1 {
 	return &ControllerV1{}
 }

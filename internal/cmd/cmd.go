@@ -34,7 +34,6 @@ func registerGetShortUrlRouter(s *ghttp.Server, ctx context.Context) {
 
 		http.Redirect(r.Response.ResponseWriter, r.Request, req.RawUrl, http.StatusFound)
 	})
-
 }
 
 func mainFunc(ctx context.Context, parser *gcmd.Parser) (err error) {
@@ -81,7 +80,6 @@ func mainFunc(ctx context.Context, parser *gcmd.Parser) (err error) {
 				user.NewV1(),
 			)
 		})
-
 	})
 	s.Run()
 	return nil

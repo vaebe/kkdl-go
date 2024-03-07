@@ -13,7 +13,7 @@ import (
 )
 
 type (
-	IShortURL interface {
+	IShortUrl interface {
 		// BatchImport 批量导入
 		BatchImport(ctx context.Context, in []entity.ShortUrl) ([]string, error)
 		// CreateShortURL 创建短链
@@ -28,16 +28,16 @@ type (
 )
 
 var (
-	localShortURL IShortURL
+	localShortUrl IShortUrl
 )
 
-func ShortURL() IShortURL {
-	if localShortURL == nil {
-		panic("implement not found for interface IShortURL, forgot register?")
+func ShortUrl() IShortUrl {
+	if localShortUrl == nil {
+		panic("implement not found for interface IShortUrl, forgot register?")
 	}
-	return localShortURL
+	return localShortUrl
 }
 
-func RegisterShortURL(i IShortURL) {
-	localShortURL = i
+func RegisterShortUrl(i IShortUrl) {
+	localShortUrl = i
 }
