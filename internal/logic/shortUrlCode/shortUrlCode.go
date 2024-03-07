@@ -1,14 +1,25 @@
-package shortURL
+package shortUrlCode
 
 import (
 	"compressURL/internal/dao"
+	"compressURL/internal/service"
 	"compressURL/utility"
 	"github.com/gogf/gf/v2/frame/g"
 	"golang.org/x/net/context"
 )
 
-// BatchCreateShortUrlCode 批量生成短链 code
-func (s *sShortURL) BatchCreateShortUrlCode(ctx context.Context, num int) error {
+type sShortUrlCode struct {
+}
+
+func init() {
+	service.RegisterShortUrlCode(New())
+}
+
+func New() *sShortUrlCode {
+	return &sShortUrlCode{}
+}
+
+func (s *sShortUrlCode) BatchCreateCode(ctx context.Context, num int) error {
 	g.Log().Info(ctx, "开始生成短链")
 	// 记录插入数量
 	insertDataNum := 0

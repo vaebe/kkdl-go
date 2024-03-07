@@ -14,8 +14,6 @@ import (
 
 type (
 	IShortURL interface {
-		// BatchCreateShortUrlCode 批量生成短链 code
-		BatchCreateShortUrlCode(ctx context.Context, num int) error
 		// BatchImport 批量导入
 		BatchImport(ctx context.Context, in []entity.ShortUrl) ([]string, error)
 		// CreateShortURL 创建短链

@@ -5,6 +5,7 @@ import (
 	"compressURL/internal/controller/common"
 	"compressURL/internal/controller/login"
 	"compressURL/internal/controller/shortURL"
+	"compressURL/internal/controller/shortUrlCode"
 	"compressURL/internal/controller/user"
 	"compressURL/internal/controller/weChatMiniProgram"
 	"compressURL/internal/middlewares"
@@ -75,7 +76,7 @@ func mainFunc(ctx context.Context, parser *gcmd.Parser) (err error) {
 				shortURL.NewV1().BatchImport,
 				shortURL.NewV1().TemplateDownload,
 				shortURL.NewV1().BatchExport,
-				shortURL.NewV1().BatchCreateShortUrlCode,
+				shortUrlCode.NewV1(),
 				common.NewV1().UploadFile,
 				user.NewV1(),
 			)
