@@ -19,11 +19,11 @@ type (
 		Update(ctx context.Context, in entity.User) error
 		// Remove 删除用户
 		Remove(ctx context.Context, id string) error
-		GetUserInfo(ctx context.Context, id string) (*v1.GetUserInfoRes, error)
+		GetUserInfo(ctx context.Context, id string) (*v1.GetOneRes, error)
 		// Detail 获取用户详情
 		Detail(ctx context.Context, id string) (entity.User, error)
 		// GetUserList 获取用户列表
-		GetUserList(ctx context.Context, in v1.GetUserListReq) ([]entity.User, int, error)
+		GetUserList(ctx context.Context, in v1.GetListReq) ([]entity.User, int, error)
 	}
 )
 

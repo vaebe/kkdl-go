@@ -2,11 +2,11 @@ package v1
 
 import "github.com/gogf/gf/v2/frame/g"
 
-type GetUserInfoReq struct {
-	g.Meta `path:"/user/detail" method:"get" summary:"获取用户信息" tags:"用户"`
+type GetOneReq struct {
+	g.Meta `path:"/user/detail" method:"get" summary:"获取用户信息详情" tags:"用户"`
 	UserId string `json:"userId"  v:"required#请输入用户 id"   dc:"用户 id"`
 }
-type GetUserInfoRes struct {
+type GetOneRes struct {
 	Id          string `json:"id" dc:"用户 id"`
 	Email       string `json:"email" dc:"邮箱"`
 	WxId        string `json:"wxId" dc:"小程序 id"`

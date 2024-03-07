@@ -1,13 +1,14 @@
 package user
 
 import (
-	"compressURL/api/user/v1"
 	"compressURL/internal/model"
 	"compressURL/internal/service"
 	"context"
+
+	"compressURL/api/user/v1"
 )
 
-func (c *ControllerV1) GetUserList(ctx context.Context, req *v1.GetUserListReq) (res *v1.GetUserListRes, err error) {
+func (c *ControllerV1) GetList(ctx context.Context, req *v1.GetListReq) (res *v1.GetListRes, err error) {
 	list, total, err := service.User().GetUserList(ctx, *req)
 
 	if err != nil {
@@ -19,7 +20,7 @@ func (c *ControllerV1) GetUserList(ctx context.Context, req *v1.GetUserListReq) 
 		list[i].Salt = ""
 	}
 
-	return &v1.GetUserListRes{
+	return &v1.GetListRes{
 		List: list,
 		PageParams: model.PageParams{
 			Total:    total,

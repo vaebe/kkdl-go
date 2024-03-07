@@ -121,8 +121,8 @@ func (s *sUser) Remove(ctx context.Context, id string) error {
 	return err
 }
 
-func (s *sUser) GetUserInfo(ctx context.Context, id string) (*v1.GetUserInfoRes, error) {
-	userInfo := v1.GetUserInfoRes{}
+func (s *sUser) GetUserInfo(ctx context.Context, id string) (*v1.GetOneRes, error) {
+	userInfo := v1.GetOneRes{}
 
 	err := dao.User.Ctx(ctx).Where(dao.User.Columns().Id, id).Scan(&userInfo)
 
@@ -145,7 +145,7 @@ func (s *sUser) Detail(ctx context.Context, id string) (entity.User, error) {
 }
 
 // GetUserList 获取用户列表
-func (s *sUser) GetUserList(ctx context.Context, in v1.GetUserListReq) ([]entity.User, int, error) {
+func (s *sUser) GetUserList(ctx context.Context, in v1.GetListReq) ([]entity.User, int, error) {
 	var userList []entity.User
 
 	db := dao.User.Ctx(ctx).OmitEmptyWhere().

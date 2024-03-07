@@ -12,8 +12,8 @@ import (
 
 type IUserV1 interface {
 	Create(ctx context.Context, req *v1.CreateReq) (res *v1.CreateRes, err error)
-	GetUserInfo(ctx context.Context, req *v1.GetUserInfoReq) (res *v1.GetUserInfoRes, err error)
-	GetUserList(ctx context.Context, req *v1.GetUserListReq) (res *v1.GetUserListRes, err error)
-	Remove(ctx context.Context, req *v1.RemoveReq) (res *v1.RemoveRes, err error)
+	Delete(ctx context.Context, req *v1.DeleteReq) (res *v1.DeleteRes, err error)
+	GetOne(ctx context.Context, req *v1.GetOneReq) (res *v1.GetOneRes, err error)
+	GetList(ctx context.Context, req *v1.GetListReq) (res *v1.GetListRes, err error)
 	Update(ctx context.Context, req *v1.UpdateReq) (res *v1.UpdateRes, err error)
 }
