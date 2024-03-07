@@ -8,7 +8,7 @@ import (
 )
 
 func (c *ControllerV1) WeChatMiniProgramLogin(ctx context.Context, req *v1.WeChatMiniProgramLoginReq) (res *v1.WeChatMiniProgramLoginRes, err error) {
-	token, err := service.Login().GetWeChatToken(ctx)
+	token, err := service.WeChatMiniProgram().GetWeChatToken(ctx)
 	if err != nil {
 		return nil, err
 	}

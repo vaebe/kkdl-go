@@ -1,4 +1,4 @@
-package login
+package weChatMiniProgram
 
 import (
 	"encoding/json"
@@ -36,7 +36,7 @@ func getWeChatToken(ctx context.Context) string {
 }
 
 // GetWeChatToken 获取微信 api token
-func (s *sLogin) GetWeChatToken(ctx context.Context) (string, error) {
+func (s *sWeChatMiniProgram) GetWeChatToken(ctx context.Context) (string, error) {
 	// 缓存的 weChatToken 存在直接返回
 	token := getWeChatToken(ctx)
 	if token != "" {

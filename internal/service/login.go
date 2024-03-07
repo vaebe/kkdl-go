@@ -20,8 +20,6 @@ type (
 		UserLogin(ctx context.Context, in model.LoginInput) (userInfo entity.User, token string, tokenExpire string, err error)
 		// SignOutLogin 退出登录
 		SignOutLogin(ctx context.Context) error
-		// GetWeChatToken 获取微信 api token
-		GetWeChatToken(ctx context.Context) (string, error)
 	}
 )
 

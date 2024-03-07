@@ -15,7 +15,7 @@ import (
 )
 
 func (c *ControllerV1) GetMiniProgramCode(ctx context.Context, req *v1.GetMiniProgramCodeReq) (res *v1.GetMiniProgramCodeRes, err error) {
-	token, err := service.Login().GetWeChatToken(ctx)
+	token, err := service.WeChatMiniProgram().GetWeChatToken(ctx)
 	if err != nil {
 		return nil, err
 	}
