@@ -5,6 +5,7 @@ import (
 	"compressURL/internal/service"
 	jwt "github.com/gogf/gf-jwt/v2"
 	"github.com/gogf/gf/v2/frame/g"
+	"github.com/gogf/gf/v2/os/glog"
 	"golang.org/x/net/context"
 	"time"
 )
@@ -48,6 +49,13 @@ func (s sAuth) AuthInstance() *jwt.GfJWTMiddleware {
 func (s sAuth) GetLoginUserInfo(ctx context.Context) (model.JWTPayloadInfo, error) {
 
 	jwtInfo, token, err := authInstance.GetClaimsFromJWT(ctx)
+
+	glog.Info(ctx, jwtInfo, token, err)
+
+	// 为空直接返回
+	if jwtInfo == nil {
+		return model.JWTPayloadInfo{}, err
+	}
 
 	info := model.JWTPayloadInfo{
 		Id:          jwtInfo["LoginUserId"].(string),

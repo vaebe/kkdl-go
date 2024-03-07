@@ -9,11 +9,8 @@ import (
 )
 
 func (c *ControllerV1) Create(ctx context.Context, req *v1.CreateReq) (res *v1.CreateRes, err error) {
-	// 获取当前登陆用户信息
-	loginUserInfo, err := service.Auth().GetLoginUserInfo(ctx)
-	if err != nil {
-		return nil, err
-	}
+	// 获取当前登陆用户信息,获取不到用户信息即视为未登录不赋值用户id
+	loginUserInfo, _ := service.Auth().GetLoginUserInfo(ctx)
 
 	info := entity.ShortUrl{
 		RawUrl:         req.RawUrl,
