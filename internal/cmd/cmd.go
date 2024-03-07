@@ -55,7 +55,7 @@ func mainFunc(ctx context.Context, parser *gcmd.Parser) (err error) {
 		group.Group("/", func(group *ghttp.RouterGroup) {
 			group.Bind(
 				login.NewV1().EmailLogin,
-				login.NewV1().WeChatMiniProgramLogin,
+				login.NewV1().WxMiniProgramLogin,
 				login.NewV1().Registration,
 				shortURL.NewV1().Create,
 				common.NewV1().GetVerificationCodeEmail,
