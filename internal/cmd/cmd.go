@@ -56,11 +56,10 @@ func mainFunc(ctx context.Context, parser *gcmd.Parser) (err error) {
 			group.Bind(
 				login.NewV1().EmailLogin,
 				login.NewV1().WeChatMiniProgramLogin,
-				login.NewV1().GetMiniProgramCode,
 				login.NewV1().Registration,
 				shortURL.NewV1().Create,
 				common.NewV1().GetVerificationCodeEmail,
-				weChatMiniProgram.NewV1().GetWeChatMiniProgramOpenId,
+				weChatMiniProgram.NewV1(),
 			)
 		})
 

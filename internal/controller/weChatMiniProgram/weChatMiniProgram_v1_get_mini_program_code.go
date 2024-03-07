@@ -1,8 +1,7 @@
-package login
+package weChatMiniProgram
 
 import (
 	"bytes"
-	"compressURL/api/login/v1"
 	"compressURL/internal/service"
 	"context"
 	"encoding/json"
@@ -11,6 +10,8 @@ import (
 	"github.com/gogf/gf/v2/os/glog"
 	"io"
 	"log"
+
+	"compressURL/api/weChatMiniProgram/v1"
 )
 
 func (c *ControllerV1) GetMiniProgramCode(ctx context.Context, req *v1.GetMiniProgramCodeReq) (res *v1.GetMiniProgramCodeRes, err error) {
