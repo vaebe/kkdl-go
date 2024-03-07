@@ -16,15 +16,15 @@ type sShortUrl struct {
 }
 
 func init() {
-	service.RegisterShortURL(New())
+	service.RegisterShortUrl(New())
 }
 
 func New() *sShortUrl {
 	return &sShortUrl{}
 }
 
-// CreateShortURL 创建短链
-func (s *sShortUrl) CreateShortURL(ctx context.Context, in entity.ShortUrl) (string, error) {
+// CreateShortUrl 创建短链
+func (s *sShortUrl) CreateShortUrl(ctx context.Context, in entity.ShortUrl) (string, error) {
 	// 获取一条未使用短链 code
 	shortCodeData := entity.ShortUrlCode{}
 	err := dao.ShortUrlCode.Ctx(ctx).Where("status", 0).Limit(1).Scan(&shortCodeData)
@@ -57,8 +57,8 @@ func (s *sShortUrl) CreateShortURL(ctx context.Context, in entity.ShortUrl) (str
 	return shortCodeData.Code, err
 }
 
-// GetShortURL 获取短链
-func (s *sShortUrl) GetShortURL(ctx context.Context, url string) (string, error) {
+// GetShortUrl 获取短链
+func (s *sShortUrl) GetShortUrl(ctx context.Context, url string) (string, error) {
 	one, err := dao.ShortUrl.Ctx(ctx).Where("shortUrl", url).One()
 	if err != nil {
 		return "", err

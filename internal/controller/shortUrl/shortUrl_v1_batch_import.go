@@ -90,6 +90,6 @@ func (c *ControllerV1) BatchImport(ctx context.Context, req *v1.BatchImportReq) 
 		return nil, gerror.New(errStr)
 	}
 
-	_, err = service.ShortURL().BatchImport(ctx, data)
+	_, err = service.ShortUrl().BatchImport(ctx, data)
 	return nil, err
 }

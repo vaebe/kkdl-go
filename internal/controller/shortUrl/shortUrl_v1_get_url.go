@@ -8,7 +8,7 @@ import (
 )
 
 func (c *ControllerV1) GetUrl(ctx context.Context, req *v1.GetUrlReq) (res *v1.GetUrlRes, err error) {
-	rawUrl, err := service.ShortURL().GetShortURL(ctx, req.ShortUrl)
+	rawUrl, err := service.ShortUrl().GetShortUrl(ctx, req.ShortUrl)
 
 	println(rawUrl)
 	if err != nil {

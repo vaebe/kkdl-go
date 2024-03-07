@@ -18,7 +18,7 @@ func (c *ControllerV1) GetList(ctx context.Context, req *v1.GetListReq) (res *v1
 		userId = loginUserInfo.Id
 	}
 
-	list, total, err := service.ShortURL().GetList(ctx, *req, userId)
+	list, total, err := service.ShortUrl().GetList(ctx, *req, userId)
 
 	if err != nil {
 		return nil, err

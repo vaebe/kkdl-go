@@ -20,7 +20,7 @@ func (c *ControllerV1) Create(ctx context.Context, req *v1.CreateReq) (res *v1.C
 		ExpirationTime: gtime.NewFromStrFormat(req.ExpirationTime, "Y-m-d H:i:s"),
 	}
 
-	code, err := service.ShortURL().CreateShortURL(ctx, info)
+	code, err := service.ShortUrl().CreateShortUrl(ctx, info)
 
 	if err != nil {
 		return nil, err

@@ -16,10 +16,10 @@ type (
 	IShortUrl interface {
 		// BatchImport 批量导入
 		BatchImport(ctx context.Context, in []entity.ShortUrl) ([]string, error)
-		// CreateShortURL 创建短链
-		CreateShortURL(ctx context.Context, in entity.ShortUrl) (string, error)
-		// GetShortURL 获取短链
-		GetShortURL(ctx context.Context, url string) (string, error)
+		// CreateShortUrl 创建短链
+		CreateShortUrl(ctx context.Context, in entity.ShortUrl) (string, error)
+		// GetShortUrl 获取短链
+		GetShortUrl(ctx context.Context, url string) (string, error)
 		// GetList 短链列表
 		GetList(ctx context.Context, in v1.GetListReq, userId string) ([]entity.ShortUrl, int, error)
 		// Delete 删除短链

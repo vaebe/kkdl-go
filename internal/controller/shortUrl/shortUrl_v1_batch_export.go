@@ -41,7 +41,7 @@ func (c *ControllerV1) BatchExport(ctx context.Context, req *v1.BatchExportReq) 
 	}
 
 	// 获取数据
-	dataList, _, err := service.ShortURL().GetList(ctx, inParams, userId)
+	dataList, _, err := service.ShortUrl().GetList(ctx, inParams, userId)
 	if err != nil {
 		glog.Errorf(ctx, "获取导出数据错误: %s", err)
 	}
