@@ -16,4 +16,5 @@ type ILoginV1 interface {
 	Registration(ctx context.Context, req *v1.RegistrationReq) (res *v1.RegistrationRes, err error)
 	SignOut(ctx context.Context, req *v1.SignOutReq) (res *v1.SignOutRes, err error)
 	WxMiniProgramLogin(ctx context.Context, req *v1.WxMiniProgramLoginReq) (res *v1.WxMiniProgramLoginRes, err error)
+	Ws(ctx context.Context, req *v1.WsReq) (res *v1.WsRes, err error)
 }
