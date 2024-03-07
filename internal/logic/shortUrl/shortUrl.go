@@ -1,7 +1,7 @@
-package shortURL
+package shortUrl
 
 import (
-	v1 "compressURL/api/shortURL/v1"
+	v1 "compressURL/api/shortUrl/v1"
 	"compressURL/internal/dao"
 	"compressURL/internal/model/entity"
 	"compressURL/internal/service"
@@ -12,19 +12,19 @@ import (
 	"golang.org/x/net/context"
 )
 
-type sShortURL struct {
+type sShortUrl struct {
 }
 
 func init() {
 	service.RegisterShortURL(New())
 }
 
-func New() *sShortURL {
-	return &sShortURL{}
+func New() *sShortUrl {
+	return &sShortUrl{}
 }
 
 // CreateShortURL 创建短链
-func (s *sShortURL) CreateShortURL(ctx context.Context, in entity.ShortUrl) (string, error) {
+func (s *sShortUrl) CreateShortURL(ctx context.Context, in entity.ShortUrl) (string, error) {
 	// 获取一条未使用短链 code
 	shortCodeData := entity.ShortUrlCode{}
 	err := dao.ShortUrlCode.Ctx(ctx).Where("status", 0).Limit(1).Scan(&shortCodeData)
@@ -58,7 +58,7 @@ func (s *sShortURL) CreateShortURL(ctx context.Context, in entity.ShortUrl) (str
 }
 
 // GetShortURL 获取短链
-func (s *sShortURL) GetShortURL(ctx context.Context, url string) (string, error) {
+func (s *sShortUrl) GetShortURL(ctx context.Context, url string) (string, error) {
 	one, err := dao.ShortUrl.Ctx(ctx).Where("shortUrl", url).One()
 	if err != nil {
 		return "", err
@@ -73,7 +73,7 @@ func (s *sShortURL) GetShortURL(ctx context.Context, url string) (string, error)
 }
 
 // GetList 短链列表
-func (s *sShortURL) GetList(ctx context.Context, in v1.GetListReq, userId string) ([]entity.ShortUrl, int, error) {
+func (s *sShortUrl) GetList(ctx context.Context, in v1.GetListReq, userId string) ([]entity.ShortUrl, int, error) {
 	var list []entity.ShortUrl
 
 	db := dao.ShortUrl.Ctx(ctx).OmitEmptyWhere().
@@ -96,7 +96,7 @@ func (s *sShortURL) GetList(ctx context.Context, in v1.GetListReq, userId string
 }
 
 // Delete 删除短链
-func (s *sShortURL) Delete(ctx context.Context, id string) error {
+func (s *sShortUrl) Delete(ctx context.Context, id string) error {
 	res, err := dao.ShortUrl.Ctx(ctx).Where(dao.ShortUrl.Columns().Id, id).Delete()
 
 	if num, _ := res.RowsAffected(); num == 0 {

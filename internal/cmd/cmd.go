@@ -1,10 +1,10 @@
 package cmd
 
 import (
-	v1 "compressURL/api/shortURL/v1"
+	v1 "compressURL/api/shortUrl/v1"
 	"compressURL/internal/controller/common"
 	"compressURL/internal/controller/login"
-	"compressURL/internal/controller/shortURL"
+	"compressURL/internal/controller/shortUrl"
 	"compressURL/internal/controller/shortUrlCode"
 	"compressURL/internal/controller/user"
 	"compressURL/internal/controller/weChatMiniProgram"
@@ -20,13 +20,13 @@ import (
 // 注册获取短链路由
 func registerGetShortUrlRouter(s *ghttp.Server, ctx context.Context) {
 	s.BindHandler("/:id", func(r *ghttp.Request) {
-		shortUrl := gstr.SubStr(r.Request.RequestURI, 1, len(r.Request.RequestURI))
+		url := gstr.SubStr(r.Request.RequestURI, 1, len(r.Request.RequestURI))
 
-		if shortUrl == "favicon.ico" {
+		if url == "favicon.ico" {
 			return
 		}
 
-		req, err := shortURL.NewV1().GetUrl(ctx, &v1.GetUrlReq{ShortUrl: shortUrl})
+		req, err := shortUrl.NewV1().GetUrl(ctx, &v1.GetUrlReq{ShortUrl: url})
 		if err != nil {
 			r.Response.Write("未获取到对应的地址，请检查链接是否正确！")
 			return
@@ -58,7 +58,7 @@ func mainFunc(ctx context.Context, parser *gcmd.Parser) (err error) {
 				login.NewV1().EmailLogin,
 				login.NewV1().WxMiniProgramLogin,
 				login.NewV1().Registration,
-				shortURL.NewV1().Create,
+				shortUrl.NewV1().Create,
 				common.NewV1().GetVerificationCodeEmail,
 				weChatMiniProgram.NewV1(),
 			)
@@ -70,12 +70,12 @@ func mainFunc(ctx context.Context, parser *gcmd.Parser) (err error) {
 			group.Bind(
 				login.NewV1().SignOut,
 				login.NewV1().RefreshToken,
-				shortURL.NewV1().GetUrl,
-				shortURL.NewV1().GetList,
-				shortURL.NewV1().Delete,
-				shortURL.NewV1().BatchImport,
-				shortURL.NewV1().TemplateDownload,
-				shortURL.NewV1().BatchExport,
+				shortUrl.NewV1().GetUrl,
+				shortUrl.NewV1().GetList,
+				shortUrl.NewV1().Delete,
+				shortUrl.NewV1().BatchImport,
+				shortUrl.NewV1().TemplateDownload,
+				shortUrl.NewV1().BatchExport,
 				shortUrlCode.NewV1(),
 				common.NewV1().UploadFile,
 				user.NewV1(),

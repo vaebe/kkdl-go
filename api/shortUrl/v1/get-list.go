@@ -7,7 +7,7 @@ import (
 )
 
 type GetListReq struct {
-	g.Meta `path:"/shortURL/getList" method:"post" summary:"获取短链列表" tags:"短链"`
+	g.Meta `path:"/shortUrl/getList" method:"post" summary:"获取短链列表" tags:"短链"`
 	model.PageParams
 	Title  string `json:"title"   dc:"短链标题"`
 	RawUrl string `json:"rawUrl"   dc:"跳转链接"`

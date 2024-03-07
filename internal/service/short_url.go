@@ -6,7 +6,7 @@
 package service
 
 import (
-	v1 "compressURL/api/shortURL/v1"
+	v1 "compressURL/api/shortUrl/v1"
 	"compressURL/internal/model/entity"
 
 	"golang.org/x/net/context"

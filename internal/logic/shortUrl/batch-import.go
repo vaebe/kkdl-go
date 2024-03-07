@@ -1,4 +1,4 @@
-package shortURL
+package shortUrl
 
 import (
 	"compressURL/internal/dao"
@@ -9,7 +9,7 @@ import (
 )
 
 // BatchImport 批量导入
-func (s *sShortURL) BatchImport(ctx context.Context, in []entity.ShortUrl) ([]string, error) {
+func (s *sShortUrl) BatchImport(ctx context.Context, in []entity.ShortUrl) ([]string, error) {
 	// 获取一条未使用短链 code
 	var shortCodeDataList []entity.ShortUrlCode
 	err := dao.ShortUrlCode.Ctx(ctx).Where("status", 0).Limit(len(in)).Scan(&shortCodeDataList)

@@ -1,4 +1,4 @@
-package shortURL
+package shortUrl
 
 import (
 	"compressURL/internal/model"
@@ -12,7 +12,7 @@ import (
 	"github.com/gogf/gf/v2/os/gtime"
 	"github.com/xuri/excelize/v2"
 
-	"compressURL/api/shortURL/v1"
+	"compressURL/api/shortUrl/v1"
 )
 
 func (c *ControllerV1) BatchExport(ctx context.Context, req *v1.BatchExportReq) (res *v1.BatchExportRes, err error) {
@@ -86,7 +86,7 @@ func (c *ControllerV1) BatchExport(ctx context.Context, req *v1.BatchExportReq) 
 	}
 
 	fileName := fmt.Sprintf("短链列表%s.xlsx", gtime.Datetime())
-	saveFilePath := "resource/template/shortURL/" + fileName
+	saveFilePath := "resource/template/shortUrl/" + fileName
 	if err := f.SaveAs(saveFilePath); err != nil {
 		return nil, gerror.Newf("保存导出文件错误: %s", err)
 	}

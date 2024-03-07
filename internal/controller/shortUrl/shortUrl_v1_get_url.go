@@ -1,10 +1,10 @@
-package shortURL
+package shortUrl
 
 import (
 	"compressURL/internal/service"
 	"context"
 
-	"compressURL/api/shortURL/v1"
+	"compressURL/api/shortUrl/v1"
 )
 
 func (c *ControllerV1) GetUrl(ctx context.Context, req *v1.GetUrlReq) (res *v1.GetUrlRes, err error) {

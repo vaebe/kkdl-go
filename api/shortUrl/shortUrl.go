@@ -2,12 +2,12 @@
 // Code generated and maintained by GoFrame CLI tool. DO NOT EDIT.
 // =================================================================================
 
-package shortURL
+package shortUrl
 
 import (
 	"context"
 
-	"compressURL/api/shortURL/v1"
+	"compressURL/api/shortUrl/v1"
 )
 
 type IShortURLV1 interface {
