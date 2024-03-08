@@ -32,10 +32,11 @@ func (c *ControllerV1) Ws(ctx context.Context, req *v1.WsReq) (res *v1.WsRes, er
 	}
 
 	wsClientMap[req.UserCode] = ws
+	if err = ws.WriteMessage(1, []byte(`{"status": "ok"}`)); err != nil {
+		return nil, err
+	}
 
 	for {
-		if err = ws.WriteMessage(1, []byte(`{"status": "ok"}`)); err != nil {
-			return nil, err
-		}
+		_, _, _ = ws.ReadMessage()
 	}
 }
