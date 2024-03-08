@@ -58,6 +58,8 @@ func (s *sUser) Create(ctx context.Context, in entity.User) (string, error) {
 	if in.WxId != "" {
 		data["WxId"] = in.WxId
 		data["AccountType"] = "02"
+		data["Password"] = ""
+		data["Salt"] = ""
 	}
 
 	if in.Email != "" {
@@ -121,10 +123,23 @@ func (s *sUser) Remove(ctx context.Context, id string) error {
 	return err
 }
 
+// GetUserInfo 根据 id 获取用户信息
 func (s *sUser) GetUserInfo(ctx context.Context, id string) (*v1.GetOneRes, error) {
 	userInfo := v1.GetOneRes{}
 
 	err := dao.User.Ctx(ctx).Where(dao.User.Columns().Id, id).Scan(&userInfo)
+
+	if err != nil {
+		return nil, errors.New("未查询到用户数据！")
+	}
+	return &userInfo, nil
+}
+
+// GetUserInfoByWxId 根据 wxIdOpenId 获取用户信息
+func (s *sUser) GetUserInfoByWxId(ctx context.Context, wxId string) (*v1.GetOneRes, error) {
+	userInfo := v1.GetOneRes{}
+
+	err := dao.User.Ctx(ctx).Where(dao.User.Columns().WxId, wxId).Scan(&userInfo)
 
 	if err != nil {
 		return nil, errors.New("未查询到用户数据！")

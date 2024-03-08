@@ -7,7 +7,6 @@ import (
 	"compressURL/internal/service"
 	"compressURL/utility"
 	"github.com/gogf/gf/v2/errors/gerror"
-	"github.com/gogf/gf/v2/os/glog"
 	"github.com/gogf/gf/v2/os/gtime"
 	"golang.org/x/net/context"
 )
@@ -30,20 +29,17 @@ func (s *sLogin) GetUserInfo(ctx context.Context, in model.LoginInput) (entity.U
 	if in.AccountType == "" || in.AccountType == "01" {
 		err := dao.User.Ctx(ctx).Where(dao.User.Columns().Email, in.Email).Scan(&userInfo)
 		if err != nil {
-			glog.Error(ctx, "GetUserInfo", err)
 			return userInfo, gerror.New("用户不存在！")
+		}
+
+		if utility.EncryptPassword(in.Password, userInfo.Salt) != userInfo.Password {
+			return userInfo, gerror.New("账号或者密码不正确!")
 		}
 	} else {
 		err := dao.User.Ctx(ctx).Where(dao.User.Columns().WxId, in.WxId).Scan(&userInfo)
 		if err != nil {
-			glog.Error(ctx, "GetUserInfo", err)
 			return userInfo, gerror.New("用户不存在！")
 		}
-	}
-
-	if utility.EncryptPassword(in.Password, userInfo.Salt) != userInfo.Password {
-		glog.Error(ctx, "GetUserInfo", "账号或者密码不正确!")
-		return userInfo, gerror.New("账号或者密码不正确!")
 	}
 
 	return userInfo, nil
