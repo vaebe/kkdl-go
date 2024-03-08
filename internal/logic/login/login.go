@@ -7,6 +7,7 @@ import (
 	"compressURL/internal/service"
 	"compressURL/utility"
 	"github.com/gogf/gf/v2/errors/gerror"
+	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/os/gtime"
 	"golang.org/x/net/context"
 )
@@ -51,6 +52,9 @@ func (s *sLogin) UserLogin(ctx context.Context, in model.LoginInput) (userInfo e
 	if err != nil {
 		return entity.User{}, "", "", err
 	}
+
+	// 设置登录用户信息
+	g.RequestFromCtx(ctx).SetCtxVar("loginInfo", userInfo)
 
 	token, expire := service.Auth().AuthInstance().LoginHandler(ctx)
 	tokenExpire = gtime.NewFromTime(expire).Format("Y-m-d H:i:s")

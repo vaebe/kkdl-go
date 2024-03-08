@@ -2,6 +2,7 @@ package auth
 
 import (
 	"compressURL/internal/model"
+	"compressURL/internal/model/entity"
 	"compressURL/internal/service"
 	jwt "github.com/gogf/gf-jwt/v2"
 	"github.com/gogf/gf/v2/frame/g"
@@ -107,25 +108,18 @@ func Unauthorized(ctx context.Context, code int, message string) {
 // if your identityKey is 'id', your user data must have 'id'
 // Check error (e) to determine the appropriate error message.
 func Authenticator(ctx context.Context) (interface{}, error) {
-	var (
-		r  = g.RequestFromCtx(ctx)
-		in model.LoginInput
-	)
+	var loginInfo entity.User
 
-	if err := r.Parse(&in); err != nil {
-		return "", err
-	}
-
-	userInfo, err := service.Login().GetUserInfo(ctx, in)
+	err := g.RequestFromCtx(ctx).GetCtxVar("loginInfo").Scan(&loginInfo)
 
 	if err != nil {
-		return nil, jwt.ErrFailedAuthentication
+		return nil, err
 	}
 
 	data := g.Map{
-		"LoginUserId":          userInfo.Id,
-		"LoginUserAccountType": userInfo.AccountType,
-		"LoginUserRole":        userInfo.Role,
+		"LoginUserId":          loginInfo.Id,
+		"LoginUserAccountType": loginInfo.AccountType,
+		"LoginUserRole":        loginInfo.Role,
 	}
 
 	return data, nil
