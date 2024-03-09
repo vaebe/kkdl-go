@@ -5,6 +5,7 @@ import (
 	v12 "compressURL/api/user/v1"
 	"compressURL/internal/service"
 	"context"
+	"fmt"
 	"github.com/gogf/gf/v2/errors/gerror"
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/util/grand"
@@ -22,7 +23,8 @@ func (c *ControllerV1) GetVerificationCodeEmail(ctx context.Context, req *v1.Get
 	}
 
 	// 检查验证码是否过期
-	ttl, err := g.Redis().TTL(ctx, req.Email)
+	rdsKey := fmt.Sprintf("verificationCode-%s", req.Email)
+	ttl, err := g.Redis().TTL(ctx, rdsKey)
 	if err != nil {
 		return nil, err
 	}
@@ -34,7 +36,7 @@ func (c *ControllerV1) GetVerificationCodeEmail(ctx context.Context, req *v1.Get
 
 	// 发送验证码
 	code := grand.S(6)
-	err = g.Redis().SetEX(ctx, req.Email, code, 60*2)
+	err = g.Redis().SetEX(ctx, rdsKey, code, 60*2)
 	if err != nil {
 		return nil, gerror.New("redis 缓存邮箱验证码失败!")
 	}
