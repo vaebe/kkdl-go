@@ -13,7 +13,7 @@ import (
 )
 
 // GetOpenId 获取微信小程序用户openId
-func (s *sWeChatMiniProgram) GetOpenId(ctx context.Context, Code string) (resInfo *v1.GetWeChatMiniProgramOpenIdRes, err error) {
+func (s *sWeChatMiniProgram) GetOpenId(ctx context.Context, Code string) (resInfo *v1.GetOpenIdRes, err error) {
 	// 获取微信小程序配置
 	miniProgramsConf := g.Cfg().MustGet(ctx, "weChat.miniPrograms").Map()
 	url := fmt.Sprintf("https://api.weixin.qq.com/sns/jscode2session?grant_type=client_credential&appid=%s&secret=%s&js_code=%s&grant_type=authorization_code", miniProgramsConf["appid"], miniProgramsConf["secret"], Code)

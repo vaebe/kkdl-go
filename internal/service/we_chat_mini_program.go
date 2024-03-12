@@ -14,7 +14,7 @@ import (
 type (
 	IWeChatMiniProgram interface {
 		// GetOpenId 获取微信小程序用户openId
-		GetOpenId(ctx context.Context, Code string) (resInfo *v1.GetWeChatMiniProgramOpenIdRes, err error)
+		GetOpenId(ctx context.Context, Code string) (resInfo *v1.GetOpenIdRes, err error)
 		// GetWeChatToken 获取微信 api token
 		GetWeChatToken(ctx context.Context) (string, error)
 	}

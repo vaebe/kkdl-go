@@ -12,5 +12,5 @@ import (
 
 type IWeChatMiniProgramV1 interface {
 	GetMiniProgramCode(ctx context.Context, req *v1.GetMiniProgramCodeReq) (res *v1.GetMiniProgramCodeRes, err error)
-	GetWeChatMiniProgramOpenId(ctx context.Context, req *v1.GetWeChatMiniProgramOpenIdReq) (res *v1.GetWeChatMiniProgramOpenIdRes, err error)
+	GetOpenId(ctx context.Context, req *v1.GetOpenIdReq) (res *v1.GetOpenIdRes, err error)
 }
