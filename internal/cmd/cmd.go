@@ -66,7 +66,7 @@ func mainFunc(ctx context.Context, parser *gcmd.Parser) (err error) {
 
 		// 需要权限验证
 		group.Group("/", func(group *ghttp.RouterGroup) {
-			group.Middleware(middlewares.MiddlewareAuth)
+			group.Middleware(middlewares.Auth)
 			group.Bind(
 				login.NewV1().SignOut,
 				login.NewV1().RefreshToken,
@@ -78,6 +78,14 @@ func mainFunc(ctx context.Context, parser *gcmd.Parser) (err error) {
 				shortUrl.NewV1().BatchExport,
 				shortUrlCode.NewV1(),
 				common.NewV1().UploadFile,
+			)
+		})
+
+		group.Group("/", func(group *ghttp.RouterGroup) {
+			group.Middleware(middlewares.Auth)
+			group.Middleware(middlewares.UserIsAdmin)
+
+			group.Bind(
 				user.NewV1(),
 			)
 		})
