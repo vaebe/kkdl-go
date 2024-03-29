@@ -1,21 +1,21 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: template-single
+  name: kkdl
   labels:
-    app: template-single
+    app: kkdl
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: template-single
+      app: kkdl
   template:
     metadata:
       labels:
-        app: template-single
+        app: kkdl
     spec:
       containers:
         - name : main
-          image: template-single
+          image: kkdl
           imagePullPolicy: Always
 

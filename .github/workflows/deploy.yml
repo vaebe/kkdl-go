@@ -3,33 +3,61 @@ name: Build and Deploy Docker Image
 on:
   push:
     tags:
-      - 'v*'
+      - 'v*' # 当有以 'v' 开头的 tag 被推送时触发
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
-      with:
-        fetch-depth: 0
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0 # 检出完整的git历史记录
 
-    - name: Build and push Docker image
-      run: |
-        make image
-        docker tag my-image:latest my-registry.example.com/my-image:${GITHUB_REF#refs/tags/}
-        docker push my-registry.example.com/my-image:${GITHUB_REF#refs/tags/}
+      - name: Ensure directory exists
+        run: mkdir -p $GITHUB_WORKSPACE/manifest/config # 确保目录存在，用于存放配置文件
 
-    - name: Deploy to server
-      uses: appleboy/ssh-action@master
-      with:
-        host: my-server.example.com
-        username: ${{ secrets.SERVER_USERNAME }}
-        password: ${{ secrets.SERVER_PASSWORD }}
-        port: 22
-        script: |
-          docker pull my-registry.example.com/my-image:${GITHUB_REF#refs/tags/}
-          docker stop my-container || true
-          docker rm my-container || true
-          docker run -d --name my-container -p 80:80 my-registry.example.com/my-image:${GITHUB_REF#refs/tags/}
+      - name: Set Config File
+        run: |
+          printf '%s' ${{ secrets.CONFIG }} | python -c 'import json, sys, yaml; print(yaml.dump(json.loads(sys.stdin.read())))' > $GITHUB_WORKSPACE/manifest/config/config.yaml # 设置配置文件，将环境变量中的 JSON 字符串格式化为 YAML 格式
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.20' # 设置 Go 版本为 1.20
+
+      - name: Install gf-tool
+        run: |
+          wget -O gf https://github.com/gogf/gf/releases/latest/download/gf_$(go env GOOS)_$(go env GOARCH) && chmod +x gf && ./gf install -y && rm ./gf # 安装 gf 工具
+
+      - name: Login to Docker Hub
+        run: echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin # 登录到 Docker Hub
+
+      - name: Build and push Docker image
+        run: |
+          make image.push # 构建并推送 Docker 镜像
+
+      - name: Get version
+        id: get_version
+        run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//} # 获取版本号，去掉前缀 'refs/tags/'
+
+      - name: Deploy to server
+        uses: appleboy/ssh-action@master
+        env:
+          DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+          GIT_TAG: ${{ steps.get_version.outputs.VERSION }} # 使用之前步骤中获取的版本号
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USERNAME }}
+          password: ${{ secrets.SERVER_PASSWORD }}
+          port: 22
+          envs: DOCKERHUB_USERNAME,GIT_TAG
+          script: |
+            # 删除所有指定名称的镜像
+            docker rmi $(docker images -q $DOCKERHUB_USERNAME/kkdl)
+            # 拉取 Docker 镜像
+            docker pull docker.io/$DOCKERHUB_USERNAME/kkdl:$GIT_TAG 
+            # 检查容器是否存在，停止并删除已存在的容器，然后运行新的容器
+            docker container ls -a | grep -q "kkdl" && docker stop kkdl && docker rm kkdl
+            docker run -d --name kkdl -p 6001:6001 $DOCKERHUB_USERNAME/kkdl:$GIT_TAG

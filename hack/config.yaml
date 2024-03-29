@@ -4,7 +4,7 @@ gfcli:
   docker:
     build: "-a amd64 -s linux -p temp -ew"
     tagPrefixes:
-      - my.image.pub/my-app
+      - vaebe
   gen:
     dao:
       - link: "mysql:root:123456@tcp(127.0.0.1:3306)/compressURL"
