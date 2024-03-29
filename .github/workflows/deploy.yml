@@ -1,0 +1,35 @@
+name: Build and Deploy Docker Image
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+
+    - name: Build and push Docker image
+      run: |
+        make image
+        docker tag my-image:latest my-registry.example.com/my-image:${GITHUB_REF#refs/tags/}
+        docker push my-registry.example.com/my-image:${GITHUB_REF#refs/tags/}
+
+    - name: Deploy to server
+      uses: appleboy/ssh-action@master
+      with:
+        host: my-server.example.com
+        username: ${{ secrets.SERVER_USERNAME }}
+        password: ${{ secrets.SERVER_PASSWORD }}
+        port: 22
+        script: |
+          docker pull my-registry.example.com/my-image:${GITHUB_REF#refs/tags/}
+          docker stop my-container || true
+          docker rm my-container || true
+          docker run -d --name my-container -p 80:80 my-registry.example.com/my-image:${GITHUB_REF#refs/tags/}
