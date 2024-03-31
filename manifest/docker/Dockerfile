@@ -1,4 +1,4 @@
-FROM loads/alpine:latest
+FROM loads/alpine:3.8
 
 ###############################################################################
 #                                INSTALLATION
