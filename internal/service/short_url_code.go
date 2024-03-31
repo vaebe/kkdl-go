@@ -11,8 +11,10 @@ import (
 
 type (
 	IShortUrlCode interface {
-		// BatchCreateCode 批量生成短链 code
+		// BatchCreateCode 批量创建短链
 		BatchCreateCode(ctx context.Context, num int) error
+		// UnusedCodeCount 获取未使用的 code 数量
+		UnusedCodeCount(ctx context.Context) (int, error)
 	}
 )
 

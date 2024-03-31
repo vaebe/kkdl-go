@@ -19,6 +19,7 @@ func New() *sShortUrlCode {
 	return &sShortUrlCode{}
 }
 
+// BatchCreateCode 批量创建短链
 func (s *sShortUrlCode) BatchCreateCode(ctx context.Context, num int) error {
 	g.Log().Info(ctx, "开始生成短链")
 	// 记录插入数量
@@ -42,4 +43,9 @@ func (s *sShortUrlCode) BatchCreateCode(ctx context.Context, num int) error {
 	}
 
 	return nil
+}
+
+// UnusedCodeCount 获取未使用的 code 数量
+func (s *sShortUrlCode) UnusedCodeCount(ctx context.Context) (int, error) {
+	return dao.ShortUrlCode.Ctx(ctx).Where(dao.ShortUrlCode.Columns().Status, 0).Count()
 }
