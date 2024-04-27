@@ -58,7 +58,6 @@ func mainFunc(ctx context.Context, parser *gcmd.Parser) (err error) {
 				login.NewV1().WxMiniProgramLogin,
 				login.NewV1().Registration,
 				login.NewV1().Ws,
-				shortUrl.NewV1().Create,
 				common.NewV1().GetVerificationCodeEmail,
 				weChatMiniProgram.NewV1(),
 			)
@@ -70,12 +69,6 @@ func mainFunc(ctx context.Context, parser *gcmd.Parser) (err error) {
 			group.Bind(
 				login.NewV1().SignOut,
 				login.NewV1().RefreshToken,
-				shortUrl.NewV1().GetUrl,
-				shortUrl.NewV1().GetList,
-				shortUrl.NewV1().Delete,
-				shortUrl.NewV1().BatchImport,
-				shortUrl.NewV1().TemplateDownload,
-				shortUrl.NewV1().BatchExport,
 				shortUrlCode.NewV1(),
 				common.NewV1().UploadFile,
 			)
@@ -86,6 +79,7 @@ func mainFunc(ctx context.Context, parser *gcmd.Parser) (err error) {
 			group.Middleware(middlewares.UserIsAdmin)
 
 			group.Bind(
+				shortUrl.NewV1(),
 				user.NewV1(),
 			)
 		})
