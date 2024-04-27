@@ -11,7 +11,8 @@ import (
 	"github.com/gogf/gf/v2/util/grand"
 )
 
-func (c *ControllerV1) GetVerificationCodeEmail(ctx context.Context, req *v1.GetVerificationCodeEmailReq) (res *v1.GetVerificationCodeEmailRes, err error) {
+func (c *ControllerV1) GetCaptcha(ctx context.Context, req *v1.GetCaptchaReq) (res *v1.GetCaptchaRes, err error) {
+
 	// 检查用户是否已经注册
 	_, total, err := service.User().GetUserList(ctx, v12.GetListReq{Email: req.Email})
 	if err != nil {

@@ -58,7 +58,7 @@ func mainFunc(ctx context.Context, parser *gcmd.Parser) (err error) {
 				login.NewV1().WxMiniProgramLogin,
 				login.NewV1().Registration,
 				login.NewV1().Ws,
-				common.NewV1().GetVerificationCodeEmail,
+				common.NewV1().GetCaptcha,
 				weChatMiniProgram.NewV1(),
 			)
 		})
