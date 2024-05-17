@@ -71,6 +71,7 @@ func mainFunc(ctx context.Context, parser *gcmd.Parser) (err error) {
 				login.NewV1().RefreshToken,
 				shortUrlCode.NewV1(),
 				common.NewV1().UploadFile,
+				shortUrl.NewV1(),
 			)
 		})
 
@@ -79,7 +80,7 @@ func mainFunc(ctx context.Context, parser *gcmd.Parser) (err error) {
 			group.Middleware(middlewares.UserIsAdmin)
 
 			group.Bind(
-				shortUrl.NewV1(),
+
 				user.NewV1(),
 			)
 		})

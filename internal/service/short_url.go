@@ -23,7 +23,7 @@ type (
 		// GetList 短链列表
 		GetList(ctx context.Context, in v1.GetListReq, userId string) ([]entity.ShortUrl, int, error)
 		// Delete 删除短链
-		Delete(ctx context.Context, id string) error
+		Delete(ctx context.Context, id string, userId string) error
 	}
 )
 

@@ -96,8 +96,15 @@ func (s *sShortUrl) GetList(ctx context.Context, in v1.GetListReq, userId string
 }
 
 // Delete 删除短链
-func (s *sShortUrl) Delete(ctx context.Context, id string) error {
-	res, err := dao.ShortUrl.Ctx(ctx).Where(dao.ShortUrl.Columns().Id, id).Delete()
+func (s *sShortUrl) Delete(ctx context.Context, id string, userId string) error {
+	db := dao.ShortUrl.Ctx(ctx).Where(dao.ShortUrl.Columns().Id, id)
+
+	// 用户 id 存在只查询当前用户的数据
+	if userId != "" {
+		db = db.Where(dao.ShortUrl.Columns().UserId, userId)
+	}
+
+	res, err := db.Delete()
 
 	if num, _ := res.RowsAffected(); num == 0 {
 		return gerror.New("需要删除的数据不存在！")
