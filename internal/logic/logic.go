@@ -10,6 +10,7 @@ import (
 	_ "compressURL/internal/logic/login"
 	_ "compressURL/internal/logic/shortUrl"
 	_ "compressURL/internal/logic/shortUrlCode"
+	_ "compressURL/internal/logic/short_url_visits"
 	_ "compressURL/internal/logic/user"
 	_ "compressURL/internal/logic/weChatMiniProgram"
 )
