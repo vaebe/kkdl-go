@@ -46,12 +46,15 @@ func (s *sShortUrl) CreateShortUrl(ctx context.Context, in entity.ShortUrl) (str
 		_, err = tx.Model("short_url_code").Data(g.Map{"status": 1}).Where("code", shortCodeData.Code).Update()
 		if err != nil {
 			// 回滚事务
-			tx.Rollback()
+			err := tx.Rollback()
 			return "", err
 		}
 
 		// 提交事务
-		tx.Commit()
+		err = tx.Commit()
+		if err != nil {
+			return "", err
+		}
 	}
 
 	return shortCodeData.Code, err
@@ -70,6 +73,18 @@ func (s *sShortUrl) GetShortUrl(ctx context.Context, url string) (string, error)
 
 	rawUrl := fmt.Sprintf("%s", one.GMap().Get("rawUrl"))
 	return rawUrl, nil
+}
+
+// GenOne 获取短链
+func (s *sShortUrl) GenOne(ctx context.Context, code string) (entity.ShortUrl, error) {
+	info := entity.ShortUrl{}
+
+	err := dao.ShortUrl.Ctx(ctx).Where(dao.ShortUrl.Columns().ShortUrl, code).Scan(&info)
+
+	if err != nil {
+		return info, errors.New("未查询到短链数据！")
+	}
+	return info, nil
 }
 
 // GetList 短链列表

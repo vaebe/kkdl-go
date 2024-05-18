@@ -20,6 +20,8 @@ type (
 		CreateShortUrl(ctx context.Context, in entity.ShortUrl) (string, error)
 		// GetShortUrl 获取短链
 		GetShortUrl(ctx context.Context, url string) (string, error)
+		// GenOne 获取短链信息
+		GenOne(ctx context.Context, code string) (entity.ShortUrl, error)
 		// GetList 短链列表
 		GetList(ctx context.Context, in v1.GetListReq, userId string) ([]entity.ShortUrl, int, error)
 		// Delete 删除短链
