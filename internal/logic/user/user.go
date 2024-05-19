@@ -74,6 +74,18 @@ func (s *sUser) Create(ctx context.Context, in entity.User) (string, error) {
 	return userId, nil
 }
 
+// Detail 获取用户详情
+func (s *sUser) Detail(ctx context.Context, id string) (entity.User, error) {
+	userInfo := entity.User{}
+
+	err := dao.User.Ctx(ctx).Where(dao.User.Columns().Id, id).Scan(&userInfo)
+
+	if err != nil {
+		return userInfo, errors.New("未查询到用户数据！")
+	}
+	return userInfo, nil
+}
+
 // Update 更新用户信息
 func (s *sUser) Update(ctx context.Context, in entity.User) error {
 	// 获取用户信息
@@ -123,8 +135,8 @@ func (s *sUser) Delete(ctx context.Context, id string) error {
 	return err
 }
 
-// GetUserInfo 根据 id 获取用户信息
-func (s *sUser) GetUserInfo(ctx context.Context, id string) (*v1.GetOneRes, error) {
+// GetOne 根据 id 获取用户信息,隐藏关键信息
+func (s *sUser) GetOne(ctx context.Context, id string) (*v1.GetOneRes, error) {
 	userInfo := v1.GetOneRes{}
 
 	err := dao.User.Ctx(ctx).Where(dao.User.Columns().Id, id).Scan(&userInfo)
@@ -145,18 +157,6 @@ func (s *sUser) GetUserInfoByWxId(ctx context.Context, wxId string) (*v1.GetOneR
 		return nil, errors.New("未查询到用户数据！")
 	}
 	return &userInfo, nil
-}
-
-// Detail 获取用户详情
-func (s *sUser) Detail(ctx context.Context, id string) (entity.User, error) {
-	userInfo := entity.User{}
-
-	err := dao.User.Ctx(ctx).Where(dao.User.Columns().Id, id).Scan(&userInfo)
-
-	if err != nil {
-		return userInfo, errors.New("未查询到用户数据！")
-	}
-	return userInfo, nil
 }
 
 // GetUserList 获取用户列表

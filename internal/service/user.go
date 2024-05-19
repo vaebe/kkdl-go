@@ -15,16 +15,16 @@ import (
 type (
 	IUser interface {
 		Create(ctx context.Context, in entity.User) (string, error)
+		// Detail 获取用户详情
+		Detail(ctx context.Context, id string) (entity.User, error)
 		// Update 更新用户信息
 		Update(ctx context.Context, in entity.User) error
 		// Delete 删除用户
 		Delete(ctx context.Context, id string) error
-		// GetUserInfo 根据 id 获取用户信息
-		GetUserInfo(ctx context.Context, id string) (*v1.GetOneRes, error)
+		// GetOne 根据 id 获取用户信息,隐藏关键信息
+		GetOne(ctx context.Context, id string) (*v1.GetOneRes, error)
 		// GetUserInfoByWxId 根据 wxIdOpenId 获取用户信息
 		GetUserInfoByWxId(ctx context.Context, wxId string) (*v1.GetOneRes, error)
-		// Detail 获取用户详情
-		Detail(ctx context.Context, id string) (entity.User, error)
 		// GetUserList 获取用户列表
 		GetUserList(ctx context.Context, in v1.GetListReq) ([]entity.User, int, error)
 	}

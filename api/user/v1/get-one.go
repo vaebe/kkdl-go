@@ -3,7 +3,7 @@ package v1
 import "github.com/gogf/gf/v2/frame/g"
 
 type GetOneReq struct {
-	g.Meta `path:"/user/detail" method:"get" summary:"获取用户信息详情" tags:"用户"`
+	g.Meta `path:"/user/getOne" method:"get" summary:"获取用户信息详情" tags:"用户"`
 	UserId string `json:"userId"  v:"required#请输入用户 id"   dc:"用户 id"`
 }
 type GetOneRes struct {
