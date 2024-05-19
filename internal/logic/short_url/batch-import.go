@@ -1,4 +1,4 @@
-package shortUrl
+package short_url
 
 import (
 	"compressURL/internal/dao"

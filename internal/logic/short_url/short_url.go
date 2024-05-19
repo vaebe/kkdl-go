@@ -1,4 +1,4 @@
-package shortUrl
+package short_url
 
 import (
 	v1 "compressURL/api/short_url/v1"
