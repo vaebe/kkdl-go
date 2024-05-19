@@ -112,8 +112,8 @@ func (s *sUser) Update(ctx context.Context, in entity.User) error {
 	return err
 }
 
-// Remove 删除用户
-func (s *sUser) Remove(ctx context.Context, id string) error {
+// Delete 删除用户
+func (s *sUser) Delete(ctx context.Context, id string) error {
 	res, err := dao.User.Ctx(ctx).Where(dao.User.Columns().Id, id).Delete()
 
 	if num, _ := res.RowsAffected(); num == 0 {

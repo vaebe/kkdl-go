@@ -17,8 +17,8 @@ type (
 		Create(ctx context.Context, in entity.User) (string, error)
 		// Update 更新用户信息
 		Update(ctx context.Context, in entity.User) error
-		// Remove 删除用户
-		Remove(ctx context.Context, id string) error
+		// Delete 删除用户
+		Delete(ctx context.Context, id string) error
 		// GetUserInfo 根据 id 获取用户信息
 		GetUserInfo(ctx context.Context, id string) (*v1.GetOneRes, error)
 		// GetUserInfoByWxId 根据 wxIdOpenId 获取用户信息
