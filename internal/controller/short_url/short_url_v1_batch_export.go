@@ -1,18 +1,19 @@
-package shortUrl
+package short_url
 
 import (
 	"compressURL/internal/model"
 	"compressURL/internal/service"
 	"context"
 	"fmt"
-	"github.com/gogf/gf/v2/errors/gerror"
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/os/gfile"
 	"github.com/gogf/gf/v2/os/glog"
 	"github.com/gogf/gf/v2/os/gtime"
 	"github.com/xuri/excelize/v2"
 
-	"compressURL/api/shortUrl/v1"
+	"github.com/gogf/gf/v2/errors/gerror"
+
+	"compressURL/api/short_url/v1"
 )
 
 func (c *ControllerV1) BatchExport(ctx context.Context, req *v1.BatchExportReq) (res *v1.BatchExportRes, err error) {

@@ -1,7 +1,7 @@
-package shortUrl
+package short_url
 
 import (
-	"compressURL/api/shortUrl/v1"
+	"compressURL/api/short_url/v1"
 	"compressURL/internal/model/entity"
 	"compressURL/internal/service"
 	"context"

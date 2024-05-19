@@ -3,8 +3,8 @@ package cmd
 import (
 	"compressURL/internal/controller/common"
 	"compressURL/internal/controller/login"
-	"compressURL/internal/controller/shortUrl"
 	"compressURL/internal/controller/shortUrlCode"
+	"compressURL/internal/controller/short_url"
 	"compressURL/internal/controller/short_url_visits"
 	"compressURL/internal/controller/user"
 	"compressURL/internal/controller/weChatMiniProgram"
@@ -96,7 +96,7 @@ func mainFunc(ctx context.Context, parser *gcmd.Parser) (err error) {
 				login.NewV1().RefreshToken,
 				shortUrlCode.NewV1(),
 				common.NewV1().UploadFile,
-				shortUrl.NewV1(),
+				short_url.NewV1(),
 				short_url_visits.NewV1(),
 			)
 		})

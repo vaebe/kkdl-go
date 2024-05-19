@@ -1,10 +1,10 @@
-package shortUrl
+package short_url
 
 import (
 	"context"
 	"github.com/gogf/gf/v2/frame/g"
 
-	"compressURL/api/shortUrl/v1"
+	"compressURL/api/short_url/v1"
 )
 
 func (c *ControllerV1) TemplateDownload(ctx context.Context, _ *v1.TemplateDownloadReq) (res *v1.TemplateDownloadRes, err error) {
