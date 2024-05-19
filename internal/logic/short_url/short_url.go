@@ -23,8 +23,8 @@ func New() *sShortUrl {
 	return &sShortUrl{}
 }
 
-// CreateShortUrl 创建短链
-func (s *sShortUrl) CreateShortUrl(ctx context.Context, in entity.ShortUrl) (string, error) {
+// Create 创建短链
+func (s *sShortUrl) Create(ctx context.Context, in entity.ShortUrl) (string, error) {
 	// 获取一条未使用短链 code
 	shortCodeData := entity.ShortUrlCode{}
 	err := dao.ShortUrlCode.Ctx(ctx).Where("status", 0).Limit(1).Scan(&shortCodeData)
@@ -58,6 +58,24 @@ func (s *sShortUrl) CreateShortUrl(ctx context.Context, in entity.ShortUrl) (str
 	}
 
 	return shortCodeData.Code, err
+}
+
+// Delete 删除短链
+func (s *sShortUrl) Delete(ctx context.Context, id string, userId string) error {
+	db := dao.ShortUrl.Ctx(ctx).Where(dao.ShortUrl.Columns().Id, id)
+
+	// 用户 id 存在只查询当前用户的数据
+	if userId != "" {
+		db = db.Where(dao.ShortUrl.Columns().UserId, userId)
+	}
+
+	res, err := db.Delete()
+
+	if num, _ := res.RowsAffected(); num == 0 {
+		return gerror.New("需要删除的数据不存在！")
+	}
+
+	return err
 }
 
 // GetShortUrl 获取短链
@@ -108,22 +126,4 @@ func (s *sShortUrl) GetList(ctx context.Context, in v1.GetListReq, userId string
 		return nil, 0, err
 	}
 	return list, total, nil
-}
-
-// Delete 删除短链
-func (s *sShortUrl) Delete(ctx context.Context, id string, userId string) error {
-	db := dao.ShortUrl.Ctx(ctx).Where(dao.ShortUrl.Columns().Id, id)
-
-	// 用户 id 存在只查询当前用户的数据
-	if userId != "" {
-		db = db.Where(dao.ShortUrl.Columns().UserId, userId)
-	}
-
-	res, err := db.Delete()
-
-	if num, _ := res.RowsAffected(); num == 0 {
-		return gerror.New("需要删除的数据不存在！")
-	}
-
-	return err
 }
