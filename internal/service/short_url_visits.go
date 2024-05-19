@@ -6,6 +6,7 @@
 package service
 
 import (
+	v1 "compressURL/api/short_url_visits/v1"
 	"compressURL/internal/model/entity"
 
 	"golang.org/x/net/context"
@@ -14,6 +15,8 @@ import (
 type (
 	IShortUrlVisits interface {
 		Create(ctx context.Context, in entity.ShortUrlVisits) error
+		// GetList 短链列表
+		GetList(ctx context.Context, in v1.GetListReq, userId string) ([]entity.ShortUrlVisits, int, error)
 	}
 )
 

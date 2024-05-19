@@ -5,6 +5,7 @@ import (
 	"compressURL/internal/controller/login"
 	"compressURL/internal/controller/shortUrl"
 	"compressURL/internal/controller/shortUrlCode"
+	"compressURL/internal/controller/short_url_visits"
 	"compressURL/internal/controller/user"
 	"compressURL/internal/controller/weChatMiniProgram"
 	"compressURL/internal/middlewares"
@@ -96,6 +97,7 @@ func mainFunc(ctx context.Context, parser *gcmd.Parser) (err error) {
 				shortUrlCode.NewV1(),
 				common.NewV1().UploadFile,
 				shortUrl.NewV1(),
+				short_url_visits.NewV1(),
 			)
 		})
 
@@ -104,7 +106,6 @@ func mainFunc(ctx context.Context, parser *gcmd.Parser) (err error) {
 			group.Middleware(middlewares.UserIsAdmin)
 
 			group.Bind(
-
 				user.NewV1(),
 			)
 		})
