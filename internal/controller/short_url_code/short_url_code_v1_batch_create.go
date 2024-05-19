@@ -1,4 +1,4 @@
-package shortUrlCode
+package short_url_code
 
 import (
 	"compressURL/internal/service"
@@ -6,7 +6,7 @@ import (
 
 	"github.com/gogf/gf/v2/errors/gerror"
 
-	"compressURL/api/shortUrlCode/v1"
+	"compressURL/api/short_url_code/v1"
 )
 
 func (c *ControllerV1) BatchCreate(ctx context.Context, req *v1.BatchCreateReq) (res *v1.BatchCreateRes, err error) {
@@ -24,6 +24,6 @@ func (c *ControllerV1) BatchCreate(ctx context.Context, req *v1.BatchCreateReq) 
 		return nil, gerror.New("每次最多生成 1000 个!")
 	}
 
-	//err = service.ShortUrlCode().BatchCreateCode(ctx, req.Num)
+	err = service.ShortUrlCode().BatchCreateCode(ctx, req.Num)
 	return nil, err
 }

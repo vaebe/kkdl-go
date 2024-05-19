@@ -1,4 +1,4 @@
-package shortUrlCode
+package short_url_code
 
 import (
 	"compressURL/internal/dao"
@@ -33,7 +33,7 @@ func (s *sShortUrlCode) BatchCreateCode(ctx context.Context, num int) error {
 		if err == nil {
 			insertDataNum++
 
-			if insertDataNum > num {
+			if insertDataNum >= num {
 				g.Log().Info(ctx, "生成短链完成", shortUrl)
 				break
 			}
