@@ -30,6 +30,16 @@ type ShortUrlVisitsColumns struct {
 	SecChUaMobile   string // 请求是否来自移动设备。?0 表示不是移动设备，?1 表示是移动设备
 	SecChUaPlatform string // 客户端所运行的平台
 	SecFetchUser    string // 请求是否是用户发起的,?1 表示是用户发起的请求
+	Continent       string // 大洲名称
+	ContinentCode   string // 大洲代码
+	Country         string // 国家名称
+	CountryCode     string // 国家代码
+	Region          string // 地区或州的短代码（FIPS或ISO）
+	RegionName      string // 地区或州名称
+	City            string // 城市名称
+	District        string // 位置的区（郡）
+	Lat             string // 纬度
+	Lon             string // 经度
 	CreatedAt       string // 创建时间，默认为当前时间戳
 	UpdatedAt       string // 更新时间
 	DeletedAt       string // 删除时间
@@ -38,15 +48,25 @@ type ShortUrlVisitsColumns struct {
 // shortUrlVisitsColumns holds the columns for table short_url_visits.
 var shortUrlVisitsColumns = ShortUrlVisitsColumns{
 	Id:              "id",
-	UserId:          "userId",
-	ShortUrl:        "shortUrl",
-	RawUrl:          "rawUrl",
+	UserId:          "user_id",
+	ShortUrl:        "short_url",
+	RawUrl:          "raw_url",
 	Ip:              "ip",
 	UserAgent:       "user_agent",
 	SecChUa:         "sec_ch_ua",
 	SecChUaMobile:   "sec_ch_ua_mobile",
 	SecChUaPlatform: "sec_ch_ua_platform",
 	SecFetchUser:    "sec_fetch_user",
+	Continent:       "continent",
+	ContinentCode:   "continent_code",
+	Country:         "country",
+	CountryCode:     "country_code",
+	Region:          "region",
+	RegionName:      "region_name",
+	City:            "city",
+	District:        "district",
+	Lat:             "lat",
+	Lon:             "lon",
 	CreatedAt:       "created_at",
 	UpdatedAt:       "updated_at",
 	DeletedAt:       "deleted_at",
