@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"compressURL/internal/controller/analytics"
 	"compressURL/internal/controller/common"
 	"compressURL/internal/controller/login"
 	"compressURL/internal/controller/short_url"
@@ -39,6 +40,7 @@ func mainFunc(ctx context.Context, parser *gcmd.Parser) (err error) {
 				login.NewV1().Ws,
 				common.NewV1().GetCaptcha,
 				weChatMiniProgram.NewV1(),
+				analytics.NewV1(),
 			)
 		})
 

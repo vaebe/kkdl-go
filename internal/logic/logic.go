@@ -5,6 +5,7 @@
 package logic
 
 import (
+	_ "compressURL/internal/logic/analytics"
 	_ "compressURL/internal/logic/auth"
 	_ "compressURL/internal/logic/common"
 	_ "compressURL/internal/logic/login"
