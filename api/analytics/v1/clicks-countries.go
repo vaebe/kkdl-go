@@ -14,8 +14,8 @@ type ClicksCountriesReq struct {
 
 type ClicksCountriesItem struct {
 	Clicks      int    `json:"clicks"   dc:"访问次数"`
-	Country     string `json:"country" dc:"国家 code"`
-	CountryName string `json:"countryName" dc:"国家名称"`
+	CountryCode string `json:"countryCode" dc:" 国家 code"`
+	Country     string `json:"country" dc:"国家名称"`
 }
 
 type ClicksCountriesRes []ClicksCountriesItem
