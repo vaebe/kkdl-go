@@ -9,7 +9,7 @@ import (
 type ClicksTimeReq struct {
 	g.Meta   `path:"/analytics/clicksTime" method:"get" summary:"根据时间统计短链访问次数" tags:"统计分析"`
 	Code     string `json:"code" dc:"短链 code"`
-	DateType string `json:"DateType" v:"required|in:24h,7d,30d" dc:"日期类型"`
+	DateType string `json:"dateType" v:"required|in:24h,7d,30d" dc:"日期类型"`
 }
 
 type ClicksTimeItem struct {

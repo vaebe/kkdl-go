@@ -6,7 +6,7 @@ import (
 	"golang.org/x/net/context"
 )
 
-// GetVisitsByCountries 根据时间统计访问数据
+// GetVisitsByCountries 根据国家统计访问数据
 func (s *sAnalytics) GetVisitsByCountries(ctx context.Context, req v1.ClicksCountriesReq) (list v1.ClicksCountriesRes, err error) {
 	err = dao.ShortUrlVisits.Ctx(ctx).OmitEmptyWhere().
 		Where(dao.ShortUrlVisits.Columns().ShortUrl, req.Code).

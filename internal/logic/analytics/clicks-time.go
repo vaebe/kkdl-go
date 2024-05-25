@@ -11,8 +11,9 @@ import (
 
 // 按小时统计
 func statisticsByHour(ctx context.Context, shortUrl string) (list v1.ClicksTimeRes, err error) {
-	startDate := gtime.NewFromStr("2024-05-20 00:00:00")
-	endDate := gtime.NewFromStr("2024-05-20 23:59:59")
+	now := gtime.Now()
+	startDate := now.StartOfDay()
+	endDate := now.EndOfDay()
 
 	// 生成唯一的临时表名
 	hoursTableName := fmt.Sprintf("temp_hours_%s", grand.Digits(6))
