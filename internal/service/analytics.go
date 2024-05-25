@@ -13,8 +13,8 @@ import (
 
 type (
 	IAnalytics interface {
-		// GetVisitsByCountries 根据时间统计访问数据
-		GetVisitsByCountries(ctx context.Context, req v1.ClicksCountriesReq) (list v1.ClicksCountriesRes, err error)
+		// GetVisitsByRegion 根据区域统计访问数据
+		GetVisitsByRegion(ctx context.Context, req v1.ClicksRegionReq) (list v1.ClicksRegionRes, err error)
 		// GetVisitsByDate 根据时间统计访问数据
 		GetVisitsByDate(ctx context.Context, req v1.ClicksTimeReq) (list v1.ClicksTimeRes, err error)
 	}
