@@ -58,51 +58,51 @@ func statisticsByHour(ctx context.Context, shortUrl string) (list v1.ClicksTimeR
 }
 
 // statisticsByDays 根据传入天数进行统计
-func statisticsByDays(ctx context.Context, shortUrl string, day int) (list v1.ClicksTimeRes, err error) {
-	startDate := gtime.Now().AddDate(0, 0, day)
-	endDate := gtime.Now() // 今天
+func statisticsByDays(ctx context.Context, shortUrl string, days int) (list v1.ClicksTimeRes, err error) {
+	startDate := gtime.Now().AddDate(0, 0, -days).StartOfDay()
+	endDate := gtime.Now().EndOfDay()
 
-	// 原始SQL语句
-	sql := `
-		SELECT
-			d.Date AS date,
-			COUNT(suv.id) AS visit_count
-		FROM (
-			SELECT a.Date
-			FROM (
-				SELECT CURDATE() - INTERVAL (a.a + (10 * b.a) + (100 * c.a)) DAY AS Date
-				FROM (SELECT 0 AS a UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9) a
-				CROSS JOIN (SELECT 0 AS a UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9) b
-				CROSS JOIN (SELECT 0 AS a UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9) c
-			) a
-			WHERE a.Date BETWEEN ? AND ?
-			ORDER BY a.Date
-		) d
-		LEFT JOIN
-		short_url_visits suv
-		ON DATE(suv.created_at) = d.Date
-		AND (? = '' OR suv.short_url = ?)
-		GROUP BY
-		d.Date
-		ORDER BY
-		d.Date;
-	`
+	// 创建查询对象
+	db := g.DB().Model("short_url_visits").
+		Fields("DATE(created_at) AS date, COUNT(id) AS visit_count").
+		Where("created_at BETWEEN ? AND ?", startDate, endDate).
+		Group("DATE(created_at)").
+		Order("DATE(created_at)")
 
-	// 执行原始SQL查询
-	rows, err := g.DB().GetAll(ctx, sql, startDate.String(), endDate.String(), shortUrl, shortUrl)
+	// 如果 shortUrl 不为空，添加条件
+	if shortUrl != "" {
+		db = db.Where("short_url", shortUrl)
+	}
+
+	// 执行查询
+	rows, err := db.All()
 	if err != nil {
 		g.Log().Error(ctx, "根据日期统计失败", err)
+		return
+	}
+
+	// 初始化每天点击数为 0
+	dateClicks := make(map[string]int)
+	for i := 0; i <= days; i++ {
+		date := gtime.Now().AddDate(0, 0, -i).Format("Y-m-d")
+		dateClicks[date] = 0
 	}
 
 	// 处理结果
 	for _, row := range rows {
-		list = append(list, v1.ClicksTimeItem{
-			Clicks: row["visit_count"].Int(),
-			Time:   row["date"].String(),
-		})
+		date := row["date"].String()
+		visitCount := row["visit_count"].Int()
+		dateClicks[date] = visitCount
 	}
 
-	g.Log().Info(ctx, len(list))
+	// 将结果转换为列表形式并按日期排序
+	for i := days; i >= 0; i-- {
+		date := gtime.Now().AddDate(0, 0, -i).Format("Y-m-d")
+		list = append(list, v1.ClicksTimeItem{
+			Clicks: dateClicks[date],
+			Time:   date,
+		})
+	}
 
 	return
 }
@@ -114,11 +114,11 @@ func (s *sAnalytics) GetVisitsByDate(ctx context.Context, req v1.ClicksTimeReq) 
 	}
 
 	if req.DateType == "7d" {
-		return statisticsByDays(ctx, req.Code, -7)
+		return statisticsByDays(ctx, req.Code, 7)
 	}
 
 	if req.DateType == "30d" {
-		return statisticsByDays(ctx, req.Code, -30)
+		return statisticsByDays(ctx, req.Code, 30)
 	}
 
 	return
