@@ -5,6 +5,7 @@ import (
 	"compressURL/internal/model/entity"
 	"compressURL/internal/service"
 	"context"
+	"fmt"
 	"github.com/gogf/gf/v2/errors/gerror"
 	"github.com/gogf/gf/v2/frame/g"
 )
@@ -12,7 +13,8 @@ import (
 func (c *ControllerV1) Registration(ctx context.Context, req *v1.RegistrationReq) (res *v1.RegistrationRes, err error) {
 
 	// 获取缓存的验证码
-	cacheVerificationCode, err := g.Redis().Get(ctx, req.Email)
+	rdsKey := fmt.Sprintf("verificationCode-%s", req.Email)
+	cacheVerificationCode, err := g.Redis().Get(ctx, rdsKey)
 	if err != nil {
 		return nil, gerror.New("获取缓存验证码失败!")
 	}

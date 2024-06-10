@@ -14,12 +14,18 @@ type ShortUrlVisits struct {
 	UserId          string      `json:"userId"          ` // 用户id
 	ShortUrl        string      `json:"shortUrl"        ` // 短链,唯一，不能为空
 	RawUrl          string      `json:"rawUrl"          ` // 原始 url 不能为空
+	UserAgent       string      `json:"userAgent"       ` // 用户代理字符串，存储提供的完整用户代理
+	BrowserName     string      `json:"browserName"     ` // 浏览器名称
+	BrowserVersion  string      `json:"browserVersion"  ` // 浏览器版本
+	BrowserMajor    string      `json:"browserMajor"    ` // 浏览器主版本号
+	CpuArchitecture string      `json:"cpuArchitecture" ` // CPU 架构
+	DeviceModel     string      `json:"deviceModel"     ` // 设备型号
+	DeviceVendor    string      `json:"deviceVendor"    ` // 设备供应商
+	EngineName      string      `json:"engineName"      ` // 浏览器引擎名称
+	EngineVersion   string      `json:"engineVersion"   ` // 浏览器引擎版本
+	OsName          string      `json:"osName"          ` // 操作系统名称
+	OsVersion       string      `json:"osVersion"       ` // 操作系统版本
 	Ip              string      `json:"ip"              ` // ip 不能为空
-	UserAgent       string      `json:"userAgent"       ` // 客户端软件的类型、版本和其他相关信息
-	SecChUa         string      `json:"secChUa"         ` // 客户端使用的浏览器和版本
-	SecChUaMobile   string      `json:"secChUaMobile"   ` // 请求是否来自移动设备。?0 表示不是移动设备，?1 表示是移动设备
-	SecChUaPlatform string      `json:"secChUaPlatform" ` // 客户端所运行的平台
-	SecFetchUser    string      `json:"secFetchUser"    ` // 请求是否是用户发起的,?1 表示是用户发起的请求
 	Continent       string      `json:"continent"       ` // 大洲名称
 	ContinentCode   string      `json:"continentCode"   ` // 大洲代码
 	Country         string      `json:"country"         ` // 国家名称

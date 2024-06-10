@@ -16,12 +16,18 @@ type ShortUrlVisits struct {
 	UserId          interface{} // 用户id
 	ShortUrl        interface{} // 短链,唯一，不能为空
 	RawUrl          interface{} // 原始 url 不能为空
+	UserAgent       interface{} // 用户代理字符串，存储提供的完整用户代理
+	BrowserName     interface{} // 浏览器名称
+	BrowserVersion  interface{} // 浏览器版本
+	BrowserMajor    interface{} // 浏览器主版本号
+	CpuArchitecture interface{} // CPU 架构
+	DeviceModel     interface{} // 设备型号
+	DeviceVendor    interface{} // 设备供应商
+	EngineName      interface{} // 浏览器引擎名称
+	EngineVersion   interface{} // 浏览器引擎版本
+	OsName          interface{} // 操作系统名称
+	OsVersion       interface{} // 操作系统版本
 	Ip              interface{} // ip 不能为空
-	UserAgent       interface{} // 客户端软件的类型、版本和其他相关信息
-	SecChUa         interface{} // 客户端使用的浏览器和版本
-	SecChUaMobile   interface{} // 请求是否来自移动设备。?0 表示不是移动设备，?1 表示是移动设备
-	SecChUaPlatform interface{} // 客户端所运行的平台
-	SecFetchUser    interface{} // 请求是否是用户发起的,?1 表示是用户发起的请求
 	Continent       interface{} // 大洲名称
 	ContinentCode   interface{} // 大洲代码
 	Country         interface{} // 国家名称

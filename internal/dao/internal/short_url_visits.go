@@ -24,12 +24,18 @@ type ShortUrlVisitsColumns struct {
 	UserId          string // 用户id
 	ShortUrl        string // 短链,唯一，不能为空
 	RawUrl          string // 原始 url 不能为空
+	UserAgent       string // 用户代理字符串，存储提供的完整用户代理
+	BrowserName     string // 浏览器名称
+	BrowserVersion  string // 浏览器版本
+	BrowserMajor    string // 浏览器主版本号
+	CpuArchitecture string // CPU 架构
+	DeviceModel     string // 设备型号
+	DeviceVendor    string // 设备供应商
+	EngineName      string // 浏览器引擎名称
+	EngineVersion   string // 浏览器引擎版本
+	OsName          string // 操作系统名称
+	OsVersion       string // 操作系统版本
 	Ip              string // ip 不能为空
-	UserAgent       string // 客户端软件的类型、版本和其他相关信息
-	SecChUa         string // 客户端使用的浏览器和版本
-	SecChUaMobile   string // 请求是否来自移动设备。?0 表示不是移动设备，?1 表示是移动设备
-	SecChUaPlatform string // 客户端所运行的平台
-	SecFetchUser    string // 请求是否是用户发起的,?1 表示是用户发起的请求
 	Continent       string // 大洲名称
 	ContinentCode   string // 大洲代码
 	Country         string // 国家名称
@@ -51,12 +57,18 @@ var shortUrlVisitsColumns = ShortUrlVisitsColumns{
 	UserId:          "user_id",
 	ShortUrl:        "short_url",
 	RawUrl:          "raw_url",
-	Ip:              "ip",
 	UserAgent:       "user_agent",
-	SecChUa:         "sec_ch_ua",
-	SecChUaMobile:   "sec_ch_ua_mobile",
-	SecChUaPlatform: "sec_ch_ua_platform",
-	SecFetchUser:    "sec_fetch_user",
+	BrowserName:     "browser_name",
+	BrowserVersion:  "browser_version",
+	BrowserMajor:    "browser_major",
+	CpuArchitecture: "cpu_architecture",
+	DeviceModel:     "device_model",
+	DeviceVendor:    "device_vendor",
+	EngineName:      "engine_name",
+	EngineVersion:   "engine_version",
+	OsName:          "os_name",
+	OsVersion:       "os_version",
+	Ip:              "ip",
 	Continent:       "continent",
 	ContinentCode:   "continent_code",
 	Country:         "country",

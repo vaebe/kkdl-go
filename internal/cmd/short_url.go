@@ -6,11 +6,13 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"github.com/gogf/gf/v2/errors/gerror"
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/net/ghttp"
 	"github.com/gogf/gf/v2/text/gstr"
 	"io"
 	"net/http"
+	"net/url"
 )
 
 // IPInfo 结构体用于存储IP地址的详细信息
@@ -30,36 +32,93 @@ type IPInfo struct {
 }
 
 func getIpInfo(ctx context.Context, clientIp string) (IPInfo, error) {
-	url := fmt.Sprintf("http://ip-api.com/json/%s?fields=status,message,continent,continentCode,country,countryCode,region,regionName,city,district,lat,lon,query&lang=zh-CN", clientIp)
-	res, err := g.Client().Get(ctx, url)
+	apiUrl := fmt.Sprintf("http://ip-api.com/json/%s?fields=status,message,continent,continentCode,country,countryCode,region,regionName,city,district,lat,lon,query&lang=zh-CN", clientIp)
+	res, err := g.Client().Get(ctx, apiUrl)
 
 	if err != nil {
-		return IPInfo{}, fmt.Errorf("failed to make request: %w", err)
+		return IPInfo{}, gerror.Newf("failed to make request: %s", err)
 	}
 	defer res.Body.Close()
 
 	if res.StatusCode != http.StatusOK {
-		return IPInfo{}, fmt.Errorf("unexpected status code: %d", res.StatusCode)
+		return IPInfo{}, gerror.Newf("unexpected status code: %d", res.StatusCode)
 	}
 
 	body, err := io.ReadAll(res.Body)
 	if err != nil {
-		return IPInfo{}, fmt.Errorf("failed to read response body: %w", err)
+		return IPInfo{}, gerror.Newf("failed to read response body: %s", err)
 	}
 
 	var ipInfo IPInfo
 	if err := json.Unmarshal(body, &ipInfo); err != nil {
-		return IPInfo{}, fmt.Errorf("failed to unmarshal JSON: %w", err)
+		return IPInfo{}, gerror.Newf("failed to unmarshal JSON: %s", err)
 	}
 
 	if ipInfo.Status != "success" {
-		return IPInfo{}, fmt.Errorf("IP info retrieval failed: %s", ipInfo.Status)
+		return IPInfo{}, gerror.Newf("IP info retrieval failed: %s", ipInfo.Status)
 	}
 
 	return ipInfo, nil
 }
 
+// UserAgentInfo 表示用户代理信息的结构体
+type UserAgentInfo struct {
+	UA      string `json:"ua"`
+	Browser struct {
+		Name    string `json:"name"`
+		Version string `json:"version"`
+		Major   string `json:"major"`
+	} `json:"browser"`
+	CPU struct {
+		Architecture string `json:"architecture"`
+	} `json:"cpu"`
+	Device struct {
+		Model  string `json:"model"`
+		Vendor string `json:"vendor"`
+	} `json:"device"`
+	Engine struct {
+		Name    string `json:"name"`
+		Version string `json:"version"`
+	} `json:"engine"`
+	OS struct {
+		Name    string `json:"name"`
+		Version string `json:"version"`
+	} `json:"os"`
+}
+
+func getUaInfo(ctx context.Context, curUa string) (UserAgentInfo, error) {
+	res, err := g.Client().Get(ctx, fmt.Sprintf("https://uaparser.vercel.app/?ua=%s", url.QueryEscape(curUa)))
+	if err != nil {
+		return UserAgentInfo{}, gerror.Newf("failed to make request: %s", err)
+	}
+
+	defer res.Body.Close()
+
+	if res.StatusCode != http.StatusOK {
+		return UserAgentInfo{}, gerror.Newf("unexpected status code: %d", res.StatusCode)
+	}
+
+	body, err := io.ReadAll(res.Body)
+	if err != nil {
+		return UserAgentInfo{}, gerror.Newf("failed to read response body: %s", err)
+	}
+
+	var uaInfo UserAgentInfo
+	if err := json.Unmarshal(body, &uaInfo); err != nil {
+		return UserAgentInfo{}, gerror.Newf("failed to unmarshal JSON: %s", err)
+	}
+
+	return uaInfo, nil
+}
+
 func saveVisitsInfo(ctx context.Context, r *ghttp.Request, shortUrlInfo entity.ShortUrl) {
+	curUa := r.Header.Get("User-Agent")
+	uaInfo, err := getUaInfo(ctx, curUa)
+
+	if err != nil {
+		return
+	}
+
 	clientIp := r.GetClientIp()
 
 	ipInfo, err := getIpInfo(ctx, clientIp)
@@ -73,12 +132,18 @@ func saveVisitsInfo(ctx context.Context, r *ghttp.Request, shortUrlInfo entity.S
 		UserId:          shortUrlInfo.UserId,
 		ShortUrl:        shortUrlInfo.ShortUrl,
 		RawUrl:          shortUrlInfo.RawUrl,
+		UserAgent:       curUa,
+		BrowserName:     uaInfo.Browser.Name,
+		BrowserVersion:  uaInfo.Browser.Version,
+		BrowserMajor:    uaInfo.Browser.Major,
+		CpuArchitecture: uaInfo.CPU.Architecture,
+		DeviceModel:     uaInfo.Device.Model,
+		DeviceVendor:    uaInfo.Device.Vendor,
+		EngineName:      uaInfo.Engine.Name,
+		EngineVersion:   uaInfo.Engine.Version,
+		OsName:          uaInfo.OS.Name,
+		OsVersion:       uaInfo.OS.Version,
 		Ip:              clientIp,
-		UserAgent:       r.Header.Get("User-Agent"),
-		SecChUa:         r.Header.Get("Sec-Ch-Ua"),
-		SecChUaMobile:   r.Header.Get("Sec-Ch-Ua-Mobile"),
-		SecChUaPlatform: r.Header.Get("Sec-Ch-Ua-Platform"),
-		SecFetchUser:    r.Header.Get("Sec-Fetch-User"),
 		Continent:       ipInfo.Continent,
 		ContinentCode:   ipInfo.ContinentCode,
 		Country:         ipInfo.Country,
@@ -89,6 +154,9 @@ func saveVisitsInfo(ctx context.Context, r *ghttp.Request, shortUrlInfo entity.S
 		District:        ipInfo.District,
 		Lat:             ipInfo.Lat,
 		Lon:             ipInfo.Lon,
+		CreatedAt:       nil,
+		UpdatedAt:       nil,
+		DeletedAt:       nil,
 	})
 
 	if err != nil {
@@ -99,15 +167,13 @@ func saveVisitsInfo(ctx context.Context, r *ghttp.Request, shortUrlInfo entity.S
 // 注册短链服务
 func registerShortURLService(s *ghttp.Server, ctx context.Context) {
 	s.BindHandler("/:id", func(r *ghttp.Request) {
-		url := gstr.SubStr(r.Request.RequestURI, 1, len(r.Request.RequestURI))
+		code := gstr.SubStr(r.Request.RequestURI, 1, len(r.Request.RequestURI))
 
-		if url == "favicon.ico" {
+		if code == "favicon.ico" {
 			return
 		}
 
-		req, err := service.ShortUrl().GenOne(ctx, url)
-
-		g.Log().Debug(ctx, url, err)
+		req, err := service.ShortUrl().GenOne(ctx, code)
 
 		if err != nil {
 			r.Response.Write("未获取到对应的地址，请检查链接是否正确！")
