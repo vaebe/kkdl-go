@@ -10,9 +10,9 @@ import (
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/net/ghttp"
 	"github.com/gogf/gf/v2/text/gstr"
+	"github.com/mssola/useragent"
 	"io"
 	"net/http"
-	"net/url"
 )
 
 // IPInfo 结构体用于存储IP地址的详细信息
@@ -61,64 +61,7 @@ func getIpInfo(ctx context.Context, clientIp string) (IPInfo, error) {
 	return ipInfo, nil
 }
 
-// UserAgentInfo 表示用户代理信息的结构体
-type UserAgentInfo struct {
-	UA      string `json:"ua"`
-	Browser struct {
-		Name    string `json:"name"`
-		Version string `json:"version"`
-		Major   string `json:"major"`
-	} `json:"browser"`
-	CPU struct {
-		Architecture string `json:"architecture"`
-	} `json:"cpu"`
-	Device struct {
-		Model  string `json:"model"`
-		Vendor string `json:"vendor"`
-	} `json:"device"`
-	Engine struct {
-		Name    string `json:"name"`
-		Version string `json:"version"`
-	} `json:"engine"`
-	OS struct {
-		Name    string `json:"name"`
-		Version string `json:"version"`
-	} `json:"os"`
-}
-
-func getUaInfo(ctx context.Context, curUa string) (UserAgentInfo, error) {
-	res, err := g.Client().Get(ctx, fmt.Sprintf("https://uaparser.vercel.app/?ua=%s", url.QueryEscape(curUa)))
-	if err != nil {
-		return UserAgentInfo{}, gerror.Newf("failed to make request: %s", err)
-	}
-
-	defer res.Body.Close()
-
-	if res.StatusCode != http.StatusOK {
-		return UserAgentInfo{}, gerror.Newf("unexpected status code: %d", res.StatusCode)
-	}
-
-	body, err := io.ReadAll(res.Body)
-	if err != nil {
-		return UserAgentInfo{}, gerror.Newf("failed to read response body: %s", err)
-	}
-
-	var uaInfo UserAgentInfo
-	if err := json.Unmarshal(body, &uaInfo); err != nil {
-		return UserAgentInfo{}, gerror.Newf("failed to unmarshal JSON: %s", err)
-	}
-
-	return uaInfo, nil
-}
-
 func saveVisitsInfo(ctx context.Context, r *ghttp.Request, shortUrlInfo entity.ShortUrl) {
-	curUa := r.Header.Get("User-Agent")
-	uaInfo, err := getUaInfo(ctx, curUa)
-
-	if err != nil {
-		g.Log().Error(ctx, "获取 ua 信息失败:", err)
-	}
-
 	clientIp := r.GetClientIp()
 
 	ipInfo, err := getIpInfo(ctx, clientIp)
@@ -127,36 +70,39 @@ func saveVisitsInfo(ctx context.Context, r *ghttp.Request, shortUrlInfo entity.S
 		g.Log().Error(ctx, "获取 ip 信息失败:", err)
 	}
 
+	curUa := r.Header.Get("User-Agent")
+	uaInfo := useragent.New(curUa)
+
+	browserName, browserVersion := uaInfo.Browser()
+	engineName, engineVersion := uaInfo.Engine()
+
 	err = service.ShortUrlVisits().Create(ctx, entity.ShortUrlVisits{
-		Id:              0,
-		UserId:          shortUrlInfo.UserId,
-		ShortUrl:        shortUrlInfo.ShortUrl,
-		RawUrl:          shortUrlInfo.RawUrl,
-		UserAgent:       curUa,
-		BrowserName:     uaInfo.Browser.Name,
-		BrowserVersion:  uaInfo.Browser.Version,
-		BrowserMajor:    uaInfo.Browser.Major,
-		CpuArchitecture: uaInfo.CPU.Architecture,
-		DeviceModel:     uaInfo.Device.Model,
-		DeviceVendor:    uaInfo.Device.Vendor,
-		EngineName:      uaInfo.Engine.Name,
-		EngineVersion:   uaInfo.Engine.Version,
-		OsName:          uaInfo.OS.Name,
-		OsVersion:       uaInfo.OS.Version,
-		Ip:              clientIp,
-		Continent:       ipInfo.Continent,
-		ContinentCode:   ipInfo.ContinentCode,
-		Country:         ipInfo.Country,
-		CountryCode:     ipInfo.CountryCode,
-		Region:          ipInfo.Region,
-		RegionName:      ipInfo.RegionName,
-		City:            ipInfo.City,
-		District:        ipInfo.District,
-		Lat:             ipInfo.Lat,
-		Lon:             ipInfo.Lon,
-		CreatedAt:       nil,
-		UpdatedAt:       nil,
-		DeletedAt:       nil,
+		Id:             0,
+		UserId:         shortUrlInfo.UserId,
+		ShortUrl:       shortUrlInfo.ShortUrl,
+		RawUrl:         shortUrlInfo.RawUrl,
+		UserAgent:      curUa,
+		BrowserName:    browserName,
+		BrowserVersion: browserVersion,
+		DeviceModel:    uaInfo.Platform(),
+		EngineName:     engineName,
+		EngineVersion:  engineVersion,
+		OsName:         uaInfo.OSInfo().Name,
+		OsVersion:      uaInfo.OSInfo().Version,
+		Ip:             clientIp,
+		Continent:      ipInfo.Continent,
+		ContinentCode:  ipInfo.ContinentCode,
+		Country:        ipInfo.Country,
+		CountryCode:    ipInfo.CountryCode,
+		Region:         ipInfo.Region,
+		RegionName:     ipInfo.RegionName,
+		City:           ipInfo.City,
+		District:       ipInfo.District,
+		Lat:            ipInfo.Lat,
+		Lon:            ipInfo.Lon,
+		CreatedAt:      nil,
+		UpdatedAt:      nil,
+		DeletedAt:      nil,
 	})
 
 	if err != nil {
