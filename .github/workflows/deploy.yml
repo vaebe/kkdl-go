@@ -32,7 +32,7 @@ jobs:
           wget -O gf https://github.com/gogf/gf/releases/latest/download/gf_$(go env GOOS)_$(go env GOARCH) && chmod +x gf && ./gf install -y && rm ./gf # 安装 gf 工具
 
       - name: Login to Docker Hub
-        run: echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin # 登录到 Docker Hub
+        run: docker login --username=${{ secrets.A_LI_YUN_DOCKER_USER }} --password=${{ secrets.A_LI_YUN_DOCKER_PW }} registry.cn-hangzhou.aliyuncs.com
 
       - name: Build and push Docker image
         run: |
@@ -45,19 +45,18 @@ jobs:
       - name: Deploy to server
         uses: appleboy/ssh-action@master
         env:
-          DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
           GIT_TAG: ${{ steps.get_version.outputs.VERSION }} # 使用之前步骤中获取的版本号
         with:
           host: ${{ secrets.SERVER_HOST }}
           username: ${{ secrets.SERVER_USERNAME }}
           password: ${{ secrets.SERVER_PASSWORD }}
           port: 22
-          envs: DOCKERHUB_USERNAME,GIT_TAG
+          envs: GIT_TAG
           script: |
             # 删除所有指定名称的镜像
-            docker rmi $(docker images -q $DOCKERHUB_USERNAME/kkdl)
+            docker rmi $(docker images -q registry.cn-hangzhou.aliyuncs.com/vaebe/kkdl)
             # 拉取 Docker 镜像
-            docker pull docker.io/$DOCKERHUB_USERNAME/kkdl:$GIT_TAG 
+            docker pull registry.cn-hangzhou.aliyuncs.com/vaebe/kkdl:$GIT_TAG 
             # 检查容器是否存在，停止并删除已存在的容器，然后运行新的容器
             docker container ls -a | grep -q "kkdl" && docker stop kkdl && docker rm kkdl
-            docker run -d --name kkdl -p 6001:6001 $DOCKERHUB_USERNAME/kkdl:$GIT_TAG
+            docker run -d --name kkdl -p 6001:6001 registry.cn-hangzhou.aliyuncs.com/vaebe/kkdl:$GIT_TAG

@@ -4,7 +4,7 @@ gfcli:
   docker:
     build: "-a amd64 -s linux -p temp -ew"
     tagPrefixes:
-      - vaebe
+      - registry.cn-hangzhou.aliyuncs.com/vaebe
   gen:
     dao:
       - link: "mysql:root:123456@tcp(127.0.0.1:3306)/kkdl"
