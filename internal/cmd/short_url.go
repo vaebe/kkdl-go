@@ -116,7 +116,7 @@ func saveVisitsInfo(ctx context.Context, r *ghttp.Request, shortUrlInfo entity.S
 	uaInfo, err := getUaInfo(ctx, curUa)
 
 	if err != nil {
-		return
+		g.Log().Error(ctx, "获取 ua 信息失败:", err)
 	}
 
 	clientIp := r.GetClientIp()
