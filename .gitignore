@@ -19,3 +19,4 @@ bin
 **/config/config.yaml
 **/config/config.pro.yaml
 mysql-data
+log
