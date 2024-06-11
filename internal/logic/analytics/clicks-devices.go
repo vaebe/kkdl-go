@@ -21,9 +21,9 @@ func (s *sAnalytics) GetVisitsByDevice(ctx context.Context, req v1.ClicksDevices
 	}
 
 	switch req.Type {
-	case "device":
+	case "devices":
 		err = queryAndLog("device_model AS name, COUNT(`short_url`) AS clicks", dao.ShortUrlVisits.Columns().DeviceModel)
-	case "browser":
+	case "browsers":
 		err = queryAndLog("browser_name AS name, COUNT(`short_url`) AS clicks", dao.ShortUrlVisits.Columns().BrowserName)
 	case "os":
 		err = queryAndLog("os_name AS name, COUNT(`short_url`) AS clicks", dao.ShortUrlVisits.Columns().OsName)
