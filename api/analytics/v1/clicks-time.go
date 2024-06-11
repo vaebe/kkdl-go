@@ -4,8 +4,7 @@ import (
 	"github.com/gogf/gf/v2/frame/g"
 )
 
-// 统计分析接口 按时间统计
-
+// ClicksTimeReq 统计分析接口 按时间统计
 type ClicksTimeReq struct {
 	g.Meta   `path:"/analytics/clicksTime" method:"get" summary:"根据时间统计短链访问次数" tags:"统计分析"`
 	Code     string `json:"code" dc:"短链 code"`
@@ -18,8 +17,3 @@ type ClicksTimeItem struct {
 }
 
 type ClicksTimeRes []ClicksTimeItem
-
-func (c ClicksTimeRes) Error() string {
-	//TODO implement me
-	panic("implement me")
-}

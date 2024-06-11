@@ -4,8 +4,7 @@ import (
 	"github.com/gogf/gf/v2/frame/g"
 )
 
-// 统计分析接口 按区域统计
-
+// ClicksRegionReq 统计分析接口 按区域统计
 type ClicksRegionReq struct {
 	g.Meta   `path:"/analytics/clicksRegion" method:"get" summary:"根据区域统计短链访问次数" tags:"统计分析"`
 	Code     string `json:"code"   dc:"短链 code"`

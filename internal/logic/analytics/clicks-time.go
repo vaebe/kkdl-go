@@ -2,6 +2,7 @@ package analytics
 
 import (
 	v1 "compressURL/api/analytics/v1"
+	"compressURL/internal/dao"
 	"fmt"
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/os/gtime"
@@ -9,7 +10,7 @@ import (
 )
 
 // 按小时统计
-func statisticsByHour(ctx context.Context, shortUrl string) (list v1.ClicksTimeRes, err error) {
+func statisticsByHour(ctx context.Context, shortUrl string, userId string) (list v1.ClicksTimeRes, err error) {
 	now := gtime.Now()
 	startDate := now.StartOfDay()
 	endDate := now.EndOfDay()
@@ -18,6 +19,7 @@ func statisticsByHour(ctx context.Context, shortUrl string) (list v1.ClicksTimeR
 	db := g.DB().Model("short_url_visits").
 		Fields("HOUR(created_at) AS hour, COUNT(id) AS visit_count").
 		Where("created_at BETWEEN ? AND ?", startDate, endDate).
+		Where(dao.ShortUrlVisits.Columns().UserId, userId).
 		Group("HOUR(created_at)").
 		Order("HOUR(created_at)")
 
@@ -58,7 +60,7 @@ func statisticsByHour(ctx context.Context, shortUrl string) (list v1.ClicksTimeR
 }
 
 // statisticsByDays 根据传入天数进行统计
-func statisticsByDays(ctx context.Context, shortUrl string, days int) (list v1.ClicksTimeRes, err error) {
+func statisticsByDays(ctx context.Context, shortUrl string, days int, userId string) (list v1.ClicksTimeRes, err error) {
 	startDate := gtime.Now().AddDate(0, 0, -days).StartOfDay()
 	endDate := gtime.Now().EndOfDay()
 
@@ -66,6 +68,7 @@ func statisticsByDays(ctx context.Context, shortUrl string, days int) (list v1.C
 	db := g.DB().Model("short_url_visits").
 		Fields("DATE(created_at) AS date, COUNT(id) AS visit_count").
 		Where("created_at BETWEEN ? AND ?", startDate, endDate).
+		Where(dao.ShortUrlVisits.Columns().UserId, userId).
 		Group("DATE(created_at)").
 		Order("DATE(created_at)")
 
@@ -108,17 +111,17 @@ func statisticsByDays(ctx context.Context, shortUrl string, days int) (list v1.C
 }
 
 // GetVisitsByDate 根据时间统计访问数据
-func (s *sAnalytics) GetVisitsByDate(ctx context.Context, req v1.ClicksTimeReq) (list v1.ClicksTimeRes, err error) {
+func (s *sAnalytics) GetVisitsByDate(ctx context.Context, req v1.ClicksTimeReq, userId string) (list v1.ClicksTimeRes, err error) {
 	if req.DateType == "24h" {
-		return statisticsByHour(ctx, req.Code)
+		return statisticsByHour(ctx, req.Code, userId)
 	}
 
 	if req.DateType == "7d" {
-		return statisticsByDays(ctx, req.Code, 7)
+		return statisticsByDays(ctx, req.Code, 7, userId)
 	}
 
 	if req.DateType == "30d" {
-		return statisticsByDays(ctx, req.Code, 30)
+		return statisticsByDays(ctx, req.Code, 30, userId)
 	}
 
 	return
