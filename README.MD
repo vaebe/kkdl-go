@@ -14,3 +14,7 @@
 CREATE INDEX idx_short_url_visits_on_created_at ON short_url_visits(created_at);
 CREATE INDEX idx_short_url_visits_on_short_url ON short_url_visits(short_url);
 ```
+
+# todo
+## 统计分析
+1. 根据区域、设备统计 增加 时间过滤条件
