@@ -1,26 +1,17 @@
-name: Build and Deploy Docker Image
+name: Build and Deploy
 
 on:
   push:
-    tags:
-      - 'v*' # 当有以 'v' 开头的 tag 被推送时触发
+    branches:
+      - dev
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0 # 检出完整的git历史记录
-
-      - name: Ensure directory exists
-        run: mkdir -p $GITHUB_WORKSPACE/manifest/config # 确保目录存在，用于存放配置文件
-
-      - name: Set Config File
-        run: |
-          printf '%s' ${{ secrets.CONFIG }} | python -c 'import json, sys, yaml; print(yaml.dump(json.loads(sys.stdin.read())))' > $GITHUB_WORKSPACE/manifest/config/config.yaml # 设置配置文件，将环境变量中的 JSON 字符串格式化为 YAML 格式
+      - name: Checkout
+        uses: actions/checkout@v4.1.7
 
       - name: Set up Go
         uses: actions/setup-go@v4
@@ -29,34 +20,35 @@ jobs:
 
       - name: Install gf-tool
         run: |
-          wget -O gf https://github.com/gogf/gf/releases/latest/download/gf_$(go env GOOS)_$(go env GOARCH) && chmod +x gf && ./gf install -y && rm ./gf # 安装 gf 工具
+          wget -O gf https://github.com/gogf/gf/releases/latest/download/gf_$(go env GOOS)_$(go env GOARCH)
+          chmod +x gf 
+          ./gf install -y
+          rm ./gf
 
-      - name: Login to Docker Hub
-        run: docker login --username=${{ secrets.A_LI_YUN_DOCKER_USER }} --password=${{ secrets.A_LI_YUN_DOCKER_PW }} registry.cn-hangzhou.aliyuncs.com
+      - name: Build Go application
+        run: gf build
 
-      - name: Build and push Docker image
+      - name: Archive build
         run: |
-          make image.push # 构建并推送 Docker 镜像
-
-      - name: Get version
-        id: get_version
-        run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//} # 获取版本号，去掉前缀 'refs/tags/'
+          cd temp/linux_amd64
+          tar -czf main.tar.gz main
 
       - name: Deploy to server
         uses: appleboy/ssh-action@master
-        env:
-          GIT_TAG: ${{ steps.get_version.outputs.VERSION }} # 使用之前步骤中获取的版本号
         with:
           host: ${{ secrets.SERVER_HOST }}
           username: ${{ secrets.SERVER_USERNAME }}
           password: ${{ secrets.SERVER_PASSWORD }}
           port: 22
-          envs: GIT_TAG
           script: |
-            # 删除所有指定名称的镜像
-            docker rmi $(docker images -q registry.cn-hangzhou.aliyuncs.com/vaebe/kkdl)
-            # 拉取 Docker 镜像
-            docker pull registry.cn-hangzhou.aliyuncs.com/vaebe/kkdl:$GIT_TAG 
-            # 检查容器是否存在，停止并删除已存在的容器，然后运行新的容器
-            docker container ls -a | grep -q "kkdl" && docker stop kkdl && docker rm kkdl
-            docker run -d --name kkdl -p 6001:6001 registry.cn-hangzhou.aliyuncs.com/vaebe/kkdl:$GIT_TAG
+            if [ -e /usr/local/kk/kkdl/main ]; then
+              mv /usr/local/kk/kkdl/main /usr/local/kk/kkdl/oldman
+            fi
+            tar -xzf main.tar.gz
+            sudo systemctl stop myapp
+            sudo mv main /usr/local/kk/kkdl/
+            sudo cd /usr/local/kk/kkdl/
+            sudo sh run.sh
+            if [ -e /usr/local/kk/kkdl/oldman ]; then
+              rm -rf oldman
+            fi
