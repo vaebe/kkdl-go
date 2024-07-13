@@ -23,7 +23,7 @@ change_permission() {
 
 # 启动进程
 start_process() {
-  nohup ./main &
+  nohup ./main --gf.gcfg.file=config.pro.yaml >/dev/null 2>&1 &
   echo "部署完成"
 }
 

@@ -28,10 +28,18 @@ jobs:
       - name: Build Go application
         run: gf build
 
-      - name: Archive build
+
+      - name: Setup SSH
         run: |
-          cd temp/linux_amd64
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+
+      - name: Archive build - upload
+        run: |
+          cd ./linux_amd64
           tar -czf main.tar.gz main
+          scp -o StrictHostKeyChecking=no -P 22 main.tar.gz ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_HOST }}:/usr/local/kk/kkdl/main.tar.gz
 
       - name: Deploy to server
         uses: appleboy/ssh-action@master
@@ -44,11 +52,9 @@ jobs:
             if [ -e /usr/local/kk/kkdl/main ]; then
               mv /usr/local/kk/kkdl/main /usr/local/kk/kkdl/oldman
             fi
+            cd /usr/local/kk/kkdl/
             tar -xzf main.tar.gz
-            sudo systemctl stop myapp
-            sudo mv main /usr/local/kk/kkdl/
-            sudo cd /usr/local/kk/kkdl/
-            sudo sh run.sh
+            sh run.sh
             if [ -e /usr/local/kk/kkdl/oldman ]; then
-              rm -rf oldman
+              rm -rf oldman main.tar.gz
             fi
