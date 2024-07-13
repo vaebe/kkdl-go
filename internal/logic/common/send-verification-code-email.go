@@ -61,7 +61,7 @@ func (s *sCommon) SendVerificationCodeEmail(ctx context.Context, VerificationCod
 		<div class="container">
 			<h1>验证码</h1>
 			<p>您好，</p>
-			<p>您的验证码为：<strong>%s</strong></p>
+			<p>您的验证码为：<strong>%d</strong></p>
 			<p>请在10分钟内使用此验证码。</p>
 			<p>谢谢！</p>
 			<div class="footer">
