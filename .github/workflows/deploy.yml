@@ -28,14 +28,13 @@ jobs:
       - name: Build Go application
         run: gf build
 
-
       - name: Setup SSH
         run: |
           mkdir -p ~/.ssh
           echo "${{ secrets.SSH_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
 
-      - name: Archive build - upload
+      - name: build upload
         run: |
           cd ./linux_amd64
           tar -czf main.tar.gz main
