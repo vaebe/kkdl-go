@@ -27,17 +27,24 @@ func (c *ControllerV1) GetCaptcha(ctx context.Context, req *v1.GetCaptchaReq) (r
 	rdsKey := fmt.Sprintf("verificationCode-%s", req.Email)
 	ttl, err := g.Redis().TTL(ctx, rdsKey)
 	if err != nil {
+
 		return nil, err
 	}
 
-	// ttl -1 没有设置过期时间,-2 键已经过期或不存在
-	if ttl != -1 && ttl != -2 {
-		return nil, gerror.Newf("请勿重复请求,有效期还剩余 %d 秒!", ttl)
+	// 一分钟内只能请求一次
+	countdown := ttl - 540
+
+	/**
+	ttl -1 没有设置过期时间,-2 键已经过期或不存在
+	且剩余时间大于 1
+	*/
+	if ttl != -1 && ttl != -2 && countdown > 1 {
+		return nil, gerror.Newf("请勿重复请求,请等待 %d 秒后在进行操作!", countdown)
 	}
 
 	// 发送验证码
-	code := grand.S(6)
-	err = g.Redis().SetEX(ctx, rdsKey, code, 60*2)
+	code := grand.N(100000, 999999)
+	err = g.Redis().SetEX(ctx, rdsKey, code, 60*10)
 	if err != nil {
 		return nil, gerror.New("redis 缓存邮箱验证码失败!")
 	}
