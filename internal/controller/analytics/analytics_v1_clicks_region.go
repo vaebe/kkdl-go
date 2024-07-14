@@ -10,9 +10,9 @@ import (
 func (c *ControllerV1) ClicksRegion(ctx context.Context, req *v1.ClicksRegionReq) (res *v1.ClicksRegionRes, err error) {
 	loginUserInfo, err := service.Auth().GetLoginUserInfo(ctx)
 
-	// 获取到用户id 就赋值,没有就默认查询全部数据
 	userId := ""
-	if loginUserInfo.Id != "" {
+	// 普通用户只能查询自己的数据, 未登录和管理员查询全部数据
+	if loginUserInfo.Id != "" && loginUserInfo.Role != "00" {
 		userId = loginUserInfo.Id
 	}
 
