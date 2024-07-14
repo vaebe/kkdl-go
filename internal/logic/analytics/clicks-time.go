@@ -16,7 +16,7 @@ func statisticsByHour(ctx context.Context, shortUrl string, userId string) (list
 	endDate := now.EndOfDay()
 
 	// 创建查询对象
-	db := g.DB().Model("short_url_visits").
+	db := g.DB().Model("short_url_visits").OmitEmptyWhere().
 		Fields("HOUR(created_at) AS hour, COUNT(id) AS visit_count").
 		Where("created_at BETWEEN ? AND ?", startDate, endDate).
 		Where(dao.ShortUrlVisits.Columns().UserId, userId).
@@ -65,7 +65,7 @@ func statisticsByDays(ctx context.Context, shortUrl string, days int, userId str
 	endDate := gtime.Now().EndOfDay()
 
 	// 创建查询对象
-	db := g.DB().Model("short_url_visits").
+	db := g.DB().Model("short_url_visits").OmitEmptyWhere().
 		Fields("DATE(created_at) AS date, COUNT(id) AS visit_count").
 		Where("created_at BETWEEN ? AND ?", startDate, endDate).
 		Where(dao.ShortUrlVisits.Columns().UserId, userId).
