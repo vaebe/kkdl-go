@@ -46,6 +46,11 @@ emailConfig:
   key: 'xxxxx'
   email: 'xxxxxx'
 
+# github
+githubConfig:
+  client_id: 'xxxxx'
+  client_secret: 'xxxxx'
+
 
 
 
