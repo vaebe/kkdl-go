@@ -37,41 +37,33 @@ func (s *sUser) Create(ctx context.Context, in entity.User) (string, error) {
 		in.Avatar = fmt.Sprintf("https://api.dicebear.com/7.x/bottts-neutral/svg?seed=%s&size=64", in.NickName)
 	}
 
-	// 生成随机盐值
-	in.Salt = grand.S(10)
-
-	userId := guid.S()
-
-	// Email、WxId 只会存在一个且不可为空
 	data := g.Map{
-		"Id":          userId,
+		"Id":          in.Id,
 		"Email":       nil,
-		"WxId":        nil,
-		"Password":    utility.EncryptPassword(in.Password, in.Salt),
+		"Password":    nil,
 		"NickName":    in.NickName,
-		"AccountType": nil,
+		"AccountType": in.AccountType,
 		"Role":        in.Role,
-		"Salt":        in.Salt,
+		"Salt":        nil,
 		"Avatar":      in.Avatar,
 	}
 
-	if in.WxId != "" {
-		data["WxId"] = in.WxId
-		data["AccountType"] = "02"
-		data["Password"] = ""
-		data["Salt"] = ""
-	}
+	if data["AccountType"] == "01" {
+		// 生成随机盐值
+		salt := grand.S(10)
 
-	if in.Email != "" {
 		data["Email"] = in.Email
-		data["AccountType"] = "01"
+		data["Id"] = guid.S()
+		data["Salt"] = salt
+		data["Password"] = utility.EncryptPassword(in.Password, salt)
 	}
 
 	_, err := dao.User.Ctx(ctx).Data(data).InsertAndGetId()
 	if err != nil {
 		return "", err
 	}
-	return userId, nil
+
+	return data["Id"].(string), nil
 }
 
 // Detail 获取用户详情
