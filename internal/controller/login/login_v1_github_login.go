@@ -1,12 +1,16 @@
 package login
 
 import (
+	"compressURL/internal/model/entity"
+	"compressURL/internal/service"
 	"context"
 	"encoding/json"
 	"github.com/gogf/gf/v2/frame/g"
+	"github.com/gogf/gf/v2/os/gtime"
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/github"
 	"io"
+	"strconv"
 	"time"
 
 	"compressURL/api/login/v1"
@@ -46,15 +50,16 @@ type GithubUserInfo struct {
 	URL               string    `json:"url"`
 }
 
-func (c *ControllerV1) GithubLogin(ctx context.Context, req *v1.GithubLoginReq) (res *v1.GithubLoginRes, err error) {
+func getGithubUserInfo(ctx context.Context, req *v1.GithubLoginReq) (res *GithubUserInfo, err error) {
 	githubClientID, _ := g.Cfg().Get(ctx, "githubConfig.client_id")
 	githubClientSecret, _ := g.Cfg().Get(ctx, "githubConfig.client_secret")
+	githubRedirectURL, _ := g.Cfg().Get(ctx, "githubConfig.redirect_uri")
 
 	githubOAuthConfig := &oauth2.Config{
 		ClientID:     githubClientID.String(),     // 从 GitHub 获取
 		ClientSecret: githubClientSecret.String(), // 从 GitHub 获取
-		RedirectURL:  "http://localhost:5173/login",
-		Scopes:       []string{"user:email"},
+		RedirectURL:  githubRedirectURL.String(),
+		Scopes:       []string{"user"}, // 客户端 https://github.com/login/oauth/authorize 不设置 scope 参数这里配置无效
 		Endpoint:     github.Endpoint,
 	}
 
@@ -78,14 +83,58 @@ func (c *ControllerV1) GithubLogin(ctx context.Context, req *v1.GithubLoginReq) 
 		}
 	}(resp.Body)
 
-	var user map[string]GithubUserInfo
-
-	if err := json.NewDecoder(resp.Body).Decode(&user); err != nil {
+	if err := json.NewDecoder(resp.Body).Decode(&res); err != nil {
 		g.Log().Error(ctx, "Failed to parse user info:", err)
 		return nil, err
 	}
 
-	g.Log().Debug(ctx, "User info:", user)
+	return res, nil
+}
 
-	return nil, nil
+// GithubLogin github登录
+func (c *ControllerV1) GithubLogin(ctx context.Context, req *v1.GithubLoginReq) (res *v1.GithubLoginRes, err error) {
+	githubUserInfo, err := getGithubUserInfo(ctx, req)
+	g.Log().Debug(ctx, githubUserInfo)
+
+	if err != nil {
+		return nil, err
+	}
+
+	// 获取用户信息
+	userInfo, err := service.User().Detail(ctx, strconv.Itoa(githubUserInfo.ID))
+
+	// 用户不存在则创建用户
+	if err != nil {
+		userInfo = entity.User{
+			Id:          strconv.Itoa(githubUserInfo.ID),
+			NickName:    githubUserInfo.Login,
+			Role:        "01",
+			Avatar:      githubUserInfo.AvatarURL,
+			AccountType: "03",
+		}
+
+		_, err = service.User().Create(ctx, userInfo)
+
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	// 设置登录用户信息
+	g.RequestFromCtx(ctx).SetCtxVar("loginInfo", userInfo)
+	token, expire := service.Auth().AuthInstance().LoginHandler(ctx)
+	tokenExpire := gtime.NewFromTime(expire).Format("Y-m-d H:i:s")
+
+	return &v1.GithubLoginRes{
+		Token:       token,
+		TokenExpire: tokenExpire,
+		UserInfo: entity.User{
+			Id:          userInfo.Id,
+			Email:       userInfo.Email,
+			NickName:    userInfo.NickName,
+			AccountType: userInfo.AccountType,
+			Role:        userInfo.Role,
+			Avatar:      userInfo.Avatar,
+		},
+	}, nil
 }
