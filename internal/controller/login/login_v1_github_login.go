@@ -1,19 +1,19 @@
 package login
 
 import (
+	"compressURL/api/login/v1"
 	"compressURL/internal/model/entity"
 	"compressURL/internal/service"
 	"context"
 	"encoding/json"
+	"github.com/gogf/gf/v2/errors/gerror"
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/os/gtime"
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/github"
-	"io"
+	"net/http"
 	"strconv"
 	"time"
-
-	"compressURL/api/login/v1"
 )
 
 type GithubUserInfo struct {
@@ -50,52 +50,44 @@ type GithubUserInfo struct {
 	URL               string    `json:"url"`
 }
 
-func getGithubUserInfo(ctx context.Context, req *v1.GithubLoginReq) (res *GithubUserInfo, err error) {
-	githubClientID, _ := g.Cfg().Get(ctx, "githubConfig.client_id")
-	githubClientSecret, _ := g.Cfg().Get(ctx, "githubConfig.client_secret")
-	githubRedirectURL, _ := g.Cfg().Get(ctx, "githubConfig.redirect_uri")
-
+func getGithubUserInfo(ctx context.Context, code string) (*GithubUserInfo, error) {
+	cfg := g.Cfg()
 	githubOAuthConfig := &oauth2.Config{
-		ClientID:     githubClientID.String(),     // 从 GitHub 获取
-		ClientSecret: githubClientSecret.String(), // 从 GitHub 获取
-		RedirectURL:  githubRedirectURL.String(),
-		Scopes:       []string{"user"}, // 客户端 https://github.com/login/oauth/authorize 不设置 scope 参数这里配置无效
+		ClientID:     cfg.MustGet(ctx, "githubConfig.client_id").String(),
+		ClientSecret: cfg.MustGet(ctx, "githubConfig.client_secret").String(),
+		RedirectURL:  cfg.MustGet(ctx, "githubConfig.redirect_uri").String(),
+		Scopes:       []string{"user"},
 		Endpoint:     github.Endpoint,
 	}
 
-	token, err := githubOAuthConfig.Exchange(context.Background(), req.Code)
+	token, err := githubOAuthConfig.Exchange(ctx, code)
 	if err != nil {
-		g.Log().Error(ctx, "Failed to get token:", err)
-		return nil, err
+		return nil, gerror.New("获取 github token失败！")
 	}
 
-	client := githubOAuthConfig.Client(context.Background(), token)
+	client := githubOAuthConfig.Client(ctx, token)
 	resp, err := client.Get("https://api.github.com/user")
 	if err != nil {
-		g.Log().Error(ctx, "Failed to get user:", err)
-		return nil, err
+		return nil, gerror.New("获取 github 用户信息失败！")
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, gerror.New("无法获取 github 用户信息！")
 	}
 
-	defer func(Body io.ReadCloser) {
-		err := Body.Close()
-		if err != nil {
-
-		}
-	}(resp.Body)
-
-	if err := json.NewDecoder(resp.Body).Decode(&res); err != nil {
+	var userInfo GithubUserInfo
+	if err := json.NewDecoder(resp.Body).Decode(&userInfo); err != nil {
 		g.Log().Error(ctx, "Failed to parse user info:", err)
-		return nil, err
+		return nil, gerror.New("格式化 github 用户信息失败！")
 	}
 
-	return res, nil
+	return &userInfo, nil
 }
 
 // GithubLogin github登录
-func (c *ControllerV1) GithubLogin(ctx context.Context, req *v1.GithubLoginReq) (res *v1.GithubLoginRes, err error) {
-	githubUserInfo, err := getGithubUserInfo(ctx, req)
-	g.Log().Debug(ctx, githubUserInfo)
-
+func (c *ControllerV1) GithubLogin(ctx context.Context, req *v1.GithubLoginReq) (*v1.GithubLoginRes, error) {
+	githubUserInfo, err := getGithubUserInfo(ctx, req.Code)
 	if err != nil {
 		return nil, err
 	}
@@ -113,9 +105,7 @@ func (c *ControllerV1) GithubLogin(ctx context.Context, req *v1.GithubLoginReq) 
 			AccountType: "03",
 		}
 
-		_, err = service.User().Create(ctx, userInfo)
-
-		if err != nil {
+		if _, err = service.User().Create(ctx, userInfo); err != nil {
 			return nil, err
 		}
 	}
