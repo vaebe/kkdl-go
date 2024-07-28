@@ -2,7 +2,6 @@ package common
 
 import (
 	"compressURL/api/common/v1"
-	userV1 "compressURL/api/user/v1"
 	"compressURL/internal/service"
 	"context"
 	"fmt"
@@ -12,17 +11,6 @@ import (
 )
 
 func (c *ControllerV1) GetCaptcha(ctx context.Context, req *v1.GetCaptchaReq) (res *v1.GetCaptchaRes, err error) {
-
-	// 检查用户是否已经注册
-	_, total, err := service.User().GetUserList(ctx, userV1.GetListReq{Email: req.Email})
-	if err != nil {
-		return nil, err
-	}
-
-	if total != 0 {
-		return nil, gerror.New("用户已注册请直接登录!")
-	}
-
 	// 检查验证码是否过期
 	rdsKey := fmt.Sprintf("verificationCode-%s", req.Email)
 	ttl, err := g.Redis().TTL(ctx, rdsKey)
