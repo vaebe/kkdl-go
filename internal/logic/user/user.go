@@ -66,18 +66,6 @@ func (s *sUser) Create(ctx context.Context, in entity.User) (string, error) {
 	return data["Id"].(string), nil
 }
 
-// Detail 获取用户详情
-func (s *sUser) Detail(ctx context.Context, id string) (entity.User, error) {
-	userInfo := entity.User{}
-
-	err := dao.User.Ctx(ctx).Where(dao.User.Columns().Id, id).Scan(&userInfo)
-
-	if err != nil {
-		return userInfo, errors.New("未查询到用户数据！")
-	}
-	return userInfo, nil
-}
-
 // Update 更新用户信息
 func (s *sUser) Update(ctx context.Context, in entity.User) error {
 	// 获取用户信息
@@ -127,11 +115,27 @@ func (s *sUser) Delete(ctx context.Context, id string) error {
 	return err
 }
 
-// GetOne 根据 id 获取用户信息,隐藏关键信息
-func (s *sUser) GetOne(ctx context.Context, id string) (*v1.GetOneRes, error) {
-	userInfo := v1.GetOneRes{}
+// Detail 获取用户详情
+func (s *sUser) Detail(ctx context.Context, id string) (entity.User, error) {
+	userInfo := entity.User{}
 
 	err := dao.User.Ctx(ctx).Where(dao.User.Columns().Id, id).Scan(&userInfo)
+
+	if err != nil {
+		return userInfo, errors.New("未查询到用户数据！")
+	}
+	return userInfo, nil
+}
+
+// GetOne 根据 id 获取用户信息,隐藏关键信息
+func (s *sUser) GetOne(ctx context.Context, id string, email string) (*v1.GetOneRes, error) {
+	userInfo := v1.GetOneRes{}
+
+	err := dao.User.Ctx(ctx).
+		OmitEmptyWhere().
+		Where(dao.User.Columns().Id, id).
+		Where(dao.User.Columns().Email, email).
+		Scan(&userInfo)
 
 	if err != nil {
 		return nil, errors.New("未查询到用户数据！")
@@ -139,7 +143,7 @@ func (s *sUser) GetOne(ctx context.Context, id string) (*v1.GetOneRes, error) {
 	return &userInfo, nil
 }
 
-// GetUserInfoByWxId 根据 wxIdOpenId 获取用户信息
+// GetUserInfoByWxId 根据 wxIdOpenId 获取用户信息 todo WxId 后期会合并到 id 中到时删除
 func (s *sUser) GetUserInfoByWxId(ctx context.Context, wxId string) (*v1.GetOneRes, error) {
 	userInfo := v1.GetOneRes{}
 

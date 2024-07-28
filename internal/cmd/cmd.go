@@ -39,6 +39,7 @@ func mainFunc(ctx context.Context, parser *gcmd.Parser) (err error) {
 				login.NewV1().Registration,
 				login.NewV1().Ws,
 				login.NewV1().GithubLogin,
+				login.NewV1().UserRegCheck,
 				common.NewV1().GetCaptcha,
 				weChatMiniProgram.NewV1(),
 				analytics.NewV1(),

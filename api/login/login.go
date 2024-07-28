@@ -16,6 +16,8 @@ type ILoginV1 interface {
 	RefreshToken(ctx context.Context, req *v1.RefreshTokenReq) (res *v1.RefreshTokenRes, err error)
 	Registration(ctx context.Context, req *v1.RegistrationReq) (res *v1.RegistrationRes, err error)
 	SignOut(ctx context.Context, req *v1.SignOutReq) (res *v1.SignOutRes, err error)
+	UserRegCheck(ctx context.Context, req *v1.UserRegCheckReq) (res *v1.UserRegCheckRes, err error)
+	VerificationCode(ctx context.Context, req *v1.VerificationCodeReq) (res *v1.VerificationCodeRes, err error)
 	WxMiniProgramLogin(ctx context.Context, req *v1.WxMiniProgramLoginReq) (res *v1.WxMiniProgramLoginRes, err error)
 	Ws(ctx context.Context, req *v1.WsReq) (res *v1.WsRes, err error)
 }
