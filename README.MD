@@ -20,5 +20,9 @@ CREATE INDEX idx_short_url_visits_on_short_url ON short_url_visits(short_url);
 ```
 
 # todo
+
 ## 统计分析
 1. 根据区域、设备统计 增加 时间过滤条件
+
+## login
+梳理所有登录相关的逻辑,目前写的不太严谨
