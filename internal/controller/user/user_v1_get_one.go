@@ -1,6 +1,7 @@
 package user
 
 import (
+	"compressURL/internal/model"
 	"compressURL/internal/service"
 	"context"
 
@@ -8,7 +9,7 @@ import (
 )
 
 func (c *ControllerV1) GetOne(ctx context.Context, req *v1.GetOneReq) (res *v1.GetOneRes, err error) {
-	info, err := service.User().GetOne(ctx, req.UserId, "")
+	info, err := service.User().GetOne(ctx, model.UserQueryInput{Id: req.UserId})
 	if err != nil {
 		return nil, err
 	}

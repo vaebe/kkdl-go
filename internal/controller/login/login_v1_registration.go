@@ -11,7 +11,6 @@ import (
 )
 
 func (c *ControllerV1) Registration(ctx context.Context, req *v1.RegistrationReq) (res *v1.RegistrationRes, err error) {
-
 	// 获取缓存的验证码
 	rdsKey := fmt.Sprintf("verificationCode-%s", req.Email)
 	cacheVerificationCode, err := g.Redis().Get(ctx, rdsKey)

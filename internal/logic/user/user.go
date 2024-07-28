@@ -3,6 +3,7 @@ package user
 import (
 	v1 "compressURL/api/user/v1"
 	"compressURL/internal/dao"
+	"compressURL/internal/model"
 	"compressURL/internal/model/entity"
 	"compressURL/internal/service"
 	"compressURL/utility"
@@ -26,6 +27,7 @@ func New() *sUser {
 	return &sUser{}
 }
 
+// Create todo 创建完用户后应该返回用户信息
 func (s *sUser) Create(ctx context.Context, in entity.User) (string, error) {
 	// 昵称不存在生成默认昵称
 	if in.NickName == "" {
@@ -69,7 +71,7 @@ func (s *sUser) Create(ctx context.Context, in entity.User) (string, error) {
 // Update 更新用户信息
 func (s *sUser) Update(ctx context.Context, in entity.User) error {
 	// 获取用户信息
-	userInfo, err := service.User().Detail(ctx, in.Id)
+	userInfo, err := service.User().Detail(ctx, model.UserQueryInput{Id: in.Id})
 
 	if err != nil {
 		return err
@@ -116,10 +118,14 @@ func (s *sUser) Delete(ctx context.Context, id string) error {
 }
 
 // Detail 获取用户详情
-func (s *sUser) Detail(ctx context.Context, id string) (entity.User, error) {
+func (s *sUser) Detail(ctx context.Context, in model.UserQueryInput) (entity.User, error) {
 	userInfo := entity.User{}
 
-	err := dao.User.Ctx(ctx).Where(dao.User.Columns().Id, id).Scan(&userInfo)
+	err := dao.User.Ctx(ctx).
+		OmitEmptyWhere().
+		Where(dao.User.Columns().Id, in.Id).
+		Where(dao.User.Columns().Email, in.Email).
+		Scan(&userInfo)
 
 	if err != nil {
 		return userInfo, errors.New("未查询到用户数据！")
@@ -128,13 +134,13 @@ func (s *sUser) Detail(ctx context.Context, id string) (entity.User, error) {
 }
 
 // GetOne 根据 id 获取用户信息,隐藏关键信息
-func (s *sUser) GetOne(ctx context.Context, id string, email string) (*v1.GetOneRes, error) {
+func (s *sUser) GetOne(ctx context.Context, in model.UserQueryInput) (*v1.GetOneRes, error) {
 	userInfo := v1.GetOneRes{}
 
 	err := dao.User.Ctx(ctx).
 		OmitEmptyWhere().
-		Where(dao.User.Columns().Id, id).
-		Where(dao.User.Columns().Email, email).
+		Where(dao.User.Columns().Id, in.Id).
+		Where(dao.User.Columns().Email, in.Email).
 		Scan(&userInfo)
 
 	if err != nil {

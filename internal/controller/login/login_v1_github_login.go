@@ -2,6 +2,7 @@ package login
 
 import (
 	"compressURL/api/login/v1"
+	"compressURL/internal/model"
 	"compressURL/internal/model/entity"
 	"compressURL/internal/service"
 	"context"
@@ -93,7 +94,7 @@ func (c *ControllerV1) GithubLogin(ctx context.Context, req *v1.GithubLoginReq) 
 	}
 
 	// 获取用户信息
-	userInfo, err := service.User().Detail(ctx, strconv.Itoa(githubUserInfo.ID))
+	userInfo, err := service.User().Detail(ctx, model.UserQueryInput{Id: strconv.Itoa(githubUserInfo.ID)})
 
 	// 用户不存在则创建用户
 	if err != nil {

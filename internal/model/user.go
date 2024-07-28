@@ -15,3 +15,8 @@ type UserUpdateInput struct {
 	Id string // 唯一标识，自增长整数
 	UserCreateInput
 }
+
+type UserQueryInput struct {
+	Email string // 邮箱,唯一
+	Id    string // id 唯一
+}
