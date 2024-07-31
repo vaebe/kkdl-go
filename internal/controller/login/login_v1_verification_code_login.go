@@ -1,18 +1,20 @@
 package login
 
 import (
-	"compressURL/api/login/v1"
 	"compressURL/internal/model"
 	"compressURL/internal/model/entity"
 	"compressURL/internal/service"
 	"context"
 	"fmt"
-	"github.com/gogf/gf/v2/errors/gerror"
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/os/gtime"
+
+	"github.com/gogf/gf/v2/errors/gerror"
+
+	"compressURL/api/login/v1"
 )
 
-func (c *ControllerV1) VerificationCode(ctx context.Context, req *v1.VerificationCodeReq) (res *v1.VerificationCodeRes, err error) {
+func (c *ControllerV1) VerificationCodeLogin(ctx context.Context, req *v1.VerificationCodeLoginReq) (res *v1.VerificationCodeLoginRes, err error) {
 	// 获取缓存的验证码
 	rdsKey := fmt.Sprintf("verificationCode-%s", req.Email)
 	cacheVerificationCode, err := g.Redis().Get(ctx, rdsKey)
@@ -46,7 +48,7 @@ func (c *ControllerV1) VerificationCode(ctx context.Context, req *v1.Verificatio
 	token, expire := service.Auth().AuthInstance().LoginHandler(ctx)
 	tokenExpire := gtime.NewFromTime(expire).Format("Y-m-d H:i:s")
 
-	return &v1.VerificationCodeRes{
+	return &v1.VerificationCodeLoginRes{
 		Token:       token,
 		TokenExpire: tokenExpire,
 		UserInfo: entity.User{
