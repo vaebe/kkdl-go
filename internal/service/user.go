@@ -15,13 +15,14 @@ import (
 
 type (
 	IUser interface {
+		// Create todo 创建完用户后应该返回用户信息
 		Create(ctx context.Context, in entity.User) (string, error)
 		// Update 更新用户信息
 		Update(ctx context.Context, in entity.User) error
 		// Delete 删除用户
 		Delete(ctx context.Context, id string) error
 		// Detail 获取用户详情
-		Detail(ctx context.Context, in model.UserQueryInput) (entity.User, error)
+		Detail(ctx context.Context, in model.UserQueryInput) (*entity.User, error)
 		// GetOne 根据 id 获取用户信息,隐藏关键信息
 		GetOne(ctx context.Context, in model.UserQueryInput) (*v1.GetOneRes, error)
 		// GetUserInfoByWxId 根据 wxIdOpenId 获取用户信息 todo WxId 后期会合并到 id 中到时删除
