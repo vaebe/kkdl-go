@@ -28,8 +28,12 @@ func (c *ControllerV1) VerificationCodeLogin(ctx context.Context, req *v1.Verifi
 
 	userInfo, err := service.User().Detail(ctx, model.UserQueryInput{Email: req.Email})
 
+	if err != nil {
+		return nil, err
+	}
+
 	// 用户不存在则创建
-	if userInfo == nil && err == nil {
+	if userInfo == nil {
 		userInfo = &entity.User{
 			Email:       req.Email,
 			Role:        "01",
@@ -39,10 +43,10 @@ func (c *ControllerV1) VerificationCodeLogin(ctx context.Context, req *v1.Verifi
 		if _, err = service.User().Create(ctx, *userInfo); err != nil {
 			return nil, err
 		}
-	}
 
-	if err != nil {
-		return nil, err
+		if userInfo, err = service.User().Detail(ctx, model.UserQueryInput{Email: userInfo.Email}); err != nil {
+			return nil, err
+		}
 	}
 
 	info := getLoginRes(ctx, *userInfo)

@@ -13,13 +13,13 @@ func (c *ControllerV1) EmailLogin(ctx context.Context, req *v1.EmailLoginReq) (r
 	// 获取用户信息
 	userInfo, err := service.User().Detail(ctx, model.UserQueryInput{Email: req.Email})
 
-	// 用户不存在则创建用户
-	if userInfo == nil && err == nil {
-		return nil, gerror.New("用户未注册!")
-	}
-
 	if err != nil {
 		return nil, err
+	}
+
+	// 用户不存在则创建用户
+	if userInfo == nil {
+		return nil, gerror.New("您还没有注册!")
 	}
 
 	if utility.EncryptPassword(req.Password, userInfo.Salt) != userInfo.Password {

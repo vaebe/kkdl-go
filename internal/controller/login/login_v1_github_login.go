@@ -95,8 +95,12 @@ func (c *ControllerV1) GithubLogin(ctx context.Context, req *v1.GithubLoginReq) 
 	// 获取用户信息
 	userInfo, err := service.User().Detail(ctx, model.UserQueryInput{Id: strconv.Itoa(githubUserInfo.ID)})
 
+	if err != nil {
+		return nil, err
+	}
+
 	// 用户不存在则创建用户
-	if userInfo == nil && err == nil {
+	if userInfo == nil {
 		userInfo = &entity.User{
 			Id:          strconv.Itoa(githubUserInfo.ID),
 			NickName:    githubUserInfo.Login,
@@ -108,10 +112,10 @@ func (c *ControllerV1) GithubLogin(ctx context.Context, req *v1.GithubLoginReq) 
 		if _, err = service.User().Create(ctx, *userInfo); err != nil {
 			return nil, err
 		}
-	}
 
-	if err != nil {
-		return nil, err
+		if userInfo, err = service.User().Detail(ctx, model.UserQueryInput{Id: userInfo.Id}); err != nil {
+			return nil, err
+		}
 	}
 
 	info := getLoginRes(ctx, *userInfo)
