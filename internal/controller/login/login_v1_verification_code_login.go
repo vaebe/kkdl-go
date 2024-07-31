@@ -6,10 +6,8 @@ import (
 	"compressURL/internal/service"
 	"context"
 	"fmt"
-	"github.com/gogf/gf/v2/frame/g"
-	"github.com/gogf/gf/v2/os/gtime"
-
 	"github.com/gogf/gf/v2/errors/gerror"
+	"github.com/gogf/gf/v2/frame/g"
 
 	"compressURL/api/login/v1"
 )
@@ -30,34 +28,23 @@ func (c *ControllerV1) VerificationCodeLogin(ctx context.Context, req *v1.Verifi
 
 	userInfo, err := service.User().Detail(ctx, model.UserQueryInput{Email: req.Email})
 
-	// todo 判断是否是数据库的错误 在抛出去
-	if err != nil {
-		userInfo = entity.User{
+	// 用户不存在则创建
+	if userInfo == nil && err == nil {
+		userInfo = &entity.User{
 			Email:       req.Email,
 			Role:        "01",
 			AccountType: "01",
 		}
 
-		if _, err = service.User().Create(ctx, userInfo); err != nil {
+		if _, err = service.User().Create(ctx, *userInfo); err != nil {
 			return nil, err
 		}
 	}
 
-	// 设置登录用户信息
-	g.RequestFromCtx(ctx).SetCtxVar("loginInfo", userInfo)
-	token, expire := service.Auth().AuthInstance().LoginHandler(ctx)
-	tokenExpire := gtime.NewFromTime(expire).Format("Y-m-d H:i:s")
+	if err != nil {
+		return nil, err
+	}
 
-	return &v1.VerificationCodeLoginRes{
-		Token:       token,
-		TokenExpire: tokenExpire,
-		UserInfo: entity.User{
-			Id:          userInfo.Id,
-			Email:       userInfo.Email,
-			NickName:    userInfo.NickName,
-			AccountType: userInfo.AccountType,
-			Role:        userInfo.Role,
-			Avatar:      userInfo.Avatar,
-		},
-	}, nil
+	info := getLoginRes(ctx, *userInfo)
+	return (*v1.VerificationCodeLoginRes)(info), nil
 }

@@ -1,6 +1,7 @@
 package v1
 
 import (
+	"compressURL/internal/model"
 	"github.com/gogf/gf/v2/frame/g"
 )
 
@@ -11,4 +12,4 @@ type VerificationCodeLoginReq struct {
 	Code   string `json:"code" v:"required#请输入验证码"   dc:"验证码"`
 }
 
-type VerificationCodeLoginRes EmailLoginRes
+type VerificationCodeLoginRes model.LoginRes

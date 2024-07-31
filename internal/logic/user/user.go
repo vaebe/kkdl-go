@@ -87,6 +87,7 @@ func (s *sUser) Update(ctx context.Context, in entity.User) error {
 		in.Email = ""
 	}
 
+	// 查询该邮箱是否已经被绑定
 	count, err := dao.User.Ctx(ctx).Where(dao.User.Columns().Email, in.Email).Count()
 	if err != nil {
 		return err
@@ -118,34 +119,54 @@ func (s *sUser) Delete(ctx context.Context, id string) error {
 }
 
 // Detail 获取用户详情
-func (s *sUser) Detail(ctx context.Context, in model.UserQueryInput) (entity.User, error) {
+func (s *sUser) Detail(ctx context.Context, in model.UserQueryInput) (*entity.User, error) {
 	userInfo := entity.User{}
 
-	err := dao.User.Ctx(ctx).
+	db := dao.User.Ctx(ctx).
 		OmitEmptyWhere().
 		Where(dao.User.Columns().Id, in.Id).
-		Where(dao.User.Columns().Email, in.Email).
-		Scan(&userInfo)
+		Where(dao.User.Columns().Email, in.Email)
+
+	total, err := db.Where(db).Count()
+
+	if total == 0 {
+		g.Log().Debug(ctx, "user GetOne 未查询到用户,邮箱:", in.Email, "id:", in.Id)
+		return nil, nil
+	}
+
+	err = db.Scan(&userInfo)
 
 	if err != nil {
-		return userInfo, errors.New("未查询到用户数据！")
+		g.Log().Error(ctx, "User Detail error:", err)
+		return nil, err
 	}
-	return userInfo, nil
+
+	return &userInfo, nil
 }
 
 // GetOne 根据 id 获取用户信息,隐藏关键信息
 func (s *sUser) GetOne(ctx context.Context, in model.UserQueryInput) (*v1.GetOneRes, error) {
 	userInfo := v1.GetOneRes{}
 
-	err := dao.User.Ctx(ctx).
+	db := dao.User.Ctx(ctx).
 		OmitEmptyWhere().
 		Where(dao.User.Columns().Id, in.Id).
-		Where(dao.User.Columns().Email, in.Email).
-		Scan(&userInfo)
+		Where(dao.User.Columns().Email, in.Email)
+
+	total, err := db.Where(db).Count()
+
+	if total == 0 {
+		g.Log().Debug(ctx, "user GetOne 未查询到用户,邮箱:", in.Email, "id:", in.Id)
+		return nil, nil
+	}
+
+	err = db.Scan(&userInfo)
 
 	if err != nil {
-		return nil, errors.New("未查询到用户数据！")
+		g.Log().Error(ctx, "User GetOne error:", err)
+		return nil, err
 	}
+
 	return &userInfo, nil
 }
 

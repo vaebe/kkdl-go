@@ -1,10 +1,18 @@
 package model
 
+import "compressURL/internal/model/entity"
+
 type LoginInput struct {
 	Email       string // 邮箱,唯一
 	WxId        string // 小程序id,唯一
 	Password    string // 密码, 小程序登录无密码
 	AccountType string // 账号类型: 01 邮箱 02 小程序
+}
+
+type LoginRes struct {
+	Token       string      `json:"token" dc:"jwt token"`
+	TokenExpire string      `json:"tokenExpire" dc:"token 过期时间"`
+	UserInfo    entity.User `json:"userInfo"   dc:"用户信息"`
 }
 
 type JWTPayloadInfo struct {

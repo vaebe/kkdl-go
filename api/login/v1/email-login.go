@@ -1,7 +1,7 @@
 package v1
 
 import (
-	"compressURL/internal/model/entity"
+	"compressURL/internal/model"
 	"github.com/gogf/gf/v2/frame/g"
 )
 
@@ -12,8 +12,4 @@ type EmailLoginReq struct {
 	Password string `json:"password"   dc:"密码"`
 }
 
-type EmailLoginRes struct {
-	Token       string      `json:"token" dc:"jwt token"`
-	TokenExpire string      `json:"tokenExpire" dc:"token 过期时间"`
-	UserInfo    entity.User `json:"userInfo"   dc:"用户信息"`
-}
+type EmailLoginRes model.LoginRes

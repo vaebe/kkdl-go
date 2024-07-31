@@ -18,8 +18,6 @@ type (
 		GetUserInfo(ctx context.Context, in model.LoginInput) (entity.User, error)
 		// UserLogin 用户登录
 		UserLogin(ctx context.Context, in model.LoginInput) (userInfo entity.User, token string, tokenExpire string, err error)
-		// SignOutLogin 退出登录
-		SignOutLogin(ctx context.Context) error
 	}
 )
 

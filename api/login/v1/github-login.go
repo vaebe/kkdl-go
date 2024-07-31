@@ -1,6 +1,7 @@
 package v1
 
 import (
+	"compressURL/internal/model"
 	"github.com/gogf/gf/v2/frame/g"
 )
 
@@ -10,4 +11,4 @@ type GithubLoginReq struct {
 	Code   string `json:"code"    dc:"授权 code"`
 }
 
-type GithubLoginRes EmailLoginRes
+type GithubLoginRes model.LoginRes

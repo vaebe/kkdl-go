@@ -61,10 +61,3 @@ func (s *sLogin) UserLogin(ctx context.Context, in model.LoginInput) (userInfo e
 
 	return userInfo, token, tokenExpire, nil
 }
-
-// SignOutLogin 退出登录
-func (s *sLogin) SignOutLogin(ctx context.Context) error {
-	service.Auth().AuthInstance().LogoutHandler(ctx)
-	// 用户退出登录删除 redis token
-	return nil
-}

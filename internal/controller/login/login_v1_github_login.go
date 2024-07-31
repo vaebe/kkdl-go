@@ -9,7 +9,6 @@ import (
 	"encoding/json"
 	"github.com/gogf/gf/v2/errors/gerror"
 	"github.com/gogf/gf/v2/frame/g"
-	"github.com/gogf/gf/v2/os/gtime"
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/github"
 	"net/http"
@@ -97,8 +96,8 @@ func (c *ControllerV1) GithubLogin(ctx context.Context, req *v1.GithubLoginReq) 
 	userInfo, err := service.User().Detail(ctx, model.UserQueryInput{Id: strconv.Itoa(githubUserInfo.ID)})
 
 	// 用户不存在则创建用户
-	if err != nil {
-		userInfo = entity.User{
+	if userInfo == nil && err == nil {
+		userInfo = &entity.User{
 			Id:          strconv.Itoa(githubUserInfo.ID),
 			NickName:    githubUserInfo.Login,
 			Role:        "01",
@@ -106,26 +105,15 @@ func (c *ControllerV1) GithubLogin(ctx context.Context, req *v1.GithubLoginReq) 
 			AccountType: "03",
 		}
 
-		if _, err = service.User().Create(ctx, userInfo); err != nil {
+		if _, err = service.User().Create(ctx, *userInfo); err != nil {
 			return nil, err
 		}
 	}
 
-	// 设置登录用户信息
-	g.RequestFromCtx(ctx).SetCtxVar("loginInfo", userInfo)
-	token, expire := service.Auth().AuthInstance().LoginHandler(ctx)
-	tokenExpire := gtime.NewFromTime(expire).Format("Y-m-d H:i:s")
+	if err != nil {
+		return nil, err
+	}
 
-	return &v1.GithubLoginRes{
-		Token:       token,
-		TokenExpire: tokenExpire,
-		UserInfo: entity.User{
-			Id:          userInfo.Id,
-			Email:       userInfo.Email,
-			NickName:    userInfo.NickName,
-			AccountType: userInfo.AccountType,
-			Role:        userInfo.Role,
-			Avatar:      userInfo.Avatar,
-		},
-	}, nil
+	info := getLoginRes(ctx, *userInfo)
+	return (*v1.GithubLoginRes)(info), nil
 }

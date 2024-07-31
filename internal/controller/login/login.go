@@ -3,3 +3,32 @@
 // =================================================================================
 
 package login
+
+import (
+	"compressURL/internal/model"
+	"compressURL/internal/model/entity"
+	"compressURL/internal/service"
+	"context"
+	"github.com/gogf/gf/v2/frame/g"
+	"github.com/gogf/gf/v2/os/gtime"
+)
+
+func getLoginRes(ctx context.Context, userInfo entity.User) *model.LoginRes {
+	// 设置登录用户信息
+	g.RequestFromCtx(ctx).SetCtxVar("loginInfo", userInfo)
+	token, expire := service.Auth().AuthInstance().LoginHandler(ctx)
+	tokenExpire := gtime.NewFromTime(expire).Format("Y-m-d H:i:s")
+
+	return &model.LoginRes{
+		Token:       token,
+		TokenExpire: tokenExpire,
+		UserInfo: entity.User{
+			Id:          userInfo.Id,
+			Email:       userInfo.Email,
+			NickName:    userInfo.NickName,
+			AccountType: userInfo.AccountType,
+			Role:        userInfo.Role,
+			Avatar:      userInfo.Avatar,
+		},
+	}
+}

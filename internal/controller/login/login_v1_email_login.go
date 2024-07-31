@@ -1,30 +1,31 @@
 package login
 
 import (
-	"compressURL/internal/model"
-	"compressURL/internal/model/entity"
-	"compressURL/internal/service"
-	"context"
-
 	"compressURL/api/login/v1"
+	"compressURL/internal/model"
+	"compressURL/internal/service"
+	"compressURL/utility"
+	"context"
+	"github.com/gogf/gf/v2/errors/gerror"
 )
 
 func (c *ControllerV1) EmailLogin(ctx context.Context, req *v1.EmailLoginReq) (res *v1.EmailLoginRes, err error) {
-	userInfo, token, tokenExpire, err := service.Login().UserLogin(ctx, model.LoginInput{Email: req.Email, Password: req.Password, AccountType: "01"})
+	// 获取用户信息
+	userInfo, err := service.User().Detail(ctx, model.UserQueryInput{Email: req.Email})
+
+	// 用户不存在则创建用户
+	if userInfo == nil && err == nil {
+		return nil, gerror.New("用户未注册!")
+	}
+
 	if err != nil {
 		return nil, err
 	}
 
-	return &v1.EmailLoginRes{
-		Token:       token,
-		TokenExpire: tokenExpire,
-		UserInfo: entity.User{
-			Id:          userInfo.Id,
-			Email:       userInfo.Email,
-			WxId:        userInfo.WxId,
-			NickName:    userInfo.NickName,
-			AccountType: userInfo.AccountType,
-			Role:        userInfo.Role,
-		},
-	}, nil
+	if utility.EncryptPassword(req.Password, userInfo.Salt) != userInfo.Password {
+		return nil, gerror.New("账号或者密码不正确!")
+	}
+
+	info := getLoginRes(ctx, *userInfo)
+	return (*v1.EmailLoginRes)(info), nil
 }
