@@ -17,9 +17,12 @@ func (c *ControllerV1) EmailLogin(ctx context.Context, req *v1.EmailLoginReq) (r
 		return nil, err
 	}
 
-	// 用户不存在则创建用户
 	if userInfo == nil {
 		return nil, gerror.New("您还没有注册!")
+	}
+
+	if userInfo.Password == "" {
+		return nil, gerror.New("您没有设置密码,请使用验证码登录!")
 	}
 
 	if utility.EncryptPassword(req.Password, userInfo.Salt) != userInfo.Password {
