@@ -6,39 +6,15 @@ import (
 	"compressURL/internal/model/entity"
 	"compressURL/internal/service"
 	"context"
-	"github.com/gogf/gf/v2/encoding/gjson"
 	"github.com/gogf/gf/v2/errors/gerror"
 )
 
-func isUserRegistered(ctx context.Context, openId string) (bool, error) {
-	info, err := service.User().GetUserInfoByWxId(ctx, openId)
-
-	// 存在错误信息直接返回
-	if info != nil && err != nil {
-		return false, err
-	}
-	return info != nil, nil
-}
-
-// 向客户端发送 ws 消息
-func sendWsMessage(data v1.WxMiniProgramLoginRes, userCode string) (err error) {
-	ws, ok := wsClientMap[userCode]
-	if !ok {
-		return gerror.New("ws 链接不存在!")
-	}
-
-	info := gjson.NewWithTag(data, "json", true)
-	err = info.Set("dataType", "loginSuccess")
-	if err != nil {
-		return gerror.Newf("序列化数据错误! %s", err)
-	}
-
-	err = ws.WriteMessage(1, []byte(info.String()))
-	if err != nil {
-		return gerror.Newf("发送 ws 消息失败! %s", err)
-	}
-	return err
-}
+/**
+1. 客户端请求一个 code
+2. 客户端请求生成小程序码接口的时候携带上边获取的 code
+3. 客户端获取到小程序码后,开始轮询改 code 的状态直到返回成功 (验证 code 状态的接口,成功后返回用户信息)
+4. 手机微信扫码-获取小程序码携带的 code 调用接口更新该 code (调用 wx login 后直接登录 or 点击按钮确认)
+*/
 
 func (c *ControllerV1) WxMiniProgramLogin(ctx context.Context, req *v1.WxMiniProgramLoginReq) (res *v1.WxMiniProgramLoginRes, err error) {
 	// 获取小程序 openId
@@ -47,41 +23,28 @@ func (c *ControllerV1) WxMiniProgramLogin(ctx context.Context, req *v1.WxMiniPro
 		return nil, err
 	}
 
-	// 验证用户是否已经注册
-	userRegistered, err := isUserRegistered(ctx, wxUserInfo.Openid)
+	// todo 后续微信小程序登录 Openid 存储到 id 字段
+	userInfo, err := service.User().Detail(ctx, model.UserQueryInput{Id: wxUserInfo.Openid})
+
 	if err != nil {
-		return nil, gerror.Newf("验证用户是否注册失败! %s", err)
+		return nil, err
 	}
 
-	// 用户不存在创建微信用户
-	if userRegistered == false {
-		_, err = service.User().Create(ctx, entity.User{
-			WxId:        wxUserInfo.Openid,
+	// 用户信息不存在则创建
+	if userInfo == nil {
+		userId, err := service.User().Create(ctx, entity.User{
+			Id:          wxUserInfo.Openid,
 			AccountType: "02",
 			Role:        "01",
 		})
 		if err != nil {
 			return nil, gerror.Newf("创建微信用户失败! %s", err)
 		}
+
+		// 创建完成再次查询用户数据返回
+		userInfo, _ = service.User().Detail(ctx, model.UserQueryInput{Id: userId})
 	}
 
-	// 生成 token
-	userInfo, token, tokenExpire, err := service.Login().UserLogin(ctx, model.LoginInput{WxId: wxUserInfo.Openid, AccountType: "02"})
-	if err != nil {
-		return nil, err
-	}
-
-	res = &v1.WxMiniProgramLoginRes{
-		Token:       token,
-		TokenExpire: tokenExpire,
-		UserInfo:    userInfo,
-	}
-
-	err = sendWsMessage(*res, req.UserCode)
-
-	if err != nil {
-		return nil, err
-	}
-
-	return res, nil
+	info := getLoginRes(ctx, *userInfo)
+	return (*v1.WxMiniProgramLoginRes)(info), nil
 }
