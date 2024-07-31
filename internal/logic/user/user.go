@@ -51,13 +51,17 @@ func (s *sUser) Create(ctx context.Context, in entity.User) (string, error) {
 	}
 
 	if data["AccountType"] == "01" {
-		// 生成随机盐值
-		salt := grand.S(10)
 
 		data["Email"] = in.Email
 		data["Id"] = guid.S()
-		data["Salt"] = salt
-		data["Password"] = utility.EncryptPassword(in.Password, salt)
+
+		// 密码存在才进行加密
+		if in.Password != "" {
+			// 生成随机盐值
+			salt := grand.S(10)
+			data["Salt"] = salt
+			data["Password"] = utility.EncryptPassword(in.Password, salt)
+		}
 	}
 
 	_, err := dao.User.Ctx(ctx).Data(data).InsertAndGetId()
