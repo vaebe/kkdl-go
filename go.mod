@@ -8,9 +8,11 @@ require (
 	github.com/gogf/gf/contrib/nosql/redis/v2 v2.6.3
 	github.com/gogf/gf/v2 v2.6.3
 	github.com/jordan-wright/email v4.0.1-0.20210109023952-943e75fe5223+incompatible
+	github.com/mssola/useragent v1.0.0
 	github.com/qiniu/go-sdk/v7 v7.19.0
 	github.com/xuri/excelize/v2 v2.8.1
 	golang.org/x/net v0.22.0
+	golang.org/x/oauth2 v0.21.0
 )
 
 require (
@@ -31,7 +33,6 @@ require (
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/mattn/go-runewidth v0.0.15 // indirect
 	github.com/mohae/deepcopy v0.0.0-20170929034955-c48cc78d4826 // indirect
-	github.com/mssola/useragent v1.0.0 // indirect
 	github.com/olekukonko/tablewriter v0.0.5 // indirect
 	github.com/redis/go-redis/v9 v9.5.1 // indirect
 	github.com/richardlehane/mscfb v1.0.4 // indirect
@@ -44,7 +45,6 @@ require (
 	go.opentelemetry.io/otel/sdk v1.24.0 // indirect
 	go.opentelemetry.io/otel/trace v1.24.0 // indirect
 	golang.org/x/crypto v0.21.0 // indirect
-	golang.org/x/oauth2 v0.21.0 // indirect
 	golang.org/x/sync v0.0.0-20220722155255-886fb9371eb4 // indirect
 	golang.org/x/sys v0.18.0 // indirect
 	golang.org/x/text v0.14.0 // indirect

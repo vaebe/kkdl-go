@@ -11,10 +11,10 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4.1.7
+        uses: actions/checkout@v6
 
       - name: Set up Go
-        uses: actions/setup-go@v4
+        uses: actions/setup-go@v6
         with:
           go-version: '1.20' # 设置 Go 版本为 1.20
 
@@ -38,7 +38,7 @@ jobs:
         run: |
           cd ./linux_amd64
           tar -czf main.tar.gz main
-          scp -o StrictHostKeyChecking=no -P 22 main.tar.gz ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_HOST }}:/usr/local/kk/kkdl/main.tar.gz
+          scp -o StrictHostKeyChecking=no -P 22 main.tar.gz ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_HOST }}:/opt/kkdl/main.tar.gz
 
       - name: Deploy to server
         uses: appleboy/ssh-action@master
@@ -48,12 +48,12 @@ jobs:
           password: ${{ secrets.SERVER_PASSWORD }}
           port: 22
           script: |
-            if [ -e /usr/local/kk/kkdl/main ]; then
-              mv /usr/local/kk/kkdl/main /usr/local/kk/kkdl/oldman
+            if [ -e /opt/kkdl/main ]; then
+              mv /opt/kkdl/main /opt/kkdl/oldMan
             fi
-            cd /usr/local/kk/kkdl/
+            cd /opt/kkdl/
             tar -xzf main.tar.gz
             sh run.sh
-            if [ -e /usr/local/kk/kkdl/oldman ]; then
-              rm -rf oldman main.tar.gz
+            if [ -e /opt/kkdl/oldMan ]; then
+              rm -rf oldMan main.tar.gz
             fi
