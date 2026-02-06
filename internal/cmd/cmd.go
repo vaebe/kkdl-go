@@ -8,15 +8,15 @@ import (
 	"compressURL/internal/controller/short_url_code"
 	"compressURL/internal/controller/short_url_visits"
 	"compressURL/internal/controller/user"
-	"compressURL/internal/controller/weChatMiniProgram"
 	"compressURL/internal/middlewares"
 	"context"
+
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/net/ghttp"
 	"github.com/gogf/gf/v2/os/gcmd"
 )
 
-func mainFunc(ctx context.Context, parser *gcmd.Parser) (err error) {
+func mainFunc(ctx context.Context, _ *gcmd.Parser) (err error) {
 
 	s := g.Server()
 
@@ -35,14 +35,12 @@ func mainFunc(ctx context.Context, parser *gcmd.Parser) (err error) {
 		group.Group("/", func(group *ghttp.RouterGroup) {
 			group.Bind(
 				login.NewV1().EmailLogin,
-				login.NewV1().WxMiniProgramLogin,
 				login.NewV1().Registration,
 				login.NewV1().Ws,
 				login.NewV1().GithubLogin,
 				login.NewV1().UserRegCheck,
 				login.NewV1().VerificationCodeLogin,
 				common.NewV1().GetCaptcha,
-				weChatMiniProgram.NewV1(),
 				analytics.NewV1(),
 			)
 		})

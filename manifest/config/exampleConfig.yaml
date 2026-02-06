@@ -28,12 +28,6 @@ redis:
     pass: 123456
     idleTimeout: 600
 
-# 微信
-weChat:
-  miniPrograms:
-    appid: wxbd4xxxx
-    secret: a40a8bxxxxx
-
 # 七牛云
 qiNiuConfig:
   access: 'xxxx'

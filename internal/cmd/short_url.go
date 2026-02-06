@@ -6,18 +6,19 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"io"
+	"net/http"
+
 	"github.com/gogf/gf/v2/errors/gerror"
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/net/ghttp"
 	"github.com/gogf/gf/v2/text/gstr"
 	"github.com/mssola/useragent"
-	"io"
-	"net/http"
 )
 
 // IPInfo 结构体用于存储IP地址的详细信息
 type IPInfo struct {
-	Query         string  `json:"query"`         // 查询的IP地址
+	Query         string  `json:"query"`         // 查询的 IP 地址
 	Status        string  `json:"status"`        // 查询状态，成功或失败
 	Continent     string  `json:"continent"`     // 大洲名称
 	ContinentCode string  `json:"continentCode"` // 大洲代码

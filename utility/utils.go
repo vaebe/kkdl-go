@@ -1,11 +1,11 @@
 package utility
 
 import (
-	"fmt"
-	"github.com/gogf/gf/v2/crypto/gmd5"
 	"math/rand"
 	"strings"
 	"time"
+
+	"github.com/gogf/gf/v2/crypto/gmd5"
 )
 
 // GenerateRandomNumber 生成指定范围随机数
@@ -42,9 +42,4 @@ func SliceEqual(slice1, slice2 []string) bool {
 	}
 
 	return true
-}
-
-// GetWeChatMiniProgramLoginCode 获取微信小程序登录用户 code key
-func GetWeChatMiniProgramLoginCode(code string) string {
-	return fmt.Sprintf("weChatMiniProgramLoginCode%s", code)
 }
