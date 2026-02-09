@@ -5,6 +5,7 @@ import (
 	"compressURL/internal/service"
 	"context"
 	"fmt"
+
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/os/gfile"
 	"github.com/gogf/gf/v2/os/glog"
@@ -24,12 +25,13 @@ func (c *ControllerV1) BatchExport(ctx context.Context, req *v1.BatchExportReq) 
 
 	userId := loginUserInfo.Id
 
-	// 非管理员用户导出需要携带用户 id
-	if loginUserInfo.Role == "00" {
-		userId = ""
-		if loginUserInfo.Id == "" {
-			return nil, gerror.Newf("用户id不能为空: %s", err)
+	// 非管理员用户导出需要携带用户 id，管理员(Role == "00")导出所有数据
+	if loginUserInfo.Role != "00" {
+		if userId == "" {
+			return nil, gerror.New("用户 id 不能为空")
 		}
+	} else {
+		userId = ""
 	}
 
 	inParams := v1.GetListReq{
@@ -45,6 +47,7 @@ func (c *ControllerV1) BatchExport(ctx context.Context, req *v1.BatchExportReq) 
 	dataList, _, err := service.ShortUrl().GetList(ctx, inParams, userId)
 	if err != nil {
 		glog.Errorf(ctx, "获取导出数据错误: %s", err)
+		return nil, err
 	}
 
 	// 导出 excel
@@ -68,15 +71,28 @@ func (c *ControllerV1) BatchExport(ctx context.Context, req *v1.BatchExportReq) 
 	// 设置工作簿的默认工作表
 	f.SetActiveSheet(sheetIndex)
 
+	// 创建加粗样式
+	style, err := f.NewStyle(&excelize.Style{
+		Font: &excelize.Font{
+			Bold: true,
+		},
+	})
+	if err != nil {
+		return nil, gerror.Newf("创建样式错误: %s", err)
+	}
+
 	// 插入表头
-	titleList := []string{"短链名称", "短链", "跳转链接", "创建时间", "过期时间", "短链分组id"}
+	titleList := []string{"短链名称", "短链", "跳转链接", "创建时间", "过期时间", "短链分组 id"}
 	for i, v := range titleList {
 		cellName, _ := excelize.CoordinatesToCellName(i+1, 1)
 		if err := f.SetCellValue("Sheet1", cellName, v); err != nil {
 			return nil, gerror.Newf("设置表头错误: %s", err)
 		}
+		// 设置加粗样式
+		if err := f.SetCellStyle("Sheet1", cellName, cellName, style); err != nil {
+			return nil, gerror.Newf("设置表头样式错误: %s", err)
+		}
 	}
-
 	// 插入内容
 	for i, v := range dataList {
 		row := i + 2 // 从第二行开始插入数据
@@ -92,12 +108,19 @@ func (c *ControllerV1) BatchExport(ctx context.Context, req *v1.BatchExportReq) 
 		return nil, gerror.Newf("保存导出文件错误: %s", err)
 	}
 
-	g.RequestFromCtx(ctx).Response.ServeFileDownload(saveFilePath, fileName)
+	// 确保文件总是被清理
+	defer func() {
+		if removeErr := gfile.RemoveFile(saveFilePath); removeErr != nil {
+			glog.Error(ctx, "删除文件失败", removeErr)
+		}
+	}()
 
-	// 完成后删除文件
-	if err = gfile.Remove(saveFilePath); err != nil {
-		glog.Error(ctx, "删除文件失败", err)
+	r := g.RequestFromCtx(ctx)
+	if r == nil {
+		return nil, gerror.New("获取请求对象失败")
 	}
+
+	r.Response.ServeFileDownload(saveFilePath, fileName)
 
 	return nil, nil
 }
