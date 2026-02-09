@@ -7,11 +7,12 @@ import (
 	"compressURL/utility"
 	"context"
 	"fmt"
+	"regexp"
+	"strings"
+
 	"github.com/gogf/gf/v2/errors/gerror"
 	"github.com/gogf/gf/v2/os/gtime"
 	"github.com/xuri/excelize/v2"
-	"regexp"
-	"strings"
 )
 
 func checkDataFormat(i int, in []string) string {
