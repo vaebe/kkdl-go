@@ -1,12 +1,12 @@
-create table verification_codes
-(
-    id int auto_increment primary key,
-    email varchar(100) not null comment '邮箱',
-    type tinyint not null comment '验证码类型: 1注册 2登录 3重置密码',
-    code varchar(10) not null comment '验证码',
-    used tinyint(1) default 0 comment '是否已使用: 0未使用 1已使用',
-    expired_at timestamp not null comment '过期时间',
-    created_at timestamp default current_timestamp comment '创建时间',
-    index idx_email_type_created (email, type, created_at),
-    index idx_expired_at (expired_at)
-) comment '邮箱验证码表';
+CREATE TABLE `verification_codes` (
+    `id` int(11) NOT NULL AUTO_INCREMENT,
+    `email` varchar(100) NOT NULL COMMENT '邮箱',
+    `type` tinyint(4) DEFAULT '1' COMMENT '验证码类型: 目前只有一种用途',
+    `CODE` varchar(10) NOT NULL COMMENT '验证码',
+    `used` tinyint(1) DEFAULT '0' COMMENT '是否已使用: 0未使用 1已使用',
+    `expired_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '过期时间',
+    `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    PRIMARY KEY (`id`),
+    KEY `idx_email_type_created` (`email`,`type`,`created_at`),
+    KEY `idx_expired_at` (`expired_at`)
+) COMMENT '邮箱验证码表';
