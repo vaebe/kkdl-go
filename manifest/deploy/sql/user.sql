@@ -1,4 +1,4 @@
-CREATE TABLE USER(
+CREATE TABLE `user`(
     `id` varchar(32) NOT NULL COMMENT '唯一标识',
     `email` varchar(50) DEFAULT NULL COMMENT '邮箱,唯一',
     `password` varchar(200) DEFAULT NULL COMMENT '密码, 小程序登录无密码',

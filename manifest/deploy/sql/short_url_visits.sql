@@ -1,4 +1,4 @@
-CREATE TABLE short_url_visits (
+CREATE TABLE `short_url_visits` (
     `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
     `user_id` varchar(40) NOT NULL COMMENT '用户id',
     `short_url` varchar(20) NOT NULL COMMENT '短链,唯一，不能为空',

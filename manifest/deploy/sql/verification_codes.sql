@@ -1,4 +1,4 @@
-CREATE TABLE verification_codes (
+CREATE TABLE `verification_codes` (
     `id` int(11) NOT NULL AUTO_INCREMENT,
     `email` varchar(100) NOT NULL COMMENT '邮箱',
     `type` tinyint(4) DEFAULT '1' COMMENT '验证码类型: 目前只有一种用途',
