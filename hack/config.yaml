@@ -8,7 +8,7 @@ gfcli:
   gen:
     dao:
       - link: "mysql:root:123456@tcp(127.0.0.1:3306)/kkdl"
-        tables: "short_url,short_url_visits,short_url_code,user"
+        tables: "short_url,short_url_visits,short_url_code,user,verification_codes"
         jsonCase: "CamelLower"
   # 工具编译配置
   build:

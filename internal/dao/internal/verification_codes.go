@@ -35,7 +35,7 @@ var verificationCodesColumns = VerificationCodesColumns{
 	Id:        "id",
 	Email:     "email",
 	Type:      "type",
-	Code:      "CODE",
+	Code:      "code",
 	Used:      "used",
 	ExpiredAt: "expired_at",
 	CreatedAt: "created_at",
