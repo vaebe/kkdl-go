@@ -7,7 +7,6 @@ import (
 	"compressURL/internal/model/entity"
 	"compressURL/internal/service"
 	"compressURL/utility"
-	"errors"
 	"fmt"
 
 	"github.com/gogf/gf/v2/errors/gerror"
@@ -175,24 +174,11 @@ func (s *sUser) GetOne(ctx context.Context, in model.UserQueryInput) (*v1.GetOne
 	return &userInfo, nil
 }
 
-// GetUserInfoByWxId 根据 wxIdOpenId 获取用户信息 todo WxId 后期会合并到 id 中到时删除
-func (s *sUser) GetUserInfoByWxId(ctx context.Context, wxId string) (*v1.GetOneRes, error) {
-	userInfo := v1.GetOneRes{}
-
-	err := dao.User.Ctx(ctx).Where(dao.User.Columns().WxId, wxId).Scan(&userInfo)
-
-	if err != nil {
-		return nil, errors.New("未查询到用户数据！")
-	}
-	return &userInfo, nil
-}
-
 // GetUserList 获取用户列表
 func (s *sUser) GetUserList(ctx context.Context, in v1.GetListReq) ([]entity.User, int, error) {
 	var userList []entity.User
 
 	db := dao.User.Ctx(ctx).OmitEmptyWhere().
-		Where(dao.User.Columns().WxId, in.WxId).
 		Where(dao.User.Columns().Email, in.Email).
 		Where(dao.User.Columns().NickName, in.NickName)
 
