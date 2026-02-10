@@ -2,6 +2,7 @@ package common_test
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"testing"
 	"time"
@@ -27,13 +28,14 @@ func getTestEmail(suffix string) string {
 	return fmt.Sprintf("test-%s-%d@example.com", suffix, time.Now().UnixNano())
 }
 
-// runInTransaction 在事务中执行测试函数
+// runInTransaction 在事务中执行测试函数，测试完成后自动回滚以清理测试数据
 func runInTransaction(t *gtest.T, testFunc func(ctx context.Context, tx gdb.TX)) {
-	err := dao.VerificationCodes.Transaction(ctx, func(ctx context.Context, tx gdb.TX) error {
+	_ = dao.VerificationCodes.Transaction(ctx, func(ctx context.Context, tx gdb.TX) error {
+		// 执行测试函数
 		testFunc(ctx, tx)
-		return nil
+		// 返回错误以触发事务回滚，清理测试数据
+		return errors.New("rollback test transaction")
 	})
-	t.AssertNil(err)
 }
 
 // insertExpiredVCode 手动插入一个已过期的验证码
