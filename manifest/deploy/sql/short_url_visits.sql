@@ -26,7 +26,6 @@ CREATE TABLE `short_url_visits` (
     `updated_at` timestamp NULL DEFAULT NULL COMMENT '更新时间',
     `deleted_at` timestamp NULL DEFAULT NULL COMMENT '删除时间',
     PRIMARY KEY (`id`),
-    UNIQUE KEY `id_unique` (`id`),
     KEY `idx_short_url_visits_on_created_at` (`created_at`),
     KEY `idx_short_url_visits_on_short_url` (`short_url`)
 ) COMMENT '短链访问信息表';
