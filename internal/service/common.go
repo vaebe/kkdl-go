@@ -23,10 +23,12 @@ type (
 		CheckVCodeCooldown(ctx context.Context, email string) (inCoolDown bool, remaining int64, err error)
 		// ConsumeVCode 消费验证码（标记为已使用）
 		ConsumeVCode(ctx context.Context, email string, code string) error
+		// DeleteVCode 删除指定邮箱的验证码（用于回滚）
+		DeleteVCode(ctx context.Context, email string) error
 		// DeleteExpiredVCodes 删除过期的验证码
 		DeleteExpiredVCodes(ctx context.Context) error
 		// SendEmailVCode 发送邮箱验证码
-		SendEmailVCode(ctx context.Context, VerificationCode int, emailAddress string) (err error)
+		SendEmailVCode(ctx context.Context, VerificationCode string, emailAddress string) (err error)
 	}
 )
 

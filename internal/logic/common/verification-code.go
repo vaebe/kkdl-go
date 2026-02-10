@@ -80,6 +80,12 @@ func (s *sCommon) ConsumeVCode(ctx context.Context, email string, code string) e
 	return err
 }
 
+// DeleteVCode 删除指定邮箱的验证码（用于回滚）
+func (s *sCommon) DeleteVCode(ctx context.Context, email string) error {
+	_, err := dao.VerificationCodes.Ctx(ctx).Where(do.VerificationCodes{Email: email}).Delete()
+	return err
+}
+
 // DeleteExpiredVCodes 删除过期的验证码
 func (s *sCommon) DeleteExpiredVCodes(ctx context.Context) error {
 	_, err := dao.VerificationCodes.Ctx(ctx).Where("expired_at < ?", gtime.Now()).Delete()
@@ -87,7 +93,7 @@ func (s *sCommon) DeleteExpiredVCodes(ctx context.Context) error {
 }
 
 // SendEmailVCode 发送邮箱验证码
-func (s *sCommon) SendEmailVCode(ctx context.Context, VerificationCode int, emailAddress string) (err error) {
+func (s *sCommon) SendEmailVCode(ctx context.Context, VerificationCode string, emailAddress string) (err error) {
 	mailUserName, _ := g.Cfg().Get(ctx, "emailConfig.email") // 邮箱账号
 	mailPassword, _ := g.Cfg().Get(ctx, "emailConfig.key")   // 邮箱授权码
 	addr := "smtp.qq.com:465"                                // TLS 地址
@@ -138,7 +144,7 @@ func (s *sCommon) SendEmailVCode(ctx context.Context, VerificationCode int, emai
 		<div class="container">
 			<h1>验证码</h1>
 			<p>您好，</p>
-			<p>您的验证码为：<strong>%d</strong></p>
+			<p>您的验证码为：<strong>%s</strong></p>
 			<p>请在10分钟内使用此验证码。</p>
 			<p>谢谢！</p>
 			<div class="footer">

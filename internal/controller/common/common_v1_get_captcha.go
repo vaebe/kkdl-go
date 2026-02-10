@@ -6,7 +6,6 @@ import (
 	"context"
 
 	"github.com/gogf/gf/v2/errors/gerror"
-	"github.com/gogf/gf/v2/util/gconv"
 )
 
 func (c *ControllerV1) GetCaptcha(ctx context.Context, req *v1.GetCaptchaReq) (res *v1.GetCaptchaRes, err error) {
@@ -29,8 +28,13 @@ func (c *ControllerV1) GetCaptcha(ctx context.Context, req *v1.GetCaptchaReq) (r
 		return nil, gerror.New("保存验证码失败!")
 	}
 
-	// 发送邮件
-	code := gconv.Int(codeStr)
-	err = service.Common().SendEmailVCode(ctx, code, req.Email)
-	return nil, err
+	// 发送邮件，如果失败则回滚删除验证码
+	err = service.Common().SendEmailVCode(ctx, codeStr, req.Email)
+	if err != nil {
+		// 回滚：删除已创建的验证码，避免用户被冷却期阻塞
+		_ = service.Common().DeleteVCode(ctx, req.Email)
+		return nil, gerror.New("发送验证码失败，请重试!")
+	}
+
+	return nil, nil
 }
