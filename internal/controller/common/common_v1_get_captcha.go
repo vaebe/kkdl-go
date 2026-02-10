@@ -17,7 +17,7 @@ func (c *ControllerV1) GetCaptcha(ctx context.Context, req *v1.GetCaptchaReq) (r
 	}
 
 	if inCoolDown {
-		return nil, gerror.Newf("请勿重复请求,请等待 %d 秒后在进行操作!", remaining)
+		return nil, gerror.Newf("请勿重复请求,请等待 %d 秒后再进行操作!", remaining)
 	}
 
 	// 清理过期验证码
