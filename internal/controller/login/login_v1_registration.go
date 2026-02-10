@@ -10,17 +10,14 @@ import (
 )
 
 func (c *ControllerV1) Registration(ctx context.Context, req *v1.RegistrationReq) (res *v1.RegistrationRes, err error) {
-	// 验证验证码
-	valid, err := service.Common().VerifyTheVCode(ctx, req.Email, req.VerificationCode)
+	// 原子性验证并消费验证码（防止 TOCTOU）
+	valid, err := service.Common().VerifyAndConsumeVCode(ctx, req.Email, req.VerificationCode)
 	if err != nil {
-		return nil, gerror.New("验证验证码失败!")
+		return nil, gerror.Wrap(err, "验证验证码失败!")
 	}
 	if !valid {
 		return nil, gerror.New("验证码不正确或已过期!")
 	}
-
-	// 标记验证码为已使用
-	_ = service.Common().ConsumeVCode(ctx, req.Email, req.VerificationCode)
 
 	userinfo := entity.User{
 		Email:       req.Email,

@@ -11,17 +11,14 @@ import (
 )
 
 func (c *ControllerV1) VerificationCodeLogin(ctx context.Context, req *v1.VerificationCodeLoginReq) (res *v1.VerificationCodeLoginRes, err error) {
-	// 验证验证码
-	valid, err := service.Common().VerifyTheVCode(ctx, req.Email, req.Code)
+	// 原子性验证并消费验证码（防止TOCTOU）
+	valid, err := service.Common().VerifyAndConsumeVCode(ctx, req.Email, req.Code)
 	if err != nil {
-		return nil, gerror.New("验证验证码失败!")
+		return nil, gerror.Wrap(err, "验证验证码失败!")
 	}
 	if !valid {
 		return nil, gerror.New("验证码不正确或已过期!")
 	}
-
-	// 标记验证码为已使用
-	_ = service.Common().ConsumeVCode(ctx, req.Email, req.Code)
 
 	userInfo, err := service.User().Detail(ctx, model.UserQueryInput{Email: req.Email})
 

@@ -76,8 +76,29 @@ func (s *sCommon) ConsumeVCode(ctx context.Context, email string, code string) e
 	_, err := dao.VerificationCodes.Ctx(ctx).Where(do.VerificationCodes{
 		Email: email,
 		Code:  code,
-	}).Update(do.VerificationCodes{Used: 1})
+		Used:  0,
+	}).Where("expired_at > ?", gtime.Now()).Update(do.VerificationCodes{Used: 1})
 	return err
+}
+
+// VerifyAndConsumeVCode 原子性验证并消费验证码（防止TOCTOU）
+func (s *sCommon) VerifyAndConsumeVCode(ctx context.Context, email string, code string) (bool, error) {
+	result, err := dao.VerificationCodes.Ctx(ctx).
+		Where(do.VerificationCodes{
+			Email: email,
+			Code:  code,
+			Used:  0,
+		}).
+		Where("expired_at > ?", gtime.Now()).
+		Update(do.VerificationCodes{Used: 1})
+	if err != nil {
+		return false, err
+	}
+	affected, err := result.RowsAffected()
+	if err != nil {
+		return false, err
+	}
+	return affected > 0, nil
 }
 
 // DeleteVCode 删除指定邮箱的验证码（用于回滚）
