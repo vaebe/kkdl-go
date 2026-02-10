@@ -9,7 +9,6 @@ type GetOneReq struct {
 type GetOneRes struct {
 	Id          string `json:"id" dc:"用户 id"`
 	Email       string `json:"email" dc:"邮箱"`
-	WxId        string `json:"wxId" dc:"小程序 id"`
 	NickName    string `json:"nickName" dc:"昵称"`
 	AccountType string `json:"accountType" dc:"账号类型"`
 	Role        string `json:"role" dc:"角色"`
