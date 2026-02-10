@@ -5,22 +5,18 @@ import (
 	"compressURL/internal/model/entity"
 	"compressURL/internal/service"
 	"context"
-	"fmt"
+
 	"github.com/gogf/gf/v2/errors/gerror"
-	"github.com/gogf/gf/v2/frame/g"
 )
 
 func (c *ControllerV1) Registration(ctx context.Context, req *v1.RegistrationReq) (res *v1.RegistrationRes, err error) {
-	// 获取缓存的验证码
-	rdsKey := fmt.Sprintf("verificationCode-%s", req.Email)
-	cacheVerificationCode, err := g.Redis().Get(ctx, rdsKey)
+	// 原子性验证并消费验证码（防止 TOCTOU）
+	valid, err := service.Common().VerifyAndConsumeVCode(ctx, req.Email, req.VerificationCode)
 	if err != nil {
-		return nil, gerror.New("获取缓存验证码失败!")
+		return nil, gerror.Wrap(err, "验证验证码失败!")
 	}
-
-	// 验证是否正确
-	if cacheVerificationCode.String() != req.VerificationCode {
-		return nil, gerror.New("验证码不正确!")
+	if !valid {
+		return nil, gerror.New("验证码不正确或已过期!")
 	}
 
 	userinfo := entity.User{

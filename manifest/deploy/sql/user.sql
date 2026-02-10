@@ -1,9 +1,9 @@
 CREATE TABLE `user`(
     `id` varchar(32) NOT NULL COMMENT '唯一标识',
     `email` varchar(50) DEFAULT NULL COMMENT '邮箱,唯一',
-    `password` varchar(200) DEFAULT NULL COMMENT '密码, 小程序登录无密码',
+    `password` varchar(200) DEFAULT NULL COMMENT '密码',
     `nickName` varchar(20) NOT NULL COMMENT '昵称, 创建默认生成',
-    `accountType` varchar(4) NOT NULL DEFAULT '01' COMMENT '账号类型: 01 邮箱 02 小程序',
+    `accountType` varchar(4) NOT NULL DEFAULT '01' COMMENT '账号类型: 01 邮箱',
     `role` varchar(4) NOT NULL DEFAULT '01' COMMENT '角色: 00 admin 01 普通用户 02 vip',
     `deleted_at` timestamp NULL DEFAULT NULL COMMENT '删除时间',
     `updated_at` timestamp NULL DEFAULT NULL COMMENT '更新时间',

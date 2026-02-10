@@ -11,14 +11,15 @@ import (
 	"github.com/gogf/gf/v2/frame/g"
 )
 
-// ShortUrlDao is the data access object for table short_url.
+// ShortUrlDao is the data access object for the table short_url.
 type ShortUrlDao struct {
-	table   string          // table is the underlying table name of the DAO.
-	group   string          // group is the database configuration group name of current DAO.
-	columns ShortUrlColumns // columns contains all the column names of Table for convenient usage.
+	table    string             // table is the underlying table name of the DAO.
+	group    string             // group is the database configuration group name of the current DAO.
+	columns  ShortUrlColumns    // columns contains all the column names of Table for convenient usage.
+	handlers []gdb.ModelHandler // handlers for customized model modification.
 }
 
-// ShortUrlColumns defines and stores column names for table short_url.
+// ShortUrlColumns defines and stores column names for the table short_url.
 type ShortUrlColumns struct {
 	Id             string // 唯一标识，自增长整数
 	ShortUrl       string // 短链,唯一，不能为空
@@ -30,7 +31,7 @@ type ShortUrlColumns struct {
 	GroupId        string // 短链分组id
 }
 
-// shortUrlColumns holds the columns for table short_url.
+// shortUrlColumns holds the columns for the table short_url.
 var shortUrlColumns = ShortUrlColumns{
 	Id:             "id",
 	ShortUrl:       "shortUrl",
@@ -43,44 +44,49 @@ var shortUrlColumns = ShortUrlColumns{
 }
 
 // NewShortUrlDao creates and returns a new DAO object for table data access.
-func NewShortUrlDao() *ShortUrlDao {
+func NewShortUrlDao(handlers ...gdb.ModelHandler) *ShortUrlDao {
 	return &ShortUrlDao{
-		group:   "default",
-		table:   "short_url",
-		columns: shortUrlColumns,
+		group:    "default",
+		table:    "short_url",
+		columns:  shortUrlColumns,
+		handlers: handlers,
 	}
 }
 
-// DB retrieves and returns the underlying raw database management object of current DAO.
+// DB retrieves and returns the underlying raw database management object of the current DAO.
 func (dao *ShortUrlDao) DB() gdb.DB {
 	return g.DB(dao.group)
 }
 
-// Table returns the table name of current dao.
+// Table returns the table name of the current DAO.
 func (dao *ShortUrlDao) Table() string {
 	return dao.table
 }
 
-// Columns returns all column names of current dao.
+// Columns returns all column names of the current DAO.
 func (dao *ShortUrlDao) Columns() ShortUrlColumns {
 	return dao.columns
 }
 
-// Group returns the configuration group name of database of current dao.
+// Group returns the database configuration group name of the current DAO.
 func (dao *ShortUrlDao) Group() string {
 	return dao.group
 }
 
-// Ctx creates and returns the Model for current DAO, It automatically sets the context for current operation.
+// Ctx creates and returns a Model for the current DAO. It automatically sets the context for the current operation.
 func (dao *ShortUrlDao) Ctx(ctx context.Context) *gdb.Model {
-	return dao.DB().Model(dao.table).Safe().Ctx(ctx)
+	model := dao.DB().Model(dao.table)
+	for _, handler := range dao.handlers {
+		model = handler(model)
+	}
+	return model.Safe().Ctx(ctx)
 }
 
 // Transaction wraps the transaction logic using function f.
-// It rollbacks the transaction and returns the error from function f if it returns non-nil error.
+// It rolls back the transaction and returns the error if function f returns a non-nil error.
 // It commits the transaction and returns nil if function f returns nil.
 //
-// Note that, you should not Commit or Rollback the transaction in function f
+// Note: Do not commit or roll back the transaction in function f,
 // as it is automatically handled by this function.
 func (dao *ShortUrlDao) Transaction(ctx context.Context, f func(ctx context.Context, tx gdb.TX) error) (err error) {
 	return dao.Ctx(ctx).Transaction(ctx, f)

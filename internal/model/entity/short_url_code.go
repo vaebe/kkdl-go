@@ -10,8 +10,8 @@ import (
 
 // ShortUrlCode is the golang structure for table short_url_code.
 type ShortUrlCode struct {
-	Id        int         `json:"id"        ` // 唯一标识，自增长整数
-	Code      string      `json:"code"      ` // 短链,唯一，不能为空
-	Status    int         `json:"status"    ` // 是否使用
-	CreatedAt *gtime.Time `json:"createdAt" ` // 创建时间，默认为当前时间戳
+	Id        int         `json:"id"        orm:"id"         ` // 唯一标识，自增长整数
+	Code      string      `json:"code"      orm:"code"       ` // 短链,唯一，不能为空
+	Status    int         `json:"status"    orm:"status"     ` // 是否使用
+	CreatedAt *gtime.Time `json:"createdAt" orm:"created_at" ` // 创建时间，默认为当前时间戳
 }

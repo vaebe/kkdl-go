@@ -3,6 +3,7 @@ package common
 import (
 	v1 "compressURL/api/common/v1"
 	"fmt"
+
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/net/ghttp"
 	"github.com/gogf/gf/v2/os/glog"
@@ -26,8 +27,8 @@ func (s *sCommon) UploadFile(ctx context.Context, file *ghttp.UploadFile) (out v
 
 	cfg := storage.Config{
 		Region:        &storage.ZoneHuadongZheJiang2, // 空间对应的机房
-		UseHTTPS:      true,                          // 是否使用https域名
-		UseCdnDomains: false,                         // 上传是否使用CDN上传加速
+		UseHTTPS:      true,                          // 是否使用 https 域名
+		UseCdnDomains: false,                         // 上传是否使用 CDN 上传加速
 	}
 
 	// 构建表单上传的对象

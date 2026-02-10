@@ -1,29 +1,23 @@
 package login
 
 import (
+	"compressURL/api/login/v1"
 	"compressURL/internal/model"
 	"compressURL/internal/model/entity"
 	"compressURL/internal/service"
 	"context"
-	"fmt"
-	"github.com/gogf/gf/v2/errors/gerror"
-	"github.com/gogf/gf/v2/frame/g"
 
-	"compressURL/api/login/v1"
+	"github.com/gogf/gf/v2/errors/gerror"
 )
 
 func (c *ControllerV1) VerificationCodeLogin(ctx context.Context, req *v1.VerificationCodeLoginReq) (res *v1.VerificationCodeLoginRes, err error) {
-	// 获取缓存的验证码
-	rdsKey := fmt.Sprintf("verificationCode-%s", req.Email)
-	cacheVerificationCode, err := g.Redis().Get(ctx, rdsKey)
-
+	// 原子性验证并消费验证码（防止TOCTOU）
+	valid, err := service.Common().VerifyAndConsumeVCode(ctx, req.Email, req.Code)
 	if err != nil {
-		return nil, gerror.New("获取缓存验证码失败!")
+		return nil, gerror.Wrap(err, "验证验证码失败!")
 	}
-
-	// 验证是否正确
-	if cacheVerificationCode.String() != req.Code {
-		return nil, gerror.New("验证码不正确!")
+	if !valid {
+		return nil, gerror.New("验证码不正确或已过期!")
 	}
 
 	userInfo, err := service.User().Detail(ctx, model.UserQueryInput{Email: req.Email})

@@ -25,8 +25,6 @@ type (
 		Detail(ctx context.Context, in model.UserQueryInput) (*entity.User, error)
 		// GetOne 根据 id 获取用户信息,隐藏关键信息
 		GetOne(ctx context.Context, in model.UserQueryInput) (*v1.GetOneRes, error)
-		// GetUserInfoByWxId 根据 wxIdOpenId 获取用户信息 todo WxId 后期会合并到 id 中到时删除
-		GetUserInfoByWxId(ctx context.Context, wxId string) (*v1.GetOneRes, error)
 		// GetUserList 获取用户列表
 		GetUserList(ctx context.Context, in v1.GetListReq) ([]entity.User, int, error)
 	}

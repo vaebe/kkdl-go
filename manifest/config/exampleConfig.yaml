@@ -20,13 +20,6 @@ database:
     type: "mysql"
     link: "mysql:root:123456@tcp(127.0.0.1:3306)/kkdl?loc=Local&parseTime=true"
     debug: true
-# Redis
-redis:
-  default:
-    address: 127.0.0.1:6379
-    db: 1
-    pass: 123456
-    idleTimeout: 600
 
 # 七牛云
 qiNiuConfig:
@@ -44,6 +37,7 @@ emailConfig:
 githubConfig:
   client_id: 'xxxxx'
   client_secret: 'xxxxx'
+  redirect_uri: 'http://localhost:5173/login'
 
 
 

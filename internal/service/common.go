@@ -14,9 +14,23 @@ import (
 
 type (
 	ICommon interface {
-		// SendVerificationCodeEmail 发送邮箱验证码
-		SendVerificationCodeEmail(ctx context.Context, VerificationCode int, emailAddress string) (err error)
 		UploadFile(ctx context.Context, file *ghttp.UploadFile) (out v1.UploadFileRes, err error)
+		// CreateVCode 创建验证码
+		CreateVCode(ctx context.Context, email string) (string, error)
+		// VerifyTheVCode 校验验证码
+		VerifyTheVCode(ctx context.Context, email string, code string) (bool, error)
+		// CheckVCodeCooldown 检查验证码发送冷却期
+		CheckVCodeCooldown(ctx context.Context, email string) (inCoolDown bool, remaining int64, err error)
+		// ConsumeVCode 消费验证码（标记为已使用）
+		ConsumeVCode(ctx context.Context, email string, code string) error
+		// VerifyAndConsumeVCode 原子性验证并消费验证码（防止TOCTOU）
+		VerifyAndConsumeVCode(ctx context.Context, email string, code string) (bool, error)
+		// DeleteVCode 删除指定邮箱的验证码（用于回滚）
+		DeleteVCode(ctx context.Context, email string) error
+		// DeleteExpiredVCodes 删除过期的验证码
+		DeleteExpiredVCodes(ctx context.Context) error
+		// SendEmailVCode 发送邮箱验证码
+		SendEmailVCode(ctx context.Context, VerificationCode string, emailAddress string) (err error)
 	}
 )
 
