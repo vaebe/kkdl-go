@@ -1,15 +1,14 @@
-# kkdl-go 项目指南
+# compressURL 项目指南
 
 ## 项目概述
 
-kkdl-go 是一个基于 [GoFrame](https://goframe.org/) 框架构建的短链接生成服务。该项目提供完整的短链接管理功能，包括链接生成、统计分析、用户认证（支持邮箱、GitHub、验证码登录）、文件上传等功能。
+compressURL 是一个基于 [GoFrame](https://goframe.org/) 框架构建的短链接生成服务。该项目提供完整的短链接管理功能，包括链接生成、统计分析、用户认证（支持邮箱、GitHub、验证码登录）、文件上传等功能。
 
 ### 主要技术栈
 
-- **语言**: Go 1.18+
-- **框架**: GoFrame v2.6.3
+- **语言**: Go 1.24+
+- **框架**: GoFrame v2.10.0
 - **数据库**: MySQL
-- **缓存**: Redis
 - **认证**: JWT (github.com/gogf/gf-jwt/v2)
 - **对象存储**: 七牛云 (github.com/qiniu/go-sdk/v7)
 - **邮件**: jordan-wright/email
@@ -41,7 +40,7 @@ kkdl-go 是一个基于 [GoFrame](https://goframe.org/) 框架构建的短链接
    - 管理员权限控制
 
 5. **通用功能**
-   - 验证码生成
+   - 验证码生成（基于数据库存储）
    - 文件上传（七牛云）
    - WebSocket 支持
 
@@ -49,9 +48,8 @@ kkdl-go 是一个基于 [GoFrame](https://goframe.org/) 框架构建的短链接
 
 ### 前置要求
 
-- Go 1.18 或更高版本
+- Go 1.24 或更高版本
 - MySQL 数据库
-- Redis 缓存服务
 - GoFrame CLI 工具（可通过 `make up` 安装）
 
 ### 常用命令
@@ -76,6 +74,12 @@ make service
 
 # 生成枚举
 make enums
+
+# 生成 protobuf 文件
+make pb
+
+# 生成数据库表的 protobuf 文件
+make pbentity
 ```
 
 #### 运行服务
@@ -107,7 +111,6 @@ make deploy
 
 - **服务器配置**: 端口（默认 6001）、日志路径、访问日志等
 - **数据库**: MySQL 连接配置
-- **Redis**: Redis 连接配置
 - **七牛云**: access key、secret、bucket、base URL
 - **邮箱配置**: SMTP key 和 email
 - **GitHub OAuth**: client_id 和 client_secret
@@ -115,7 +118,7 @@ make deploy
 ## 项目结构
 
 ```
-kkdl-go/
+compressURL/
 ├── api/                          # API 接口定义
 │   ├── analytics/               # 分析相关接口
 │   ├── common/                  # 通用接口（验证码、文件上传）
@@ -185,6 +188,28 @@ kkdl-go/
 3. **管理员接口**: 需要管理员权限
    - 用户管理
 
+### 数据库表结构
+
+项目使用以下主要数据表：
+
+- **user**: 用户信息表
+- **short_url**: 短链接表
+- **short_url_code**: 短链接码表
+- **short_url_visits**: 访问记录表
+- **verification_codes**: 验证码表
+
+### 验证码机制
+
+项目使用基于数据库的验证码机制，主要功能包括：
+
+- **创建验证码**: 生成6位随机数字验证码，有效期10分钟
+- **验证验证码**: 校验验证码是否正确且未过期
+- **冷却期检查**: 同一邮箱1分钟内只能发送一次验证码
+- **消费验证码**: 验证成功后标记为已使用
+- **清理过期验证码**: 定期清理已过期的验证码记录
+
+相关实现位于 `internal/logic/common/verification-code.go`
+
 ### 数据库优化
 
 建议为以下表创建索引以优化查询性能：
@@ -192,15 +217,30 @@ kkdl-go/
 ```sql
 CREATE INDEX idx_short_url_visits_on_created_at ON short_url_visits(created_at);
 CREATE INDEX idx_short_url_visits_on_short_url ON short_url_visits(short_url);
+CREATE INDEX idx_verification_codes_on_email ON verification_codes(email);
+CREATE INDEX idx_verification_codes_on_expired_at ON verification_codes(expired_at);
 ```
 
 ## 开发注意事项
 
-1. **登录逻辑**: 目前登录相关逻辑需要进一步完善，代码中已有 TODO 标记
-2. **统计分析**: 区域和设备统计功能需要增加时间过滤条件
-3. **配置文件**: 开发时请根据实际情况修改 `manifest/config/` 下的配置文件
-4. **API 生成**: 修改 API 定义后，需要运行 `make ctrl` 重新生成 Controller
-5. **数据库变更**: 修改数据库表结构后，需要运行 `make dao` 重新生成 DAO/DO/Entity
+1. **验证码机制**: 验证码现在存储在数据库中，不再依赖 Redis
+2. **登录逻辑**: 目前登录相关逻辑需要进一步完善，代码中已有 TODO 标记
+3. **统计分析**: 区域和设备统计功能需要增加时间过滤条件
+4. **配置文件**: 开发时请根据实际情况修改 `manifest/config/` 下的配置文件
+5. **API 生成**: 修改 API 定义后，需要运行 `make ctrl` 重新生成 Controller
+6. **数据库变更**: 修改数据库表结构后，需要运行 `make dao` 重新生成 DAO/DO/Entity
+
+## 近期变更
+
+### 架构重构
+- **移除 Redis 依赖**: 验证码机制从 Redis 迁移到数据库存储
+- **用户模型优化**: 移除了 wxId 字段，简化用户数据结构
+- **版本升级**: Go 版本升级到 1.24.0，GoFrame 升级到 v2.10.0
+
+### 新增功能
+- **验证码冷却期**: 防止验证码滥用，同一邮箱1分钟内只能发送一次
+- **验证码自动清理**: 支持清理过期验证码记录
+- **改进的邮件模板**: 验证码邮件使用更美观的 HTML 模板
 
 ## 相关文档
 
