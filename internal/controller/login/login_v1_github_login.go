@@ -7,13 +7,14 @@ import (
 	"compressURL/internal/service"
 	"context"
 	"encoding/json"
+	"net/http"
+	"strconv"
+	"time"
+
 	"github.com/gogf/gf/v2/errors/gerror"
 	"github.com/gogf/gf/v2/frame/g"
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/github"
-	"net/http"
-	"strconv"
-	"time"
 )
 
 type GithubUserInfo struct {
