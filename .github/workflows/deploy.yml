@@ -16,14 +16,11 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v6
         with:
-          go-version: '1.25'
+          go-version: '1.24'
+          cache: true
 
       - name: Install gf-tool
-        run: |
-          wget -O gf https://github.com/gogf/gf/releases/latest/download/gf_$(go env GOOS)_$(go env GOARCH)
-          chmod +x gf 
-          ./gf install -y
-          rm ./gf
+        run: wget -O gf https://github.com/gogf/gf/releases/latest/download/gf_$(go env GOOS)_$(go env GOARCH) && chmod +x gf && ./gf install -y && rm ./gf
 
       - name: Build Go application
         run: gf build
