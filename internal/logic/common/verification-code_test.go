@@ -304,7 +304,7 @@ func TestVerifyAndConsumeVCode(t *testing.T) {
 	})
 }
 
-// TestVerifyAndConsumeVCodeOCTOPUS 测试防止TOCTOU竞态条件
+// TestVerifyAndConsumeVCodeTOCTOU 测试防止 TOCTOU 竞态条件
 func TestVerifyAndConsumeVCodeTOCTOU(t *testing.T) {
 	gtest.C(t, func(t *gtest.T) {
 		testEmail := getTestEmail("toctou")
