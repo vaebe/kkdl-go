@@ -29,7 +29,7 @@ func getTestEmail(suffix string) string {
 }
 
 // runInTransaction 在事务中执行测试函数，测试完成后自动回滚以清理测试数据
-func runInTransaction(t *gtest.T, testFunc func(ctx context.Context, tx gdb.TX)) {
+func runInTransaction(testFunc func(ctx context.Context, tx gdb.TX)) {
 	_ = dao.VerificationCodes.Transaction(ctx, func(ctx context.Context, tx gdb.TX) error {
 		// 执行测试函数
 		testFunc(ctx, tx)
@@ -85,7 +85,7 @@ func TestCreateVCode(t *testing.T) {
 		testEmail := getTestEmail("create")
 
 		// 使用事务确保测试隔离
-		runInTransaction(t, func(ctx context.Context, tx gdb.TX) {
+		runInTransaction(func(ctx context.Context, tx gdb.TX) {
 			code, err := logic.CreateVCode(ctx, testEmail)
 			t.AssertNil(err)
 			t.AssertNE(code, "")
@@ -110,7 +110,7 @@ func TestCreateVCodeMultipleTimes(t *testing.T) {
 	gtest.C(t, func(t *gtest.T) {
 		testEmail := getTestEmail("multiple")
 
-		runInTransaction(t, func(ctx context.Context, tx gdb.TX) {
+		runInTransaction(func(ctx context.Context, tx gdb.TX) {
 			code1, err1 := logic.CreateVCode(ctx, testEmail)
 			t.AssertNil(err1)
 
@@ -130,7 +130,7 @@ func TestVerifyTheVCode(t *testing.T) {
 	gtest.C(t, func(t *gtest.T) {
 		testEmail := getTestEmail("verify")
 
-		runInTransaction(t, func(ctx context.Context, tx gdb.TX) {
+		runInTransaction(func(ctx context.Context, tx gdb.TX) {
 			// 先创建一个验证码
 			code, err := logic.CreateVCode(ctx, testEmail)
 			t.AssertNil(err)
@@ -159,7 +159,7 @@ func TestVerifyTheVCodeExpired(t *testing.T) {
 		testEmail := getTestEmail("expired")
 		expiredCode := gconv.String(123456)
 
-		runInTransaction(t, func(ctx context.Context, tx gdb.TX) {
+		runInTransaction(func(ctx context.Context, tx gdb.TX) {
 			// 手动插入一个已过期的验证码
 			err := insertExpiredVCode(tx, testEmail, expiredCode)
 			t.AssertNil(err)
@@ -177,7 +177,7 @@ func TestVerifyTheVCodeUsed(t *testing.T) {
 	gtest.C(t, func(t *gtest.T) {
 		testEmail := getTestEmail("used")
 
-		runInTransaction(t, func(ctx context.Context, tx gdb.TX) {
+		runInTransaction(func(ctx context.Context, tx gdb.TX) {
 			// 先创建一个验证码
 			code, err := logic.CreateVCode(ctx, testEmail)
 			t.AssertNil(err)
@@ -199,7 +199,7 @@ func TestCheckVCodeCooldown(t *testing.T) {
 	gtest.C(t, func(t *gtest.T) {
 		testEmail := getTestEmail("cooldown")
 
-		runInTransaction(t, func(ctx context.Context, tx gdb.TX) {
+		runInTransaction(func(ctx context.Context, tx gdb.TX) {
 			// 场景1: 没有发送过验证码
 			inCooldown, remaining, err := logic.CheckVCodeCooldown(ctx, "new@example.com")
 			t.AssertNil(err)
@@ -238,7 +238,7 @@ func TestConsumeVCode(t *testing.T) {
 	gtest.C(t, func(t *gtest.T) {
 		testEmail := getTestEmail("consume")
 
-		runInTransaction(t, func(ctx context.Context, tx gdb.TX) {
+		runInTransaction(func(ctx context.Context, tx gdb.TX) {
 			// 先创建一个验证码
 			code, err := logic.CreateVCode(ctx, testEmail)
 			t.AssertNil(err)
@@ -263,7 +263,7 @@ func TestConsumeVCodeExpired(t *testing.T) {
 		testEmail := getTestEmail("consume-expired")
 		expiredCode := gconv.String(123456)
 
-		runInTransaction(t, func(ctx context.Context, tx gdb.TX) {
+		runInTransaction(func(ctx context.Context, tx gdb.TX) {
 			// 手动插入一个已过期的验证码
 			err := insertExpiredVCode(tx, testEmail, expiredCode)
 			t.AssertNil(err)
@@ -283,7 +283,7 @@ func TestVerifyAndConsumeVCode(t *testing.T) {
 	gtest.C(t, func(t *gtest.T) {
 		testEmail := getTestEmail("verify-consume")
 
-		runInTransaction(t, func(ctx context.Context, tx gdb.TX) {
+		runInTransaction(func(ctx context.Context, tx gdb.TX) {
 			// 先创建一个验证码
 			code, err := logic.CreateVCode(ctx, testEmail)
 			t.AssertNil(err)
@@ -309,7 +309,7 @@ func TestVerifyAndConsumeVCodeTOCTOU(t *testing.T) {
 	gtest.C(t, func(t *gtest.T) {
 		testEmail := getTestEmail("toctou")
 
-		runInTransaction(t, func(ctx context.Context, tx gdb.TX) {
+		runInTransaction(func(ctx context.Context, tx gdb.TX) {
 			// 先创建一个验证码
 			code, err := logic.CreateVCode(ctx, testEmail)
 			t.AssertNil(err)
@@ -333,7 +333,7 @@ func TestVerifyAndConsumeVCodeExpired(t *testing.T) {
 		testEmail := getTestEmail("verify-consume-expired")
 		expiredCode := gconv.String(123456)
 
-		runInTransaction(t, func(ctx context.Context, tx gdb.TX) {
+		runInTransaction(func(ctx context.Context, tx gdb.TX) {
 			// 手动插入一个已过期的验证码
 			err := insertExpiredVCode(tx, testEmail, expiredCode)
 			t.AssertNil(err)
@@ -351,7 +351,7 @@ func TestDeleteVCode(t *testing.T) {
 	gtest.C(t, func(t *gtest.T) {
 		testEmail := getTestEmail("delete")
 
-		runInTransaction(t, func(ctx context.Context, tx gdb.TX) {
+		runInTransaction(func(ctx context.Context, tx gdb.TX) {
 			// 先创建一个验证码
 			_, err := logic.CreateVCode(ctx, testEmail)
 			t.AssertNil(err)
@@ -371,7 +371,7 @@ func TestDeleteVCodeMultipleRecords(t *testing.T) {
 	gtest.C(t, func(t *gtest.T) {
 		testEmail := getTestEmail("delete-multiple")
 
-		runInTransaction(t, func(ctx context.Context, tx gdb.TX) {
+		runInTransaction(func(ctx context.Context, tx gdb.TX) {
 			// 创建多个验证码
 			_, err := logic.CreateVCode(ctx, testEmail)
 			t.AssertNil(err)
@@ -410,7 +410,7 @@ func TestDeleteExpiredVCodes(t *testing.T) {
 		expiredEmail := getTestEmail("expired")
 		expiredCode := gconv.String(123456)
 
-		runInTransaction(t, func(ctx context.Context, tx gdb.TX) {
+		runInTransaction(func(ctx context.Context, tx gdb.TX) {
 			// 创建一个有效的验证码
 			validCode, err := logic.CreateVCode(ctx, validEmail)
 			t.AssertNil(err)
@@ -441,7 +441,7 @@ func TestDeleteExpiredVCodesMixed(t *testing.T) {
 		expiredEmail2 := getTestEmail("expired2")
 		expiredEmail3 := getTestEmail("expired3")
 
-		runInTransaction(t, func(ctx context.Context, tx gdb.TX) {
+		runInTransaction(func(ctx context.Context, tx gdb.TX) {
 			// 创建多个有效验证码
 			_, err := logic.CreateVCode(ctx, validEmail1)
 			t.AssertNil(err)
