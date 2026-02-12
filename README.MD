@@ -56,6 +56,8 @@ compressURL 是一个基于 [GoFrame](https://goframe.org/) 框架构建的短�
 
 首先需要安装 [gf cli 工具](https://goframe.org/docs/cli/install) 非常好用！
 
+使用 `gf run main.go` 启动项目
+
 最常用的命令是 `gf gen xxx`
 
 使用 `gf gen -help` 可以查看有哪些命令，如 `gf gen service`
